@@ -10,10 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VendorRegistrationRouteImport } from './routes/vendor-registration'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ServicesRouteImport } from './routes/services'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as QuoteRouteImport } from './routes/quote'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as ProductsRouteImport } from './routes/products'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as IndustriesRouteImport } from './routes/industries'
 import { Route as FaqsRouteImport } from './routes/faqs'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -21,6 +25,14 @@ import { Route as CareersRouteImport } from './routes/careers'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ServicesVendorManagementRouteImport } from './routes/services.vendor-management'
+import { Route as ServicesSafetyRouteImport } from './routes/services.safety'
+import { Route as ServicesRecruitmentRouteImport } from './routes/services.recruitment'
+import { Route as ServicesProcurementRouteImport } from './routes/services.procurement'
+import { Route as ServicesOffshoreRouteImport } from './routes/services.offshore'
+import { Route as ServicesLogisticsRouteImport } from './routes/services.logistics'
+import { Route as ServicesEquipmentRouteImport } from './routes/services.equipment'
+import { Route as ServicesDieselRouteImport } from './routes/services.diesel'
 import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
 
 const VendorRegistrationRoute = VendorRegistrationRouteImport.update({
@@ -28,9 +40,24 @@ const VendorRegistrationRoute = VendorRegistrationRouteImport.update({
   path: '/vendor-registration',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QuoteRoute = QuoteRouteImport.update({
@@ -46,6 +73,11 @@ const ProjectsRoute = ProjectsRouteImport.update({
 const ProductsRoute = ProductsRouteImport.update({
   id: '/products',
   path: '/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndustriesRoute = IndustriesRouteImport.update({
@@ -83,6 +115,47 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServicesVendorManagementRoute =
+  ServicesVendorManagementRouteImport.update({
+    id: '/vendor-management',
+    path: '/vendor-management',
+    getParentRoute: () => ServicesRoute,
+  } as any)
+const ServicesSafetyRoute = ServicesSafetyRouteImport.update({
+  id: '/safety',
+  path: '/safety',
+  getParentRoute: () => ServicesRoute,
+} as any)
+const ServicesRecruitmentRoute = ServicesRecruitmentRouteImport.update({
+  id: '/recruitment',
+  path: '/recruitment',
+  getParentRoute: () => ServicesRoute,
+} as any)
+const ServicesProcurementRoute = ServicesProcurementRouteImport.update({
+  id: '/procurement',
+  path: '/procurement',
+  getParentRoute: () => ServicesRoute,
+} as any)
+const ServicesOffshoreRoute = ServicesOffshoreRouteImport.update({
+  id: '/offshore',
+  path: '/offshore',
+  getParentRoute: () => ServicesRoute,
+} as any)
+const ServicesLogisticsRoute = ServicesLogisticsRouteImport.update({
+  id: '/logistics',
+  path: '/logistics',
+  getParentRoute: () => ServicesRoute,
+} as any)
+const ServicesEquipmentRoute = ServicesEquipmentRouteImport.update({
+  id: '/equipment',
+  path: '/equipment',
+  getParentRoute: () => ServicesRoute,
+} as any)
+const ServicesDieselRoute = ServicesDieselRouteImport.update({
+  id: '/diesel',
+  path: '/diesel',
+  getParentRoute: () => ServicesRoute,
+} as any)
 const ProductsSlugRoute = ProductsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -97,12 +170,24 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/faqs': typeof FaqsRoute
   '/industries': typeof IndustriesRoute
+  '/privacy': typeof PrivacyRoute
   '/products': typeof ProductsRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/quote': typeof QuoteRoute
-  '/services': typeof ServicesRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/services': typeof ServicesRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/vendor-registration': typeof VendorRegistrationRoute
   '/products/$slug': typeof ProductsSlugRoute
+  '/services/diesel': typeof ServicesDieselRoute
+  '/services/equipment': typeof ServicesEquipmentRoute
+  '/services/logistics': typeof ServicesLogisticsRoute
+  '/services/offshore': typeof ServicesOffshoreRoute
+  '/services/procurement': typeof ServicesProcurementRoute
+  '/services/recruitment': typeof ServicesRecruitmentRoute
+  '/services/safety': typeof ServicesSafetyRoute
+  '/services/vendor-management': typeof ServicesVendorManagementRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -112,12 +197,24 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/faqs': typeof FaqsRoute
   '/industries': typeof IndustriesRoute
+  '/privacy': typeof PrivacyRoute
   '/products': typeof ProductsRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/quote': typeof QuoteRoute
-  '/services': typeof ServicesRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/services': typeof ServicesRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/vendor-registration': typeof VendorRegistrationRoute
   '/products/$slug': typeof ProductsSlugRoute
+  '/services/diesel': typeof ServicesDieselRoute
+  '/services/equipment': typeof ServicesEquipmentRoute
+  '/services/logistics': typeof ServicesLogisticsRoute
+  '/services/offshore': typeof ServicesOffshoreRoute
+  '/services/procurement': typeof ServicesProcurementRoute
+  '/services/recruitment': typeof ServicesRecruitmentRoute
+  '/services/safety': typeof ServicesSafetyRoute
+  '/services/vendor-management': typeof ServicesVendorManagementRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -128,12 +225,24 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/faqs': typeof FaqsRoute
   '/industries': typeof IndustriesRoute
+  '/privacy': typeof PrivacyRoute
   '/products': typeof ProductsRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/quote': typeof QuoteRoute
-  '/services': typeof ServicesRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/services': typeof ServicesRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/vendor-registration': typeof VendorRegistrationRoute
   '/products/$slug': typeof ProductsSlugRoute
+  '/services/diesel': typeof ServicesDieselRoute
+  '/services/equipment': typeof ServicesEquipmentRoute
+  '/services/logistics': typeof ServicesLogisticsRoute
+  '/services/offshore': typeof ServicesOffshoreRoute
+  '/services/procurement': typeof ServicesProcurementRoute
+  '/services/recruitment': typeof ServicesRecruitmentRoute
+  '/services/safety': typeof ServicesSafetyRoute
+  '/services/vendor-management': typeof ServicesVendorManagementRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -145,12 +254,24 @@ export interface FileRouteTypes {
     | '/contact'
     | '/faqs'
     | '/industries'
+    | '/privacy'
     | '/products'
     | '/projects'
     | '/quote'
+    | '/robots.txt'
     | '/services'
+    | '/sitemap.xml'
+    | '/terms'
     | '/vendor-registration'
     | '/products/$slug'
+    | '/services/diesel'
+    | '/services/equipment'
+    | '/services/logistics'
+    | '/services/offshore'
+    | '/services/procurement'
+    | '/services/recruitment'
+    | '/services/safety'
+    | '/services/vendor-management'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -160,12 +281,24 @@ export interface FileRouteTypes {
     | '/contact'
     | '/faqs'
     | '/industries'
+    | '/privacy'
     | '/products'
     | '/projects'
     | '/quote'
+    | '/robots.txt'
     | '/services'
+    | '/sitemap.xml'
+    | '/terms'
     | '/vendor-registration'
     | '/products/$slug'
+    | '/services/diesel'
+    | '/services/equipment'
+    | '/services/logistics'
+    | '/services/offshore'
+    | '/services/procurement'
+    | '/services/recruitment'
+    | '/services/safety'
+    | '/services/vendor-management'
   id:
     | '__root__'
     | '/'
@@ -175,12 +308,24 @@ export interface FileRouteTypes {
     | '/contact'
     | '/faqs'
     | '/industries'
+    | '/privacy'
     | '/products'
     | '/projects'
     | '/quote'
+    | '/robots.txt'
     | '/services'
+    | '/sitemap.xml'
+    | '/terms'
     | '/vendor-registration'
     | '/products/$slug'
+    | '/services/diesel'
+    | '/services/equipment'
+    | '/services/logistics'
+    | '/services/offshore'
+    | '/services/procurement'
+    | '/services/recruitment'
+    | '/services/safety'
+    | '/services/vendor-management'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -191,10 +336,14 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   FaqsRoute: typeof FaqsRoute
   IndustriesRoute: typeof IndustriesRoute
+  PrivacyRoute: typeof PrivacyRoute
   ProductsRoute: typeof ProductsRouteWithChildren
   ProjectsRoute: typeof ProjectsRoute
   QuoteRoute: typeof QuoteRoute
-  ServicesRoute: typeof ServicesRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
+  ServicesRoute: typeof ServicesRouteWithChildren
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TermsRoute: typeof TermsRoute
   VendorRegistrationRoute: typeof VendorRegistrationRoute
 }
 
@@ -207,11 +356,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VendorRegistrationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/services': {
       id: '/services'
       path: '/services'
       fullPath: '/services'
       preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/quote': {
@@ -233,6 +403,13 @@ declare module '@tanstack/react-router' {
       path: '/products'
       fullPath: '/products'
       preLoaderRoute: typeof ProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/industries': {
@@ -284,6 +461,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/services/vendor-management': {
+      id: '/services/vendor-management'
+      path: '/vendor-management'
+      fullPath: '/services/vendor-management'
+      preLoaderRoute: typeof ServicesVendorManagementRouteImport
+      parentRoute: typeof ServicesRoute
+    }
+    '/services/safety': {
+      id: '/services/safety'
+      path: '/safety'
+      fullPath: '/services/safety'
+      preLoaderRoute: typeof ServicesSafetyRouteImport
+      parentRoute: typeof ServicesRoute
+    }
+    '/services/recruitment': {
+      id: '/services/recruitment'
+      path: '/recruitment'
+      fullPath: '/services/recruitment'
+      preLoaderRoute: typeof ServicesRecruitmentRouteImport
+      parentRoute: typeof ServicesRoute
+    }
+    '/services/procurement': {
+      id: '/services/procurement'
+      path: '/procurement'
+      fullPath: '/services/procurement'
+      preLoaderRoute: typeof ServicesProcurementRouteImport
+      parentRoute: typeof ServicesRoute
+    }
+    '/services/offshore': {
+      id: '/services/offshore'
+      path: '/offshore'
+      fullPath: '/services/offshore'
+      preLoaderRoute: typeof ServicesOffshoreRouteImport
+      parentRoute: typeof ServicesRoute
+    }
+    '/services/logistics': {
+      id: '/services/logistics'
+      path: '/logistics'
+      fullPath: '/services/logistics'
+      preLoaderRoute: typeof ServicesLogisticsRouteImport
+      parentRoute: typeof ServicesRoute
+    }
+    '/services/equipment': {
+      id: '/services/equipment'
+      path: '/equipment'
+      fullPath: '/services/equipment'
+      preLoaderRoute: typeof ServicesEquipmentRouteImport
+      parentRoute: typeof ServicesRoute
+    }
+    '/services/diesel': {
+      id: '/services/diesel'
+      path: '/diesel'
+      fullPath: '/services/diesel'
+      preLoaderRoute: typeof ServicesDieselRouteImport
+      parentRoute: typeof ServicesRoute
+    }
     '/products/$slug': {
       id: '/products/$slug'
       path: '/$slug'
@@ -306,6 +539,32 @@ const ProductsRouteWithChildren = ProductsRoute._addFileChildren(
   ProductsRouteChildren,
 )
 
+interface ServicesRouteChildren {
+  ServicesDieselRoute: typeof ServicesDieselRoute
+  ServicesEquipmentRoute: typeof ServicesEquipmentRoute
+  ServicesLogisticsRoute: typeof ServicesLogisticsRoute
+  ServicesOffshoreRoute: typeof ServicesOffshoreRoute
+  ServicesProcurementRoute: typeof ServicesProcurementRoute
+  ServicesRecruitmentRoute: typeof ServicesRecruitmentRoute
+  ServicesSafetyRoute: typeof ServicesSafetyRoute
+  ServicesVendorManagementRoute: typeof ServicesVendorManagementRoute
+}
+
+const ServicesRouteChildren: ServicesRouteChildren = {
+  ServicesDieselRoute: ServicesDieselRoute,
+  ServicesEquipmentRoute: ServicesEquipmentRoute,
+  ServicesLogisticsRoute: ServicesLogisticsRoute,
+  ServicesOffshoreRoute: ServicesOffshoreRoute,
+  ServicesProcurementRoute: ServicesProcurementRoute,
+  ServicesRecruitmentRoute: ServicesRecruitmentRoute,
+  ServicesSafetyRoute: ServicesSafetyRoute,
+  ServicesVendorManagementRoute: ServicesVendorManagementRoute,
+}
+
+const ServicesRouteWithChildren = ServicesRoute._addFileChildren(
+  ServicesRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -314,12 +573,26 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   FaqsRoute: FaqsRoute,
   IndustriesRoute: IndustriesRoute,
+  PrivacyRoute: PrivacyRoute,
   ProductsRoute: ProductsRouteWithChildren,
   ProjectsRoute: ProjectsRoute,
   QuoteRoute: QuoteRoute,
-  ServicesRoute: ServicesRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
+  ServicesRoute: ServicesRouteWithChildren,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TermsRoute: TermsRoute,
   VendorRegistrationRoute: VendorRegistrationRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

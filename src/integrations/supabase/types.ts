@@ -14,7 +14,287 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      contact_messages: {
+        Row: {
+          company: string | null
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          phone: string | null
+          subject: string | null
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          phone?: string | null
+          subject?: string | null
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          phone?: string | null
+          subject?: string | null
+        }
+        Relationships: []
+      }
+      job_applications: {
+        Row: {
+          cover_letter: string | null
+          created_at: string
+          email: string
+          experience_years: number | null
+          full_name: string
+          id: string
+          job_id: string | null
+          phone: string | null
+          position_applied: string
+          resume_url: string | null
+          status: string
+        }
+        Insert: {
+          cover_letter?: string | null
+          created_at?: string
+          email: string
+          experience_years?: number | null
+          full_name: string
+          id?: string
+          job_id?: string | null
+          phone?: string | null
+          position_applied: string
+          resume_url?: string | null
+          status?: string
+        }
+        Update: {
+          cover_letter?: string | null
+          created_at?: string
+          email?: string
+          experience_years?: number | null
+          full_name?: string
+          id?: string
+          job_id?: string | null
+          phone?: string | null
+          position_applied?: string
+          resume_url?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "job_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_listings: {
+        Row: {
+          active: boolean
+          category: string
+          created_at: string
+          description: string
+          id: string
+          job_type: string
+          location: string
+          requirements: string | null
+          title: string
+        }
+        Insert: {
+          active?: boolean
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          job_type?: string
+          location: string
+          requirements?: string | null
+          title: string
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          job_type?: string
+          location?: string
+          requirements?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      newsletter_subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          active: boolean
+          brochure_url: string | null
+          category: string
+          created_at: string
+          description: string | null
+          featured: boolean
+          id: string
+          image_url: string | null
+          in_stock: boolean
+          manufacturer: string | null
+          name: string
+          short_description: string | null
+          sku: string | null
+          slug: string
+          specifications: Json | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          brochure_url?: string | null
+          category: string
+          created_at?: string
+          description?: string | null
+          featured?: boolean
+          id?: string
+          image_url?: string | null
+          in_stock?: boolean
+          manufacturer?: string | null
+          name: string
+          short_description?: string | null
+          sku?: string | null
+          slug: string
+          specifications?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          brochure_url?: string | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          featured?: boolean
+          id?: string
+          image_url?: string | null
+          in_stock?: boolean
+          manufacturer?: string | null
+          name?: string
+          short_description?: string | null
+          sku?: string | null
+          slug?: string
+          specifications?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      quote_requests: {
+        Row: {
+          budget: string | null
+          company_name: string
+          contact_name: string
+          created_at: string
+          delivery_location: string | null
+          email: string
+          id: string
+          notes: string | null
+          phone: string | null
+          product_service: string
+          quantity: string | null
+          status: string
+          timeline: string | null
+        }
+        Insert: {
+          budget?: string | null
+          company_name: string
+          contact_name: string
+          created_at?: string
+          delivery_location?: string | null
+          email: string
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          product_service: string
+          quantity?: string | null
+          status?: string
+          timeline?: string | null
+        }
+        Update: {
+          budget?: string | null
+          company_name?: string
+          contact_name?: string
+          created_at?: string
+          delivery_location?: string | null
+          email?: string
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          product_service?: string
+          quantity?: string | null
+          status?: string
+          timeline?: string | null
+        }
+        Relationships: []
+      }
+      vendor_registrations: {
+        Row: {
+          capabilities: string | null
+          category: string
+          company_name: string
+          contact_name: string
+          country: string | null
+          created_at: string
+          email: string
+          id: string
+          phone: string | null
+          website: string | null
+        }
+        Insert: {
+          capabilities?: string | null
+          category: string
+          company_name: string
+          contact_name: string
+          country?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          phone?: string | null
+          website?: string | null
+        }
+        Update: {
+          capabilities?: string | null
+          category?: string
+          company_name?: string
+          contact_name?: string
+          country?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          phone?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

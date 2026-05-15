@@ -2,16 +2,14 @@ import { Link } from "@tanstack/react-router";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { SITE, NAV_PRIMARY, SERVICE_LINKS } from "@/lib/site";
 import { NewsletterForm } from "@/components/forms/NewsletterForm";
+import logo from "@/assets/ojex-logo.png";
 
 export function Footer() {
   return (
     <footer className="bg-[color:var(--navy-deep)] text-white/80">
       <div className="container-x grid gap-10 py-16 md:grid-cols-2 lg:grid-cols-4">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="grid h-10 w-10 place-items-center rounded-sm bg-[color:var(--gold)] font-bold text-[color:var(--navy-deep)]">O</span>
-            <span className="font-display text-lg font-bold tracking-wider text-white">OJEX</span>
-          </div>
+          <img src={logo} alt="OJEX Oil and Gas Services" className="h-16 w-auto" />
           <p className="mt-4 max-w-xs text-sm text-white/70">
             Trusted partner for industrial sourcing, equipment supply, base oil distribution, and oilfield manpower across West Africa.
           </p>

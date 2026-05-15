@@ -151,6 +151,153 @@ export type Database = {
         }
         Relationships: []
       }
+      procurement_activity: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          details: Json | null
+          id: string
+          request_id: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          details?: Json | null
+          id?: string
+          request_id: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          details?: Json | null
+          id?: string
+          request_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "procurement_activity_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "procurement_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      procurement_documents: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_path: string
+          file_size: number | null
+          file_type: string | null
+          id: string
+          request_id: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+          request_id: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+          request_id?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "procurement_documents_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "procurement_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      procurement_requests: {
+        Row: {
+          assigned_to: string | null
+          assigned_vendor_id: string | null
+          budget_estimate: number | null
+          category: string
+          created_at: string
+          created_by: string
+          currency: string | null
+          delivery_location: string | null
+          description: string | null
+          id: string
+          notes: string | null
+          priority: Database["public"]["Enums"]["procurement_priority"]
+          quantity: string | null
+          reference: string
+          required_by: string | null
+          status: Database["public"]["Enums"]["procurement_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          assigned_vendor_id?: string | null
+          budget_estimate?: number | null
+          category: string
+          created_at?: string
+          created_by: string
+          currency?: string | null
+          delivery_location?: string | null
+          description?: string | null
+          id?: string
+          notes?: string | null
+          priority?: Database["public"]["Enums"]["procurement_priority"]
+          quantity?: string | null
+          reference?: string
+          required_by?: string | null
+          status?: Database["public"]["Enums"]["procurement_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          assigned_vendor_id?: string | null
+          budget_estimate?: number | null
+          category?: string
+          created_at?: string
+          created_by?: string
+          currency?: string | null
+          delivery_location?: string | null
+          description?: string | null
+          id?: string
+          notes?: string | null
+          priority?: Database["public"]["Enums"]["procurement_priority"]
+          quantity?: string | null
+          reference?: string
+          required_by?: string | null
+          status?: Database["public"]["Enums"]["procurement_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "procurement_requests_assigned_vendor_id_fkey"
+            columns: ["assigned_vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           active: boolean
@@ -208,6 +355,27 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
       quote_requests: {
         Row: {
           budget: string | null
@@ -256,6 +424,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       vendor_registrations: {
         Row: {
           capabilities: string | null
@@ -300,10 +489,27 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "manager" | "user"
+      procurement_priority: "low" | "normal" | "high" | "urgent"
+      procurement_status:
+        | "draft"
+        | "submitted"
+        | "sourcing"
+        | "quoted"
+        | "approved"
+        | "ordered"
+        | "delivered"
+        | "closed"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -430,6 +636,20 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "manager", "user"],
+      procurement_priority: ["low", "normal", "high", "urgent"],
+      procurement_status: [
+        "draft",
+        "submitted",
+        "sourcing",
+        "quoted",
+        "approved",
+        "ordered",
+        "delivered",
+        "closed",
+        "cancelled",
+      ],
+    },
   },
 } as const

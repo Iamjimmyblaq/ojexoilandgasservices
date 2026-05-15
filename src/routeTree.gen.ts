@@ -17,13 +17,16 @@ import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as QuoteRouteImport } from './routes/quote'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as ProductsRouteImport } from './routes/products'
+import { Route as ProcurementRouteImport } from './routes/procurement'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as IndustriesRouteImport } from './routes/industries'
 import { Route as FaqsRouteImport } from './routes/faqs'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CareersRouteImport } from './routes/careers'
 import { Route as BlogRouteImport } from './routes/blog'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/_admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ServicesVendorManagementRouteImport } from './routes/services.vendor-management'
 import { Route as ServicesSafetyRouteImport } from './routes/services.safety'
@@ -34,6 +37,15 @@ import { Route as ServicesLogisticsRouteImport } from './routes/services.logisti
 import { Route as ServicesEquipmentRouteImport } from './routes/services.equipment'
 import { Route as ServicesDieselRouteImport } from './routes/services.diesel'
 import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
+import { Route as AdminAdminIndexRouteImport } from './routes/_admin.admin.index'
+import { Route as AdminAdminVendorsRouteImport } from './routes/_admin.admin.vendors'
+import { Route as AdminAdminReportsRouteImport } from './routes/_admin.admin.reports'
+import { Route as AdminAdminQuotesRouteImport } from './routes/_admin.admin.quotes'
+import { Route as AdminAdminProductsRouteImport } from './routes/_admin.admin.products'
+import { Route as AdminAdminProcurementRouteImport } from './routes/_admin.admin.procurement'
+import { Route as AdminAdminJobsRouteImport } from './routes/_admin.admin.jobs'
+import { Route as AdminAdminContactsRouteImport } from './routes/_admin.admin.contacts'
+import { Route as AdminAdminProcurementIdRouteImport } from './routes/_admin.admin.procurement.$id'
 
 const VendorRegistrationRoute = VendorRegistrationRouteImport.update({
   id: '/vendor-registration',
@@ -75,6 +87,11 @@ const ProductsRoute = ProductsRouteImport.update({
   path: '/products',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProcurementRoute = ProcurementRouteImport.update({
+  id: '/procurement',
+  path: '/procurement',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -105,9 +122,18 @@ const BlogRoute = BlogRouteImport.update({
   path: '/blog',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/_admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -161,16 +187,63 @@ const ProductsSlugRoute = ProductsSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => ProductsRoute,
 } as any)
+const AdminAdminIndexRoute = AdminAdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAdminVendorsRoute = AdminAdminVendorsRouteImport.update({
+  id: '/admin/vendors',
+  path: '/admin/vendors',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAdminReportsRoute = AdminAdminReportsRouteImport.update({
+  id: '/admin/reports',
+  path: '/admin/reports',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAdminQuotesRoute = AdminAdminQuotesRouteImport.update({
+  id: '/admin/quotes',
+  path: '/admin/quotes',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAdminProductsRoute = AdminAdminProductsRouteImport.update({
+  id: '/admin/products',
+  path: '/admin/products',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAdminProcurementRoute = AdminAdminProcurementRouteImport.update({
+  id: '/admin/procurement',
+  path: '/admin/procurement',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAdminJobsRoute = AdminAdminJobsRouteImport.update({
+  id: '/admin/jobs',
+  path: '/admin/jobs',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAdminContactsRoute = AdminAdminContactsRouteImport.update({
+  id: '/admin/contacts',
+  path: '/admin/contacts',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAdminProcurementIdRoute = AdminAdminProcurementIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminAdminProcurementRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/blog': typeof BlogRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/faqs': typeof FaqsRoute
   '/industries': typeof IndustriesRoute
   '/privacy': typeof PrivacyRoute
+  '/procurement': typeof ProcurementRoute
   '/products': typeof ProductsRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/quote': typeof QuoteRoute
@@ -188,16 +261,27 @@ export interface FileRoutesByFullPath {
   '/services/recruitment': typeof ServicesRecruitmentRoute
   '/services/safety': typeof ServicesSafetyRoute
   '/services/vendor-management': typeof ServicesVendorManagementRoute
+  '/admin/contacts': typeof AdminAdminContactsRoute
+  '/admin/jobs': typeof AdminAdminJobsRoute
+  '/admin/procurement': typeof AdminAdminProcurementRouteWithChildren
+  '/admin/products': typeof AdminAdminProductsRoute
+  '/admin/quotes': typeof AdminAdminQuotesRoute
+  '/admin/reports': typeof AdminAdminReportsRoute
+  '/admin/vendors': typeof AdminAdminVendorsRoute
+  '/admin/': typeof AdminAdminIndexRoute
+  '/admin/procurement/$id': typeof AdminAdminProcurementIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/blog': typeof BlogRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/faqs': typeof FaqsRoute
   '/industries': typeof IndustriesRoute
   '/privacy': typeof PrivacyRoute
+  '/procurement': typeof ProcurementRoute
   '/products': typeof ProductsRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/quote': typeof QuoteRoute
@@ -215,17 +299,29 @@ export interface FileRoutesByTo {
   '/services/recruitment': typeof ServicesRecruitmentRoute
   '/services/safety': typeof ServicesSafetyRoute
   '/services/vendor-management': typeof ServicesVendorManagementRoute
+  '/admin/contacts': typeof AdminAdminContactsRoute
+  '/admin/jobs': typeof AdminAdminJobsRoute
+  '/admin/procurement': typeof AdminAdminProcurementRouteWithChildren
+  '/admin/products': typeof AdminAdminProductsRoute
+  '/admin/quotes': typeof AdminAdminQuotesRoute
+  '/admin/reports': typeof AdminAdminReportsRoute
+  '/admin/vendors': typeof AdminAdminVendorsRoute
+  '/admin': typeof AdminAdminIndexRoute
+  '/admin/procurement/$id': typeof AdminAdminProcurementIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_admin': typeof AdminRouteWithChildren
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/blog': typeof BlogRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/faqs': typeof FaqsRoute
   '/industries': typeof IndustriesRoute
   '/privacy': typeof PrivacyRoute
+  '/procurement': typeof ProcurementRoute
   '/products': typeof ProductsRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/quote': typeof QuoteRoute
@@ -243,18 +339,29 @@ export interface FileRoutesById {
   '/services/recruitment': typeof ServicesRecruitmentRoute
   '/services/safety': typeof ServicesSafetyRoute
   '/services/vendor-management': typeof ServicesVendorManagementRoute
+  '/_admin/admin/contacts': typeof AdminAdminContactsRoute
+  '/_admin/admin/jobs': typeof AdminAdminJobsRoute
+  '/_admin/admin/procurement': typeof AdminAdminProcurementRouteWithChildren
+  '/_admin/admin/products': typeof AdminAdminProductsRoute
+  '/_admin/admin/quotes': typeof AdminAdminQuotesRoute
+  '/_admin/admin/reports': typeof AdminAdminReportsRoute
+  '/_admin/admin/vendors': typeof AdminAdminVendorsRoute
+  '/_admin/admin/': typeof AdminAdminIndexRoute
+  '/_admin/admin/procurement/$id': typeof AdminAdminProcurementIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/auth'
     | '/blog'
     | '/careers'
     | '/contact'
     | '/faqs'
     | '/industries'
     | '/privacy'
+    | '/procurement'
     | '/products'
     | '/projects'
     | '/quote'
@@ -272,16 +379,27 @@ export interface FileRouteTypes {
     | '/services/recruitment'
     | '/services/safety'
     | '/services/vendor-management'
+    | '/admin/contacts'
+    | '/admin/jobs'
+    | '/admin/procurement'
+    | '/admin/products'
+    | '/admin/quotes'
+    | '/admin/reports'
+    | '/admin/vendors'
+    | '/admin/'
+    | '/admin/procurement/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/auth'
     | '/blog'
     | '/careers'
     | '/contact'
     | '/faqs'
     | '/industries'
     | '/privacy'
+    | '/procurement'
     | '/products'
     | '/projects'
     | '/quote'
@@ -299,16 +417,28 @@ export interface FileRouteTypes {
     | '/services/recruitment'
     | '/services/safety'
     | '/services/vendor-management'
+    | '/admin/contacts'
+    | '/admin/jobs'
+    | '/admin/procurement'
+    | '/admin/products'
+    | '/admin/quotes'
+    | '/admin/reports'
+    | '/admin/vendors'
+    | '/admin'
+    | '/admin/procurement/$id'
   id:
     | '__root__'
     | '/'
+    | '/_admin'
     | '/about'
+    | '/auth'
     | '/blog'
     | '/careers'
     | '/contact'
     | '/faqs'
     | '/industries'
     | '/privacy'
+    | '/procurement'
     | '/products'
     | '/projects'
     | '/quote'
@@ -326,17 +456,29 @@ export interface FileRouteTypes {
     | '/services/recruitment'
     | '/services/safety'
     | '/services/vendor-management'
+    | '/_admin/admin/contacts'
+    | '/_admin/admin/jobs'
+    | '/_admin/admin/procurement'
+    | '/_admin/admin/products'
+    | '/_admin/admin/quotes'
+    | '/_admin/admin/reports'
+    | '/_admin/admin/vendors'
+    | '/_admin/admin/'
+    | '/_admin/admin/procurement/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AuthRoute: typeof AuthRoute
   BlogRoute: typeof BlogRoute
   CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
   FaqsRoute: typeof FaqsRoute
   IndustriesRoute: typeof IndustriesRoute
   PrivacyRoute: typeof PrivacyRoute
+  ProcurementRoute: typeof ProcurementRoute
   ProductsRoute: typeof ProductsRouteWithChildren
   ProjectsRoute: typeof ProjectsRoute
   QuoteRoute: typeof QuoteRoute
@@ -405,6 +547,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/procurement': {
+      id: '/procurement'
+      path: '/procurement'
+      fullPath: '/procurement'
+      preLoaderRoute: typeof ProcurementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -447,11 +596,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_admin': {
+      id: '/_admin'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -524,8 +687,108 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsSlugRouteImport
       parentRoute: typeof ProductsRoute
     }
+    '/_admin/admin/': {
+      id: '/_admin/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminAdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/admin/vendors': {
+      id: '/_admin/admin/vendors'
+      path: '/admin/vendors'
+      fullPath: '/admin/vendors'
+      preLoaderRoute: typeof AdminAdminVendorsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/admin/reports': {
+      id: '/_admin/admin/reports'
+      path: '/admin/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AdminAdminReportsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/admin/quotes': {
+      id: '/_admin/admin/quotes'
+      path: '/admin/quotes'
+      fullPath: '/admin/quotes'
+      preLoaderRoute: typeof AdminAdminQuotesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/admin/products': {
+      id: '/_admin/admin/products'
+      path: '/admin/products'
+      fullPath: '/admin/products'
+      preLoaderRoute: typeof AdminAdminProductsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/admin/procurement': {
+      id: '/_admin/admin/procurement'
+      path: '/admin/procurement'
+      fullPath: '/admin/procurement'
+      preLoaderRoute: typeof AdminAdminProcurementRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/admin/jobs': {
+      id: '/_admin/admin/jobs'
+      path: '/admin/jobs'
+      fullPath: '/admin/jobs'
+      preLoaderRoute: typeof AdminAdminJobsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/admin/contacts': {
+      id: '/_admin/admin/contacts'
+      path: '/admin/contacts'
+      fullPath: '/admin/contacts'
+      preLoaderRoute: typeof AdminAdminContactsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/admin/procurement/$id': {
+      id: '/_admin/admin/procurement/$id'
+      path: '/$id'
+      fullPath: '/admin/procurement/$id'
+      preLoaderRoute: typeof AdminAdminProcurementIdRouteImport
+      parentRoute: typeof AdminAdminProcurementRoute
+    }
   }
 }
+
+interface AdminAdminProcurementRouteChildren {
+  AdminAdminProcurementIdRoute: typeof AdminAdminProcurementIdRoute
+}
+
+const AdminAdminProcurementRouteChildren: AdminAdminProcurementRouteChildren = {
+  AdminAdminProcurementIdRoute: AdminAdminProcurementIdRoute,
+}
+
+const AdminAdminProcurementRouteWithChildren =
+  AdminAdminProcurementRoute._addFileChildren(
+    AdminAdminProcurementRouteChildren,
+  )
+
+interface AdminRouteChildren {
+  AdminAdminContactsRoute: typeof AdminAdminContactsRoute
+  AdminAdminJobsRoute: typeof AdminAdminJobsRoute
+  AdminAdminProcurementRoute: typeof AdminAdminProcurementRouteWithChildren
+  AdminAdminProductsRoute: typeof AdminAdminProductsRoute
+  AdminAdminQuotesRoute: typeof AdminAdminQuotesRoute
+  AdminAdminReportsRoute: typeof AdminAdminReportsRoute
+  AdminAdminVendorsRoute: typeof AdminAdminVendorsRoute
+  AdminAdminIndexRoute: typeof AdminAdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAdminContactsRoute: AdminAdminContactsRoute,
+  AdminAdminJobsRoute: AdminAdminJobsRoute,
+  AdminAdminProcurementRoute: AdminAdminProcurementRouteWithChildren,
+  AdminAdminProductsRoute: AdminAdminProductsRoute,
+  AdminAdminQuotesRoute: AdminAdminQuotesRoute,
+  AdminAdminReportsRoute: AdminAdminReportsRoute,
+  AdminAdminVendorsRoute: AdminAdminVendorsRoute,
+  AdminAdminIndexRoute: AdminAdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface ProductsRouteChildren {
   ProductsSlugRoute: typeof ProductsSlugRoute
@@ -567,13 +830,16 @@ const ServicesRouteWithChildren = ServicesRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   AboutRoute: AboutRoute,
+  AuthRoute: AuthRoute,
   BlogRoute: BlogRoute,
   CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
   FaqsRoute: FaqsRoute,
   IndustriesRoute: IndustriesRoute,
   PrivacyRoute: PrivacyRoute,
+  ProcurementRoute: ProcurementRoute,
   ProductsRoute: ProductsRouteWithChildren,
   ProjectsRoute: ProjectsRoute,
   QuoteRoute: QuoteRoute,

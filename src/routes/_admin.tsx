@@ -9,17 +9,16 @@ export const Route = createFileRoute("/_admin")({
   head: () => ({ meta: [{ title: "Admin — OJEX" }, { name: "robots", content: "noindex" }] }),
 });
 
-type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
-const NAV: NavItem[] = [
+const NAV = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { to: "/admin/products", label: "Products", icon: Package },
-  { to: "/admin/quotes", label: "Quote Requests", icon: FileText },
-  { to: "/admin/contacts", label: "Contact Messages", icon: MessageSquare },
-  { to: "/admin/vendors", label: "Vendors", icon: Building2 },
-  { to: "/admin/jobs", label: "Jobs & Applications", icon: Briefcase },
-  { to: "/admin/procurement", label: "Procurement", icon: ShoppingCart },
-  { to: "/admin/reports", label: "Reports & Exports", icon: BarChart3 },
-];
+  { to: "/admin/products", label: "Products", icon: Package, exact: false },
+  { to: "/admin/quotes", label: "Quote Requests", icon: FileText, exact: false },
+  { to: "/admin/contacts", label: "Contact Messages", icon: MessageSquare, exact: false },
+  { to: "/admin/vendors", label: "Vendors", icon: Building2, exact: false },
+  { to: "/admin/jobs", label: "Jobs & Applications", icon: Briefcase, exact: false },
+  { to: "/admin/procurement", label: "Procurement", icon: ShoppingCart, exact: false },
+  { to: "/admin/reports", label: "Reports & Exports", icon: BarChart3, exact: false },
+] as const;
 
 function AdminLayout() {
   const { user, isAdmin, isManager, loading, signOut } = useAuth();

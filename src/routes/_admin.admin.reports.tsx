@@ -85,13 +85,16 @@ function Reports() {
                 <tr>{Object.keys(rows[0]).slice(0, 6).map((k) => <th key={k} className="p-2">{k}</th>)}</tr>
               </thead>
               <tbody>
-                {rows.slice(0, 50).map((r, i) => (
-                  <tr key={i} className="border-t border-border">
-                    {Object.keys(rows[0]).slice(0, 6).map((k) => (
-                      <td key={k} className="max-w-[200px] truncate p-2">{typeof r[k] === "object" ? JSON.stringify(r[k]) : String(r[k] ?? "")}</td>
-                    ))}
-                  </tr>
-                ))}
+                {rows.slice(0, 50).map((r, i) => {
+                  const row = r as Record<string, unknown>;
+                  return (
+                    <tr key={i} className="border-t border-border">
+                      {Object.keys(rows[0]).slice(0, 6).map((k) => (
+                        <td key={k} className="max-w-[200px] truncate p-2">{typeof row[k] === "object" ? JSON.stringify(row[k]) : String(row[k] ?? "")}</td>
+                      ))}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
             {rows.length > 50 && <p className="mt-2 text-xs text-muted-foreground">Showing first 50. Export for full list.</p>}

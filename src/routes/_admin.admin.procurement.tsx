@@ -30,13 +30,14 @@ function Procurement() {
 
   const create = useMutation({
     mutationFn: async (form: FormData) => {
+      const requiredBy = form.get("required_by");
       const payload = {
         title: String(form.get("title")),
         description: String(form.get("description")),
         category: String(form.get("category")),
         quantity: String(form.get("quantity") || ""),
         budget_estimate: form.get("budget") ? Number(form.get("budget")) : null,
-        required_by: form.get("required_by") || null,
+        required_by: requiredBy ? String(requiredBy) : null,
         delivery_location: String(form.get("delivery_location") || ""),
         priority: String(form.get("priority")) as "low" | "normal" | "high" | "urgent",
         status: "submitted" as const,

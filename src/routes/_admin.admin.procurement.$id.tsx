@@ -53,9 +53,9 @@ function Detail() {
 
   const update = useMutation({
     mutationFn: async (patch: Record<string, unknown>) => {
-      const { error } = await supabase.from("procurement_requests").update(patch).eq("id", id);
+      const { error } = await supabase.from("procurement_requests").update(patch as never).eq("id", id);
       if (error) throw error;
-      await supabase.from("procurement_activity").insert({ request_id: id, actor_id: user!.id, action: "updated", details: patch });
+      await supabase.from("procurement_activity").insert({ request_id: id, actor_id: user!.id, action: "updated", details: patch as never });
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["procurement", id] }); qc.invalidateQueries({ queryKey: ["procurement-activity", id] }); toast.success("Updated"); },
     onError: (e: Error) => toast.error(e.message),

@@ -1,0 +1,94 @@
+import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { LayoutDashboard, Package, FileText, MessageSquare, Building2, Briefcase, ShoppingCart, BarChart3, LogOut, ChevronLeft } from "lucide-react";
+import logo from "@/assets/ojex-logo.png";
+
+export const Route = createFileRoute("/_admin")({
+  component: AdminLayout,
+  head: () => ({ meta: [{ title: "Admin — OJEX" }, { name: "robots", content: "noindex" }] }),
+});
+
+const NAV = [
+  { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { to: "/admin/products", label: "Products", icon: Package },
+  { to: "/admin/quotes", label: "Quote Requests", icon: FileText },
+  { to: "/admin/contacts", label: "Contact Messages", icon: MessageSquare },
+  { to: "/admin/vendors", label: "Vendors", icon: Building2 },
+  { to: "/admin/jobs", label: "Jobs & Applications", icon: Briefcase },
+  { to: "/admin/procurement", label: "Procurement", icon: ShoppingCart },
+  { to: "/admin/reports", label: "Reports & Exports", icon: BarChart3 },
+] as const;
+
+function AdminLayout() {
+  const { user, isAdmin, isManager, loading, signOut } = useAuth();
+  const nav = useNavigate();
+  const path = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    if (!loading && !user) nav({ to: "/auth" });
+  }, [loading, user, nav]);
+
+  if (loading || !user) {
+    return <div className="grid min-h-screen place-items-center text-muted-foreground">Loading…</div>;
+  }
+
+  if (!isAdmin && !isManager) {
+    return (
+      <div className="grid min-h-screen place-items-center px-4 text-center">
+        <div>
+          <h1 className="text-2xl font-bold">Access denied</h1>
+          <p className="mt-2 text-muted-foreground">Your account does not have admin access.</p>
+          <p className="mt-4 text-xs text-muted-foreground">Signed in as {user.email}</p>
+          <div className="mt-4 flex justify-center gap-2">
+            <button onClick={() => signOut()} className="btn-navy">Sign out</button>
+            <Link to="/" className="btn-gold">Return home</Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen bg-muted/30">
+      <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-[color:var(--navy-deep)] text-white lg:flex">
+        <div className="flex h-20 items-center gap-2 border-b border-white/10 px-4">
+          <img src={logo} alt="OJEX" className="h-12 w-auto" />
+        </div>
+        <nav className="flex-1 space-y-1 p-3">
+          {NAV.map((item) => {
+            const active = item.exact ? path === item.to : path.startsWith(item.to);
+            const Icon = item.icon;
+            return (
+              <Link key={item.to} to={item.to} className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors ${active ? "bg-[color:var(--gold)] text-[color:var(--navy-deep)] font-medium" : "text-white/75 hover:bg-white/5 hover:text-white"}`}>
+                <Icon className="h-4 w-4" /> {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+        <div className="border-t border-white/10 p-3">
+          <p className="truncate px-2 pb-2 text-xs text-white/50">{user.email}</p>
+          <Link to="/" className="flex items-center gap-2 rounded px-3 py-2 text-xs text-white/70 hover:bg-white/5"><ChevronLeft className="h-3 w-3" /> View website</Link>
+          <button onClick={() => signOut()} className="mt-1 flex w-full items-center gap-2 rounded px-3 py-2 text-xs text-white/70 hover:bg-white/5">
+            <LogOut className="h-3 w-3" /> Sign out
+          </button>
+        </div>
+      </aside>
+
+      <main className="flex-1 overflow-x-auto">
+        <div className="border-b border-border bg-background px-6 py-4 lg:hidden">
+          <div className="flex items-center justify-between">
+            <img src={logo} alt="OJEX" className="h-10" />
+            <button onClick={() => signOut()} className="text-sm text-muted-foreground">Sign out</button>
+          </div>
+          <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
+            {NAV.map((item) => (
+              <Link key={item.to} to={item.to} className="whitespace-nowrap rounded-full border border-border px-3 py-1 text-xs">{item.label}</Link>
+            ))}
+          </div>
+        </div>
+        <div className="p-6 lg:p-8"><Outlet /></div>
+      </main>
+    </div>
+  );
+}

@@ -10,7 +10,7 @@ function Dashboard() {
   const { data, isLoading } = useQuery({
     queryKey: ["admin-stats"],
     queryFn: async () => {
-      const counts = async (table: string, filter?: { col: string; val: string }) => {
+      const counts = async (table: "quote_requests" | "contact_messages" | "vendor_registrations" | "job_applications" | "procurement_requests" | "products", filter?: { col: string; val: string }) => {
         let q = supabase.from(table).select("*", { count: "exact", head: true });
         if (filter) q = q.eq(filter.col, filter.val);
         const { count } = await q;

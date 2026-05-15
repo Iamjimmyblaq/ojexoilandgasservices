@@ -9,7 +9,8 @@ export const Route = createFileRoute("/_admin")({
   head: () => ({ meta: [{ title: "Admin — OJEX" }, { name: "robots", content: "noindex" }] }),
 });
 
-const NAV = [
+type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
+const NAV: NavItem[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/products", label: "Products", icon: Package },
   { to: "/admin/quotes", label: "Quote Requests", icon: FileText },
@@ -18,7 +19,7 @@ const NAV = [
   { to: "/admin/jobs", label: "Jobs & Applications", icon: Briefcase },
   { to: "/admin/procurement", label: "Procurement", icon: ShoppingCart },
   { to: "/admin/reports", label: "Reports & Exports", icon: BarChart3 },
-] as const;
+];
 
 function AdminLayout() {
   const { user, isAdmin, isManager, loading, signOut } = useAuth();

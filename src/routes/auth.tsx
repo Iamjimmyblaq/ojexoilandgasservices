@@ -9,6 +9,13 @@ export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Sign in — OJEX" }, { name: "robots", content: "noindex" }] }),
 });
 
+async function routeAfterAuth(userId: string, nav: (opts: { to: string }) => void) {
+  const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+  const roles = (data ?? []).map((r: { role: string }) => r.role);
+  if (roles.includes("admin") || roles.includes("manager")) nav({ to: "/admin" });
+  else nav({ to: "/" });
+}
+
 function AuthPage() {
   const nav = useNavigate();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -18,7 +25,9 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => { if (data.session) nav({ to: "/admin" }); });
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session?.user) routeAfterAuth(data.session.user.id, nav);
+    });
   }, [nav]);
 
   async function submit(e: React.FormEvent) {
@@ -28,15 +37,15 @@ function AuthPage() {
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
           email, password,
-          options: { emailRedirectTo: `${window.location.origin}/admin`, data: { full_name: fullName } },
+          options: { emailRedirectTo: `${window.location.origin}/`, data: { full_name: fullName } },
         });
         if (error) throw error;
         toast.success("Account created. Check your email to verify.");
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data: signInData, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Welcome back.");
-        nav({ to: "/admin" });
+        if (signInData.user) await routeAfterAuth(signInData.user.id, nav);
       }
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Authentication failed");

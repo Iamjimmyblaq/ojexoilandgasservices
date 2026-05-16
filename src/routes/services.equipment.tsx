@@ -1,32 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ServicePage } from "@/components/ServicePage";
+import { SERVICES } from "@/lib/services-data";
 import { SITE } from "@/lib/site";
 
+const S = SERVICES.equipment;
 export const Route = createFileRoute("/services/equipment")({
-  component: () => (
-    <ServicePage
-      eyebrow="Industrial Equipment Supply"
-      title="Drilling, marine, and industrial equipment."
-      subtitle="Shale shakers, mud cleaners, screens, pumps, valves, and complete drilling packages."
-      intro="We supply new and refurbished oilfield equipment from leading global manufacturers. Whether you need replacement shaker screens or a complete solids-control package, OJEX delivers to spec, on schedule, with full documentation."
-      bullets={[
-        "Shale shakers, mud cleaners, desanders, desilters",
-        "OEM and aftermarket shaker screens (all major brands)",
-        "Mud pumps, BOPs, valves, manifolds, and spares",
-        "Industrial vehicles, generators, and marine equipment",
-        "Full warranty and after-sales technical support",
-        "On-site commissioning available",
-      ]}
-    />
-  ),
+  component: () => <ServicePage service={S} />,
   head: () => ({
     meta: [
-      { title: `Industrial Equipment Supply — ${SITE.name}` },
-      { name: "description", content: "Drilling equipment, shale shakers, mud cleaners, screens, marine and industrial equipment supply." },
-      { property: "og:title", content: "Industrial Equipment Supply — OJEX" },
-      { property: "og:description", content: "OEM and certified aftermarket equipment for drilling and offshore operations." },
-      { property: "og:url", content: "/services/equipment" },
+      { title: `${S.eyebrow} — ${SITE.name}` },
+      { name: "description", content: S.layman },
+      { property: "og:title", content: `${S.eyebrow} — OJEX` },
+      { property: "og:description", content: S.subtitle },
+      { property: "og:url", content: `/services/${S.slug}` },
     ],
-    links: [{ rel: "canonical", href: "/services/equipment" }],
+    links: [{ rel: "canonical", href: `/services/${S.slug}` }],
   }),
 });

@@ -26,27 +26,14 @@ function AdminLayout() {
   const path = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
-    if (!loading && !user) nav({ to: "/auth" });
-  }, [loading, user, nav]);
+    if (loading) return;
+    if (!user) { nav({ to: "/auth" }); return; }
+    // Non-admin users are silently redirected to the public site
+    if (!isAdmin && !isManager) { nav({ to: "/" }); }
+  }, [loading, user, isAdmin, isManager, nav]);
 
-  if (loading || !user) {
+  if (loading || !user || (!isAdmin && !isManager)) {
     return <div className="grid min-h-screen place-items-center text-muted-foreground">Loading…</div>;
-  }
-
-  if (!isAdmin && !isManager) {
-    return (
-      <div className="grid min-h-screen place-items-center px-4 text-center">
-        <div>
-          <h1 className="text-2xl font-bold">Access denied</h1>
-          <p className="mt-2 text-muted-foreground">Your account does not have admin access.</p>
-          <p className="mt-4 text-xs text-muted-foreground">Signed in as {user.email}</p>
-          <div className="mt-4 flex justify-center gap-2">
-            <button onClick={() => signOut()} className="btn-navy">Sign out</button>
-            <Link to="/" className="btn-gold">Return home</Link>
-          </div>
-        </div>
-      </div>
-    );
   }
 
   return (

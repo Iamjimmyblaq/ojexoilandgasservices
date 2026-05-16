@@ -2,6 +2,9 @@ import { useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { sendQuoteEmails } from "@/lib/email.functions";
+import { CheckCircle2, Mail } from "lucide-react";
 
 const schema = z.object({
   company_name: z.string().trim().min(1).max(160),
@@ -18,13 +21,19 @@ const schema = z.object({
 
 export function QuoteForm({ defaultProduct }: { defaultProduct?: string }) {
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState<null | { name: string; product: string; email: string }>(null);
+  const sendEmails = useServerFn(sendQuoteEmails);
+
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const parsed = schema.safeParse(Object.fromEntries(fd));
-    if (!parsed.success) { toast.error("Please complete the required fields."); return; }
+    if (!parsed.success) {
+      toast.error("Please complete the required fields.");
+      return;
+    }
     setLoading(true);
-    const { error } = await supabase.from("quote_requests").insert({
+    const payload = {
       ...parsed.data,
       phone: parsed.data.phone || null,
       quantity: parsed.data.quantity || null,
@@ -32,11 +41,45 @@ export function QuoteForm({ defaultProduct }: { defaultProduct?: string }) {
       timeline: parsed.data.timeline || null,
       budget: parsed.data.budget || null,
       notes: parsed.data.notes || null,
-    });
+    };
+
+    const { error } = await supabase.from("quote_requests").insert(payload);
+    if (error) {
+      setLoading(false);
+      toast.error("Could not submit. Try again.");
+      return;
+    }
+
+    // Fire emails (don't block success on email delivery)
+    sendEmails({ data: payload }).catch((err) => console.warn("email send failed", err));
+
     setLoading(false);
-    if (error) { toast.error("Could not submit. Try again."); return; }
-    toast.success("Quote request received. Our team will respond within 24 hours.");
-    e.currentTarget.reset();
+    setSuccess({ name: parsed.data.contact_name, product: parsed.data.product_service, email: parsed.data.email });
+  }
+
+  if (success) {
+    return (
+      <div className="text-center py-6">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--gold)]/15">
+          <CheckCircle2 className="h-9 w-9 text-[color:var(--gold-deep)]" />
+        </div>
+        <h3 className="mt-5 text-2xl font-bold">Thank you, {success.name}!</h3>
+        <p className="mt-2 text-muted-foreground">
+          Your quote request for <strong className="text-foreground">{success.product}</strong> has been received.
+        </p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Our team will respond within <strong>24 hours</strong>. A confirmation email is on its way to{" "}
+          <span className="inline-flex items-center gap-1 font-medium text-foreground"><Mail className="h-3.5 w-3.5" />{success.email}</span>.
+        </p>
+        <button
+          type="button"
+          onClick={() => setSuccess(null)}
+          className="btn-outline-navy mt-6"
+        >
+          Submit another request
+        </button>
+      </div>
+    );
   }
 
   return (

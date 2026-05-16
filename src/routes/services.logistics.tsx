@@ -1,32 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ServicePage } from "@/components/ServicePage";
+import { SERVICES } from "@/lib/services-data";
 import { SITE } from "@/lib/site";
 
+const S = SERVICES.logistics;
 export const Route = createFileRoute("/services/logistics")({
-  component: () => (
-    <ServicePage
-      eyebrow="Logistics Support"
-      title="Move equipment safely, cost-effectively, on schedule."
-      subtitle="Inland haulage, freight forwarding, customs clearance, and warehousing."
-      intro="OJEX manages the full logistics chain from supplier door to your operational site — international freight, Nigerian customs clearance at Apapa and PH, inland haulage, and short- to medium-term warehousing."
-      bullets={[
-        "Sea, air, and road freight coordination",
-        "Customs clearance at Apapa, Tin Can, and Onne",
-        "Heavy-haul and abnormal-load transport",
-        "Bonded and general warehousing",
-        "Project cargo and over-dimensional shipments",
-        "Real-time shipment tracking and reporting",
-      ]}
-    />
-  ),
+  component: () => <ServicePage service={S} />,
   head: () => ({
     meta: [
-      { title: `Logistics Support — ${SITE.name}` },
-      { name: "description", content: "Freight forwarding, customs clearance, inland haulage, and warehousing for oil & gas cargo." },
-      { property: "og:title", content: "Logistics Support — OJEX" },
-      { property: "og:description", content: "End-to-end logistics for oilfield equipment and project cargo." },
-      { property: "og:url", content: "/services/logistics" },
+      { title: `${S.eyebrow} — ${SITE.name}` },
+      { name: "description", content: S.layman },
+      { property: "og:title", content: `${S.eyebrow} — OJEX` },
+      { property: "og:description", content: S.subtitle },
+      { property: "og:url", content: `/services/${S.slug}` },
     ],
-    links: [{ rel: "canonical", href: "/services/logistics" }],
+    links: [{ rel: "canonical", href: `/services/${S.slug}` }],
   }),
 });

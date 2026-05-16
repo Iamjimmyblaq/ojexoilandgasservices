@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/PageHero";
-import { SITE } from "@/lib/site";
+import { SITE, SERVICE_LINKS } from "@/lib/site";
 import { SERVICES } from "@/lib/services-data";
 import { ArrowRight } from "lucide-react";
 
@@ -18,7 +18,9 @@ export const Route = createFileRoute("/services")({
   }),
 });
 
-const ORDER = ["procurement", "equipment", "diesel", "recruitment", "logistics", "safety", "offshore", "vendor-management"];
+function slugFromPath(to: string) {
+  return to.replace("/services/", "");
+}
 
 function Services() {
   return (
@@ -30,12 +32,13 @@ function Services() {
       />
       <section className="section">
         <div className="container-x grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {ORDER.map((slug) => {
-            const s = SERVICES[slug];
+          {SERVICE_LINKS.map((link) => {
+            const s = SERVICES[slugFromPath(link.to)];
+            if (!s) return null;
             return (
-              <Link key={slug} to={"/services/$slug" as never} params={{ slug } as never} className="card-elevated group block">
+              <Link key={link.to} to={link.to} className="card-elevated group block">
                 <span className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--gold-deep)]">{s.eyebrow}</span>
-                <h3 className="mt-2 text-xl font-bold leading-tight">{s.title}</h3>
+                <h3 className="mt-2 text-xl font-bold leading-tight">{link.label}</h3>
                 <p className="mt-3 text-sm text-muted-foreground line-clamp-3">{s.layman}</p>
                 <span className="mt-5 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-widest text-[color:var(--navy)] group-hover:text-[color:var(--gold)]">
                   Explore <ArrowRight className="h-3 w-3" />

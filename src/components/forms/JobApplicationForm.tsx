@@ -2,6 +2,8 @@ import { useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { sendJobApplicationEmails } from "@/lib/email.functions";
 
 const schema = z.object({
   full_name: z.string().trim().min(1).max(120),
@@ -15,13 +17,15 @@ const schema = z.object({
 
 export function JobApplicationForm({ jobId, position }: { jobId?: string; position?: string }) {
   const [loading, setLoading] = useState(false);
+  const sendEmails = useServerFn(sendJobApplicationEmails);
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const fd = new FormData(form);
     const parsed = schema.safeParse(Object.fromEntries(fd));
     if (!parsed.success) { toast.error("Please complete the required fields."); return; }
     setLoading(true);
-    const { error } = await supabase.from("job_applications").insert({
+    const { data: inserted, error } = await supabase.from("job_applications").insert({
       job_id: jobId ?? null,
       full_name: parsed.data.full_name,
       email: parsed.data.email,
@@ -30,11 +34,12 @@ export function JobApplicationForm({ jobId, position }: { jobId?: string; positi
       experience_years: parsed.data.experience_years ? Number(parsed.data.experience_years) : null,
       cover_letter: parsed.data.cover_letter || null,
       resume_url: parsed.data.resume_url || null,
-    });
+    }).select("id").single();
     setLoading(false);
-    if (error) { toast.error("Could not submit application."); return; }
-    toast.success("Application received. Our recruitment team will be in touch.");
-    e.currentTarget.reset();
+    if (error || !inserted) { toast.error("Could not submit application."); return; }
+    sendEmails({ data: { id: inserted.id } }).catch((err) => console.warn("email send failed", err));
+    toast.success("Application received. A confirmation email is on its way.");
+    form.reset();
   }
   return (
     <form onSubmit={onSubmit} className="grid gap-4">

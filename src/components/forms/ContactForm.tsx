@@ -2,6 +2,8 @@ import { useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { sendContactEmails } from "@/lib/email.functions";
 
 const schema = z.object({
   name: z.string().trim().min(1).max(120),
@@ -14,24 +16,27 @@ const schema = z.object({
 
 export function ContactForm() {
   const [loading, setLoading] = useState(false);
+  const sendEmails = useServerFn(sendContactEmails);
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const fd = new FormData(form);
     const parsed = schema.safeParse(Object.fromEntries(fd));
     if (!parsed.success) { toast.error("Please review the form fields."); return; }
     setLoading(true);
-    const { error } = await supabase.from("contact_messages").insert({
+    const { data: inserted, error } = await supabase.from("contact_messages").insert({
       name: parsed.data.name,
       email: parsed.data.email,
       phone: parsed.data.phone || null,
       company: parsed.data.company || null,
       subject: parsed.data.subject || null,
       message: parsed.data.message,
-    });
+    }).select("id").single();
     setLoading(false);
-    if (error) { toast.error("Could not send message. Try again."); return; }
-    toast.success("Message sent. We will respond within 1 business day.");
-    e.currentTarget.reset();
+    if (error || !inserted) { toast.error("Could not send message. Try again."); return; }
+    sendEmails({ data: { id: inserted.id } }).catch((err) => console.warn("email send failed", err));
+    toast.success("Message sent. A confirmation email is on its way.");
+    form.reset();
   }
 
   return (

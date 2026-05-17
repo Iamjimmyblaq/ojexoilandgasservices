@@ -5,16 +5,17 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Trash2, Edit } from "lucide-react";
 import { PRODUCT_CATEGORIES } from "@/lib/site";
+import { GalleryUploader } from "@/components/admin/GalleryUploader";
 
 export const Route = createFileRoute("/_admin/admin/products")({ component: Products });
 
 type Product = {
   id?: string; name: string; slug: string; category: string; sku?: string | null;
   short_description?: string | null; description?: string | null; manufacturer?: string | null;
-  image_url?: string | null; featured?: boolean; in_stock?: boolean; active?: boolean;
+  image_url?: string | null; gallery_urls?: string[]; featured?: boolean; in_stock?: boolean; active?: boolean;
 };
 
-const empty: Product = { name: "", slug: "", category: PRODUCT_CATEGORIES[0], featured: false, in_stock: true, active: true };
+const empty: Product = { name: "", slug: "", category: PRODUCT_CATEGORIES[0], gallery_urls: [], featured: false, in_stock: true, active: true };
 
 function Products() {
   const qc = useQueryClient();
@@ -70,7 +71,18 @@ function Products() {
           </select>
           <input placeholder="SKU" value={editing.sku ?? ""} onChange={(e) => setEditing({ ...editing, sku: e.target.value })} className="rounded border border-input bg-background px-3 py-2 text-sm" />
           <input placeholder="Manufacturer" value={editing.manufacturer ?? ""} onChange={(e) => setEditing({ ...editing, manufacturer: e.target.value })} className="rounded border border-input bg-background px-3 py-2 text-sm" />
-          <input placeholder="Image URL" value={editing.image_url ?? ""} onChange={(e) => setEditing({ ...editing, image_url: e.target.value })} className="rounded border border-input bg-background px-3 py-2 text-sm" />
+          <input placeholder="Manufacturer" value={editing.manufacturer ?? ""} onChange={(e) => setEditing({ ...editing, manufacturer: e.target.value })} className="rounded border border-input bg-background px-3 py-2 text-sm" />
+          <input placeholder="Cover image URL (optional — uploads below set this automatically)" value={editing.image_url ?? ""} onChange={(e) => setEditing({ ...editing, image_url: e.target.value })} className="rounded border border-input bg-background px-3 py-2 text-sm" />
+          <div className="sm:col-span-2">
+            <label className="mb-1.5 block text-sm font-medium">Product photos</label>
+            <GalleryUploader
+              value={editing.gallery_urls ?? []}
+              onChange={(urls) => setEditing({ ...editing, gallery_urls: urls })}
+              productSlug={editing.slug || editing.name?.toLowerCase().replace(/[^a-z0-9]+/g, "-")}
+              primaryUrl={editing.image_url}
+              onPrimaryChange={(url) => setEditing({ ...editing, image_url: url })}
+            />
+          </div>
           <textarea placeholder="Short description" value={editing.short_description ?? ""} onChange={(e) => setEditing({ ...editing, short_description: e.target.value })} rows={2} className="sm:col-span-2 rounded border border-input bg-background px-3 py-2 text-sm" />
           <textarea placeholder="Full description" value={editing.description ?? ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} rows={4} className="sm:col-span-2 rounded border border-input bg-background px-3 py-2 text-sm" />
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={editing.featured} onChange={(e) => setEditing({ ...editing, featured: e.target.checked })} /> Featured</label>

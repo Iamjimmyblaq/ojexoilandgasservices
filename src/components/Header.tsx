@@ -7,7 +7,7 @@ import logo from "@/assets/ojex-logo.png";
 
 export function Header() {
   const [open, setOpen] = useState(false);
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, signOut } = useAuth();
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-[color:var(--navy-deep)]/95 backdrop-blur supports-[backdrop-filter]:bg-[color:var(--navy-deep)]/85">
       <div className="container-x flex h-16 items-center justify-between sm:h-20">
@@ -35,9 +35,12 @@ export function Header() {
             <Phone className="h-4 w-4" /> {SITE.phone}
           </a>
           {user ? (
-            <Link to={isAdmin ? "/admin" : "/procurement"} className="text-sm font-medium text-white/80 hover:text-[color:var(--gold)]">
-              {isAdmin ? "Admin" : "Portal"}
-            </Link>
+            <>
+              <Link to={isAdmin ? "/admin" : "/procurement"} className="text-sm font-medium text-white/80 hover:text-[color:var(--gold)]">
+                {isAdmin ? "Admin" : "Portal"}
+              </Link>
+              <button onClick={() => signOut()} className="text-sm font-medium text-white/80 hover:text-[color:var(--gold)]">Sign out</button>
+            </>
           ) : (
             <Link to="/auth" className="text-sm font-medium text-white/80 hover:text-[color:var(--gold)]">Sign in</Link>
           )}
@@ -58,9 +61,12 @@ export function Header() {
               </Link>
             ))}
             {user ? (
-              <Link to={isAdmin ? "/admin" : "/procurement"} onClick={() => setOpen(false)} className="rounded px-2 py-2 text-sm text-white/80">
-                {isAdmin ? "Admin Dashboard" : "My Portal"}
-              </Link>
+              <>
+                <Link to={isAdmin ? "/admin" : "/procurement"} onClick={() => setOpen(false)} className="rounded px-2 py-2 text-sm text-white/80">
+                  {isAdmin ? "Admin Dashboard" : "My Portal"}
+                </Link>
+                <button onClick={() => { setOpen(false); signOut(); }} className="rounded px-2 py-2 text-left text-sm text-white/80">Sign out</button>
+              </>
             ) : (
               <Link to="/auth" onClick={() => setOpen(false)} className="rounded px-2 py-2 text-sm text-white/80">Sign in</Link>
             )}

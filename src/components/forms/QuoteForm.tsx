@@ -43,15 +43,15 @@ export function QuoteForm({ defaultProduct }: { defaultProduct?: string }) {
       notes: parsed.data.notes || null,
     };
 
-    const { error } = await supabase.from("quote_requests").insert(payload);
-    if (error) {
+    const { data: inserted, error } = await supabase.from("quote_requests").insert(payload).select("id").single();
+    if (error || !inserted) {
       setLoading(false);
       toast.error("Could not submit. Try again.");
       return;
     }
 
     // Fire emails (don't block success on email delivery)
-    sendEmails({ data: payload }).catch((err) => console.warn("email send failed", err));
+    sendEmails({ data: { id: inserted.id } }).catch((err) => console.warn("email send failed", err));
 
     setLoading(false);
     setSuccess({ name: parsed.data.contact_name, product: parsed.data.product_service, email: parsed.data.email });

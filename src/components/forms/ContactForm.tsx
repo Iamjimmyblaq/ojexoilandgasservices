@@ -24,17 +24,18 @@ export function ContactForm() {
     const parsed = schema.safeParse(Object.fromEntries(fd));
     if (!parsed.success) { toast.error("Please review the form fields."); return; }
     setLoading(true);
-    const { data: inserted, error } = await supabase.from("contact_messages").insert({
+    const payload = {
       name: parsed.data.name,
       email: parsed.data.email,
       phone: parsed.data.phone || null,
       company: parsed.data.company || null,
       subject: parsed.data.subject || null,
       message: parsed.data.message,
-    }).select("id").single();
+    };
+    const { error } = await supabase.from("contact_messages").insert(payload);
     setLoading(false);
-    if (error || !inserted) { toast.error("Could not send message. Try again."); return; }
-    sendEmails({ data: { id: inserted.id } }).catch((err) => console.warn("email send failed", err));
+    if (error) { toast.error("Could not send message. Try again."); return; }
+    sendEmails({ data: payload }).catch((err) => console.warn("email send failed", err));
     toast.success("Message sent. A confirmation email is on its way.");
     form.reset();
   }

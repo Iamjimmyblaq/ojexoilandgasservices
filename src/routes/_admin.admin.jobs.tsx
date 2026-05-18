@@ -104,7 +104,7 @@ function Jobs() {
                 <tr key={a.id} className="border-t border-border align-top">
                   <td className="p-3 text-xs text-muted-foreground">{new Date(a.created_at).toLocaleDateString()}</td>
                   <td className="p-3"><div className="font-medium">{a.full_name}</div><div className="text-xs text-muted-foreground">{a.email}</div><div className="text-xs text-muted-foreground">{a.phone ?? ""}</div></td>
-                  <td className="p-3 max-w-xs"><div>{a.position_applied}</div>{a.cover_letter && <div className="mt-1 line-clamp-2 text-xs text-muted-foreground">{a.cover_letter}</div>}{a.resume_url && <a href={a.resume_url} target="_blank" rel="noopener noreferrer" className="text-xs text-[color:var(--gold-deep)] underline">Resume</a>}</td>
+                  <td className="p-3 max-w-xs"><div>{a.position_applied}</div>{a.cover_letter && <div className="mt-1 line-clamp-2 text-xs text-muted-foreground">{a.cover_letter}</div>}{a.resume_url && /^https?:\/\//i.test(a.resume_url) && <a href={a.resume_url} target="_blank" rel="noopener noreferrer" className="text-xs text-[color:var(--gold-deep)] underline">Resume</a>}</td>
                   <td className="p-3">{a.experience_years ?? "—"} yrs</td>
                   <td className="p-3"><StatusBadge status={a.status} /></td>
                   <td className="p-3"><select defaultValue={a.status} onChange={(e) => updateApp.mutate({ id: a.id, status: e.target.value })} className="rounded border border-input bg-background px-2 py-1 text-xs">{APP_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}</select></td>

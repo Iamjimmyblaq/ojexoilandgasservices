@@ -12,7 +12,7 @@ const schema = z.object({
   position_applied: z.string().trim().min(1).max(160),
   experience_years: z.string().optional(),
   cover_letter: z.string().trim().max(3000).optional().or(z.literal("")),
-  resume_url: z.string().trim().max(500).optional().or(z.literal("")),
+  resume_url: z.string().trim().max(500).refine((u) => u === "" || /^https?:\/\//i.test(u), { message: "Only http(s) URLs are allowed" }).optional().or(z.literal("")),
 });
 
 export function JobApplicationForm({ jobId, position }: { jobId?: string; position?: string }) {

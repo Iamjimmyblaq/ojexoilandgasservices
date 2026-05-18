@@ -1,11 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_mail/gmail/v1";
 const ADMIN_EMAIL = "ojexoilandgasservices@gmail.com";
 
-// HTML escape user-supplied values before interpolation
 function esc(s: string | number | null | undefined): string {
   return String(s ?? "")
     .replace(/&/g, "&amp;")
@@ -61,12 +59,12 @@ async function sendOne(to: string, subject: string, html: string) {
   return res.json();
 }
 
-function shell(title: string, accent: string, body: string) {
+function shell(title: string, body: string) {
   return `<div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;background:#fff">
     <div style="background:#0a1f44;color:#fff;padding:18px 20px;text-align:center">
       <h1 style="margin:0;font-size:20px;color:#d4af37">OJEX Oil and Gas Services</h1>
     </div>
-    <div style="background:${accent};color:#0a1f44;padding:10px 20px;font-size:14px;font-weight:600">${esc(title)}</div>
+    <div style="background:#d4af37;color:#0a1f44;padding:10px 20px;font-size:14px;font-weight:600">${esc(title)}</div>
     <div style="padding:22px;border:1px solid #e5e7eb;border-top:none">${body}</div>
     <p style="text-align:center;color:#94a3b8;font-size:11px;margin:12px 0">No 18 Okporo Road, Port Harcourt, Rivers State · +234 707 572 8373</p>
   </div>`;
@@ -87,80 +85,101 @@ async function dispatch(customer: { email: string; subject: string; html: string
 }
 
 // ====================== QUOTES ======================
-const idSchema = z.object({ id: z.string().uuid() });
+const quoteSchema = z.object({
+  company_name: z.string().min(1).max(200),
+  contact_name: z.string().min(1).max(200),
+  email: z.string().email().max(255),
+  phone: z.string().max(40).nullable().optional(),
+  product_service: z.string().min(1).max(500),
+  quantity: z.string().max(120).nullable().optional(),
+  delivery_location: z.string().max(300).nullable().optional(),
+  timeline: z.string().max(120).nullable().optional(),
+  budget: z.string().max(120).nullable().optional(),
+  notes: z.string().max(3000).nullable().optional(),
+});
 
 export const sendQuoteEmails = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => idSchema.parse(input))
+  .inputValidator((input: unknown) => quoteSchema.parse(input))
   .handler(async ({ data }) => {
-    const { data: q, error } = await supabaseAdmin.from("quote_requests").select("*").eq("id", data.id).single();
-    if (error || !q) throw new Error("Quote not found");
-
-    const customerHtml = shell("Quote request received", "#d4af37", `
-      <h2 style="color:#0a1f44;margin-top:0">Thank you, ${esc(q.contact_name)}!</h2>
-      <p style="color:#475569;line-height:1.6">We have received your quote request for <strong>${esc(q.product_service)}</strong>.</p>
+    const customerHtml = shell("Quote request received", `
+      <h2 style="color:#0a1f44;margin-top:0">Thank you, ${esc(data.contact_name)}!</h2>
+      <p style="color:#475569;line-height:1.6">We have received your quote request for <strong>${esc(data.product_service)}</strong>.</p>
       <p style="color:#475569;line-height:1.6">Our team will respond within <strong>24 hours</strong> with pricing, lead time, and terms.</p>
       <p style="color:#475569;line-height:1.6">For urgent matters, WhatsApp: <a href="https://wa.me/2347075728373" style="color:#d4af37">+234 707 572 8373</a></p>`);
 
-    const adminHtml = shell("🔔 New Quote Request", "#d4af37", `
+    const adminHtml = shell("🔔 New Quote Request", `
       <table style="width:100%;border-collapse:collapse">
-        ${row("Company", q.company_name)}${row("Contact", q.contact_name)}${row("Email", q.email)}
-        ${row("Phone", q.phone)}${row("Product/Service", q.product_service)}${row("Quantity", q.quantity)}
-        ${row("Delivery Location", q.delivery_location)}${row("Timeline", q.timeline)}${row("Budget", q.budget)}${row("Notes", q.notes)}
+        ${row("Company", data.company_name)}${row("Contact", data.contact_name)}${row("Email", data.email)}
+        ${row("Phone", data.phone)}${row("Product/Service", data.product_service)}${row("Quantity", data.quantity)}
+        ${row("Delivery Location", data.delivery_location)}${row("Timeline", data.timeline)}${row("Budget", data.budget)}${row("Notes", data.notes)}
       </table>
       <p style="margin-top:16px;font-size:12px;color:#64748b">Open in admin → /admin/quotes</p>`);
 
     return dispatch(
-      { email: q.email, subject: "We received your quote request — OJEX", html: customerHtml },
-      { subject: `New quote: ${q.company_name} — ${q.product_service}`.slice(0, 180), html: adminHtml },
+      { email: data.email, subject: "We received your quote request — OJEX", html: customerHtml },
+      { subject: `New quote: ${data.company_name} — ${data.product_service}`.slice(0, 180), html: adminHtml },
     );
   });
 
 // ====================== CONTACT ======================
-export const sendContactEmails = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => idSchema.parse(input))
-  .handler(async ({ data }) => {
-    const { data: c, error } = await supabaseAdmin.from("contact_messages").select("*").eq("id", data.id).single();
-    if (error || !c) throw new Error("Contact message not found");
+const contactSchema = z.object({
+  name: z.string().min(1).max(200),
+  email: z.string().email().max(255),
+  phone: z.string().max(40).nullable().optional(),
+  company: z.string().max(200).nullable().optional(),
+  subject: z.string().max(200).nullable().optional(),
+  message: z.string().min(1).max(5000),
+});
 
-    const customerHtml = shell("Message received", "#d4af37", `
-      <h2 style="color:#0a1f44;margin-top:0">Thank you, ${esc(c.name)}!</h2>
+export const sendContactEmails = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => contactSchema.parse(input))
+  .handler(async ({ data }) => {
+    const customerHtml = shell("Message received", `
+      <h2 style="color:#0a1f44;margin-top:0">Thank you, ${esc(data.name)}!</h2>
       <p style="color:#475569;line-height:1.6">We have received your message and will respond within <strong>1 business day</strong>.</p>
       <p style="color:#475569;line-height:1.6">If urgent, WhatsApp: <a href="https://wa.me/2347075728373" style="color:#d4af37">+234 707 572 8373</a></p>`);
 
-    const adminHtml = shell("📨 New Contact Message", "#d4af37", `
+    const adminHtml = shell("📨 New Contact Message", `
       <table style="width:100%;border-collapse:collapse">
-        ${row("Name", c.name)}${row("Email", c.email)}${row("Phone", c.phone)}${row("Company", c.company)}${row("Subject", c.subject)}
+        ${row("Name", data.name)}${row("Email", data.email)}${row("Phone", data.phone)}${row("Company", data.company)}${row("Subject", data.subject)}
       </table>
-      <div style="margin-top:12px;padding:12px;background:#f8fafc;border-radius:6px;font-size:14px;white-space:pre-wrap">${esc(c.message)}</div>`);
+      <div style="margin-top:12px;padding:12px;background:#f8fafc;border-radius:6px;font-size:14px;white-space:pre-wrap">${esc(data.message)}</div>`);
 
     return dispatch(
-      { email: c.email, subject: "We received your message — OJEX", html: customerHtml },
-      { subject: `Contact: ${c.subject || c.name}`.slice(0, 180), html: adminHtml },
+      { email: data.email, subject: "We received your message — OJEX", html: customerHtml },
+      { subject: `Contact: ${data.subject || data.name}`.slice(0, 180), html: adminHtml },
     );
   });
 
 // ====================== JOB APPLICATIONS ======================
-export const sendJobApplicationEmails = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => idSchema.parse(input))
-  .handler(async ({ data }) => {
-    const { data: a, error } = await supabaseAdmin.from("job_applications").select("*").eq("id", data.id).single();
-    if (error || !a) throw new Error("Application not found");
+const jobAppSchema = z.object({
+  full_name: z.string().min(1).max(200),
+  email: z.string().email().max(255),
+  phone: z.string().max(40).nullable().optional(),
+  position_applied: z.string().min(1).max(200),
+  experience_years: z.number().nullable().optional(),
+  cover_letter: z.string().max(5000).nullable().optional(),
+  resume_url: z.string().max(500).nullable().optional(),
+});
 
-    const customerHtml = shell("Application received", "#d4af37", `
-      <h2 style="color:#0a1f44;margin-top:0">Thank you, ${esc(a.full_name)}!</h2>
-      <p style="color:#475569;line-height:1.6">We have received your application for <strong>${esc(a.position_applied)}</strong>.</p>
+export const sendJobApplicationEmails = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => jobAppSchema.parse(input))
+  .handler(async ({ data }) => {
+    const customerHtml = shell("Application received", `
+      <h2 style="color:#0a1f44;margin-top:0">Thank you, ${esc(data.full_name)}!</h2>
+      <p style="color:#475569;line-height:1.6">We have received your application for <strong>${esc(data.position_applied)}</strong>.</p>
       <p style="color:#475569;line-height:1.6">Our recruitment team reviews every application carefully and will contact shortlisted candidates within <strong>5–10 business days</strong>.</p>`);
 
-    const adminHtml = shell("👤 New Job Application", "#d4af37", `
+    const adminHtml = shell("👤 New Job Application", `
       <table style="width:100%;border-collapse:collapse">
-        ${row("Name", a.full_name)}${row("Email", a.email)}${row("Phone", a.phone)}
-        ${row("Position", a.position_applied)}${row("Experience (yrs)", a.experience_years)}${row("Resume URL", a.resume_url)}
+        ${row("Name", data.full_name)}${row("Email", data.email)}${row("Phone", data.phone)}
+        ${row("Position", data.position_applied)}${row("Experience (yrs)", data.experience_years)}${row("Resume URL", data.resume_url)}
       </table>
-      ${a.cover_letter ? `<div style="margin-top:12px;padding:12px;background:#f8fafc;border-radius:6px;font-size:14px;white-space:pre-wrap">${esc(a.cover_letter)}</div>` : ""}
+      ${data.cover_letter ? `<div style="margin-top:12px;padding:12px;background:#f8fafc;border-radius:6px;font-size:14px;white-space:pre-wrap">${esc(data.cover_letter)}</div>` : ""}
       <p style="margin-top:16px;font-size:12px;color:#64748b">Open in admin → /admin/jobs</p>`);
 
     return dispatch(
-      { email: a.email, subject: "We received your application — OJEX", html: customerHtml },
-      { subject: `Application: ${a.full_name} — ${a.position_applied}`.slice(0, 180), html: adminHtml },
+      { email: data.email, subject: "We received your application — OJEX", html: customerHtml },
+      { subject: `Application: ${data.full_name} — ${data.position_applied}`.slice(0, 180), html: adminHtml },
     );
   });

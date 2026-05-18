@@ -50,14 +50,28 @@ function Products() {
 
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((p) => (
-              <Link key={p.id} to="/products/$slug" params={{ slug: p.slug }} className="card-elevated group">
-                <div className="flex items-start justify-between gap-2">
-                  <span className="text-xs font-semibold uppercase tracking-widest text-[color:var(--gold)]">{p.category}</span>
-                  {p.featured && <span className="rounded-full bg-[color:var(--gold)]/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--navy-deep)]">Featured</span>}
+              <Link key={p.id} to="/products/$slug" params={{ slug: p.slug }} className="card-elevated group overflow-hidden !p-0 flex flex-col">
+                <div className="p-5 pb-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="text-xs font-semibold uppercase tracking-widest text-[color:var(--gold)]">{p.category}</span>
+                    {p.featured && <span className="rounded-full bg-[color:var(--gold)]/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--navy-deep)]">Featured</span>}
+                  </div>
+                  <h3 className="mt-3 text-lg font-bold">{p.name}</h3>
                 </div>
-                <h3 className="mt-3 text-lg font-bold">{p.name}</h3>
-                <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{p.short_description}</p>
-                <p className="mt-4 text-xs text-muted-foreground">SKU: {p.sku ?? "—"}</p>
+                {(p.image_url || (p.gallery_urls && p.gallery_urls[0])) && (
+                  <div className="aspect-[4/3] w-full overflow-hidden bg-muted">
+                    <img
+                      src={p.image_url || p.gallery_urls[0]}
+                      alt={p.name}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                )}
+                <div className="flex-1 p-5 pt-3">
+                  <p className="text-sm text-muted-foreground line-clamp-3">{p.short_description}</p>
+                  <p className="mt-4 text-xs text-muted-foreground">SKU: {p.sku ?? "—"}</p>
+                </div>
               </Link>
             ))}
             {filtered.length === 0 && <p className="col-span-full text-center text-muted-foreground">No products match your search.</p>}

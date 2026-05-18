@@ -9,7 +9,7 @@ const schema = z.object({
   email: z.string().trim().email().max(255),
   phone: z.string().trim().max(40).optional().or(z.literal("")),
   country: z.string().trim().max(80).optional().or(z.literal("")),
-  website: z.string().trim().max(255).optional().or(z.literal("")),
+  website: z.string().trim().max(255).refine((u) => u === "" || /^https?:\/\//i.test(u), { message: "Only http(s) URLs allowed" }).optional().or(z.literal("")),
   category: z.string().trim().min(2).max(160),
   capabilities: z.string().trim().max(2000).optional().or(z.literal("")),
 });

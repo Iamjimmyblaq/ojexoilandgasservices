@@ -25,7 +25,7 @@ export function JobApplicationForm({ jobId, position }: { jobId?: string; positi
     const parsed = schema.safeParse(Object.fromEntries(fd));
     if (!parsed.success) { toast.error("Please complete the required fields."); return; }
     setLoading(true);
-    const { data: inserted, error } = await supabase.from("job_applications").insert({
+    const payload = {
       job_id: jobId ?? null,
       full_name: parsed.data.full_name,
       email: parsed.data.email,
@@ -34,10 +34,12 @@ export function JobApplicationForm({ jobId, position }: { jobId?: string; positi
       experience_years: parsed.data.experience_years ? Number(parsed.data.experience_years) : null,
       cover_letter: parsed.data.cover_letter || null,
       resume_url: parsed.data.resume_url || null,
-    }).select("id").single();
+    };
+    const { error } = await supabase.from("job_applications").insert(payload);
     setLoading(false);
-    if (error || !inserted) { toast.error("Could not submit application."); return; }
-    sendEmails({ data: { id: inserted.id } }).catch((err) => console.warn("email send failed", err));
+    if (error) { toast.error("Could not submit application."); return; }
+    const { job_id: _ignored, ...emailPayload } = payload;
+    sendEmails({ data: emailPayload }).catch((err) => console.warn("email send failed", err));
     toast.success("Application received. A confirmation email is on its way.");
     form.reset();
   }

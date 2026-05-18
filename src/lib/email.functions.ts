@@ -13,12 +13,19 @@ function esc(s: string | number | null | undefined): string {
     .replace(/'/g, "&#39;");
 }
 
+function sanitizeHeader(s: string): string {
+  return String(s ?? "").replace(/[\r\n]+/g, " ").trim();
+}
+
 function rfc2822(to: string, subject: string, html: string, from: string) {
+  const safeTo = sanitizeHeader(to);
+  const safeFrom = sanitizeHeader(from);
+  const safeSubject = sanitizeHeader(subject);
   const boundary = "----=_OJEX_" + Math.random().toString(36).slice(2);
   const msg = [
-    `From: OJEX Oil and Gas Services <${from}>`,
-    `To: ${to}`,
-    `Subject: ${subject}`,
+    `From: OJEX Oil and Gas Services <${safeFrom}>`,
+    `To: ${safeTo}`,
+    `Subject: ${safeSubject}`,
     "MIME-Version: 1.0",
     `Content-Type: multipart/alternative; boundary="${boundary}"`,
     "",

@@ -38,7 +38,7 @@ function Vendors() {
             {rows.map((v) => (
               <tr key={v.id} className="border-t border-border align-top">
                 <td className="p-3 text-xs text-muted-foreground">{new Date(v.created_at).toLocaleDateString()}</td>
-                <td className="p-3"><div className="font-medium">{v.company_name}</div>{v.website && <a className="text-xs text-muted-foreground hover:underline" href={v.website} target="_blank" rel="noopener noreferrer">{v.website}</a>}</td>
+                <td className="p-3"><div className="font-medium">{v.company_name}</div>{v.website && /^https?:\/\//i.test(v.website) && <a className="text-xs text-muted-foreground hover:underline" href={v.website} target="_blank" rel="noopener noreferrer">{v.website}</a>}</td>
                 <td className="p-3"><div>{v.contact_name}</div><div className="text-xs text-muted-foreground">{v.email}</div><div className="text-xs text-muted-foreground">{v.phone ?? ""}</div></td>
                 <td className="p-3">{v.category}</td>
                 <td className="p-3">{v.country ?? "—"}</td>

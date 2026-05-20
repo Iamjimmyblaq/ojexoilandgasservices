@@ -47,6 +47,42 @@ export type Database = {
         }
         Relationships: []
       }
+      email_log: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          kind: string
+          recipient: string
+          related_id: string | null
+          related_reference: string | null
+          status: string
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          kind: string
+          recipient: string
+          related_id?: string | null
+          related_reference?: string | null
+          status: string
+          subject: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          kind?: string
+          recipient?: string
+          related_id?: string | null
+          related_reference?: string | null
+          status?: string
+          subject?: string
+        }
+        Relationships: []
+      }
       job_applications: {
         Row: {
           cover_letter: string | null
@@ -392,6 +428,7 @@ export type Database = {
           phone: string | null
           product_service: string
           quantity: string | null
+          reference: string
           status: string
           timeline: string | null
         }
@@ -407,6 +444,7 @@ export type Database = {
           phone?: string | null
           product_service: string
           quantity?: string | null
+          reference?: string
           status?: string
           timeline?: string | null
         }
@@ -422,6 +460,7 @@ export type Database = {
           phone?: string | null
           product_service?: string
           quantity?: string | null
+          reference?: string
           status?: string
           timeline?: string | null
         }

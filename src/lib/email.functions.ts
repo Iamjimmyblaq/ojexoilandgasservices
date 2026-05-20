@@ -1,6 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_mail/gmail/v1";
 const ADMIN_EMAIL = "ojexoilandgasservices@gmail.com";
@@ -15,6 +14,7 @@ async function logEmail(entry: {
   related_reference?: string | null;
 }) {
   try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await supabaseAdmin.from("email_log").insert(entry);
   } catch (e) {
     console.warn("email_log insert failed", e);

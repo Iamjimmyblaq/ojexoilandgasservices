@@ -99,14 +99,42 @@ function row(label: string, value: string | number | null | undefined) {
   return `<tr><td style="padding:6px 12px;color:#64748b;font-size:13px;border-bottom:1px solid #f1f5f9">${esc(label)}</td><td style="padding:6px 12px;font-size:14px;border-bottom:1px solid #f1f5f9">${esc(value)}</td></tr>`;
 }
 
-async function dispatch(customer: { email: string; subject: string; html: string }, admin: { subject: string; html: string }) {
+async function dispatch(
+  customer: { email: string; subject: string; html: string },
+  admin: { subject: string; html: string },
+  log?: { kind: string; related_id?: string | null; related_reference?: string | null },
+) {
   const results = await Promise.allSettled([
     sendOne(customer.email, customer.subject, customer.html),
     sendOne(ADMIN_EMAIL, admin.subject, admin.html),
   ]);
   const errors = results.filter((r) => r.status === "rejected").map((r) => (r as PromiseRejectedResult).reason?.message ?? "unknown");
+  if (log) {
+    const [custRes, admRes] = results;
+    await Promise.all([
+      logEmail({
+        kind: log.kind,
+        recipient: customer.email,
+        subject: customer.subject,
+        status: custRes.status === "fulfilled" ? "sent" : "failed",
+        error: custRes.status === "rejected" ? String((custRes as PromiseRejectedResult).reason?.message ?? "") : null,
+        related_id: log.related_id ?? null,
+        related_reference: log.related_reference ?? null,
+      }),
+      logEmail({
+        kind: `${log.kind}-admin`,
+        recipient: ADMIN_EMAIL,
+        subject: admin.subject,
+        status: admRes.status === "fulfilled" ? "sent" : "failed",
+        error: admRes.status === "rejected" ? String((admRes as PromiseRejectedResult).reason?.message ?? "") : null,
+        related_id: log.related_id ?? null,
+        related_reference: log.related_reference ?? null,
+      }),
+    ]);
+  }
   return { ok: errors.length === 0, errors };
 }
+
 
 // ====================== QUOTES ======================
 const quoteSchema = z.object({

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { sendVendorEmails } from "@/lib/email.functions";
 
 const schema = z.object({
   company_name: z.string().trim().min(1).max(160),
@@ -16,23 +18,32 @@ const schema = z.object({
 
 export function VendorForm() {
   const [loading, setLoading] = useState(false);
+  const sendEmails = useServerFn(sendVendorEmails);
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const fd = new FormData(form);
     const parsed = schema.safeParse(Object.fromEntries(fd));
     if (!parsed.success) { toast.error("Please complete the required fields."); return; }
     setLoading(true);
-    const { error } = await supabase.from("vendor_registrations").insert({
+    const payload = {
       ...parsed.data,
       phone: parsed.data.phone || null,
       country: parsed.data.country || null,
       website: parsed.data.website || null,
       capabilities: parsed.data.capabilities || null,
-    });
+    };
+    const { data: inserted, error } = await supabase
+      .from("vendor_registrations")
+      .insert(payload)
+      .select("id")
+      .single();
     setLoading(false);
     if (error) { toast.error("Could not submit registration."); return; }
-    toast.success("Vendor registration received. Our procurement team will review.");
-    e.currentTarget.reset();
+    sendEmails({ data: { ...payload, id: inserted?.id ?? null } })
+      .catch((err) => console.warn("vendor email send failed", err));
+    toast.success("Vendor registration received. A confirmation email is on its way.");
+    form.reset();
   }
   return (
     <form onSubmit={onSubmit} className="grid gap-4">

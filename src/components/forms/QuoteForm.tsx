@@ -21,7 +21,7 @@ const schema = z.object({
 
 export function QuoteForm({ defaultProduct }: { defaultProduct?: string }) {
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState<null | { name: string; product: string; email: string }>(null);
+  const [success, setSuccess] = useState<null | { name: string; product: string; email: string; reference: string }>(null);
   const sendEmails = useServerFn(sendQuoteEmails);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -43,18 +43,28 @@ export function QuoteForm({ defaultProduct }: { defaultProduct?: string }) {
       notes: parsed.data.notes || null,
     };
 
-    const { error } = await supabase.from("quote_requests").insert(payload);
-    if (error) {
+    const { data: inserted, error } = await supabase
+      .from("quote_requests")
+      .insert(payload)
+      .select("id, reference")
+      .single();
+    if (error || !inserted) {
       setLoading(false);
       toast.error("Could not submit. Try again.");
       return;
     }
 
-    // Fire emails (don't block success on email delivery)
-    sendEmails({ data: payload }).catch((err) => console.warn("email send failed", err));
+    sendEmails({
+      data: { ...payload, reference: inserted.reference, id: inserted.id },
+    }).catch((err) => console.warn("email send failed", err));
 
     setLoading(false);
-    setSuccess({ name: parsed.data.contact_name, product: parsed.data.product_service, email: parsed.data.email });
+    setSuccess({
+      name: parsed.data.contact_name,
+      product: parsed.data.product_service,
+      email: parsed.data.email,
+      reference: inserted.reference,
+    });
   }
 
   if (success) {
@@ -64,7 +74,11 @@ export function QuoteForm({ defaultProduct }: { defaultProduct?: string }) {
           <CheckCircle2 className="h-9 w-9 text-[color:var(--gold-deep)]" />
         </div>
         <h3 className="mt-5 text-2xl font-bold">Thank you, {success.name}!</h3>
-        <p className="mt-2 text-muted-foreground">
+        <div className="mx-auto mt-4 inline-block rounded-md border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 px-4 py-2">
+          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Reference number</div>
+          <div className="font-mono text-lg font-bold text-foreground">{success.reference}</div>
+        </div>
+        <p className="mt-4 text-muted-foreground">
           Your quote request for <strong className="text-foreground">{success.product}</strong> has been received.
         </p>
         <p className="mt-1 text-sm text-muted-foreground">

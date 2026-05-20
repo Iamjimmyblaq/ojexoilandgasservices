@@ -2,12 +2,15 @@ import { useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { sendNewsletterWelcome } from "@/lib/email.functions";
 
 const schema = z.object({ email: z.string().trim().email().max(255) });
 
 export function NewsletterForm() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const sendWelcome = useServerFn(sendNewsletterWelcome);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -16,7 +19,12 @@ export function NewsletterForm() {
     setLoading(true);
     const { error } = await supabase.from("newsletter_subscribers").insert({ email: parsed.data.email });
     setLoading(false);
-    if (error && !error.message.includes("duplicate")) { toast.error("Could not subscribe. Try again."); return; }
+    const isDup = error && error.message.includes("duplicate");
+    if (error && !isDup) { toast.error("Could not subscribe. Try again."); return; }
+    if (!isDup) {
+      sendWelcome({ data: { email: parsed.data.email } })
+        .catch((err) => console.warn("newsletter email failed", err));
+    }
     toast.success("Subscribed. Welcome aboard.");
     setEmail("");
   }

@@ -148,28 +148,37 @@ const quoteSchema = z.object({
   timeline: z.string().max(120).nullable().optional(),
   budget: z.string().max(120).nullable().optional(),
   notes: z.string().max(3000).nullable().optional(),
+  reference: z.string().max(60).nullable().optional(),
+  id: z.string().uuid().nullable().optional(),
 });
 
 export const sendQuoteEmails = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => quoteSchema.parse(input))
   .handler(async ({ data }) => {
+    const ref = data.reference || "";
+    const refBlock = ref
+      ? `<div style="margin:14px 0;padding:12px 16px;background:#fef3c7;border-left:4px solid #d4af37;border-radius:4px"><div style="font-size:12px;color:#78350f;letter-spacing:.5px">REFERENCE NUMBER</div><div style="font-size:18px;font-weight:700;color:#0a1f44;font-family:monospace">${esc(ref)}</div></div>`
+      : "";
+
     const customerHtml = shell("Quote request received", `
       <h2 style="color:#0a1f44;margin-top:0">Thank you, ${esc(data.contact_name)}!</h2>
+      ${refBlock}
       <p style="color:#475569;line-height:1.6">We have received your quote request for <strong>${esc(data.product_service)}</strong>.</p>
-      <p style="color:#475569;line-height:1.6">Our team will respond within <strong>24 hours</strong> with pricing, lead time, and terms.</p>
+      <p style="color:#475569;line-height:1.6">Please keep this reference number for your records. Our team will respond within <strong>24 hours</strong> with pricing, lead time, and terms.</p>
       <p style="color:#475569;line-height:1.6">For urgent matters, WhatsApp: <a href="https://wa.me/2347075728373" style="color:#d4af37">+234 707 572 8373</a></p>`);
 
-    const adminHtml = shell("🔔 New Quote Request", `
+    const adminHtml = shell(`🔔 New Quote Request${ref ? ` — ${ref}` : ""}`, `
       <table style="width:100%;border-collapse:collapse">
-        ${row("Company", data.company_name)}${row("Contact", data.contact_name)}${row("Email", data.email)}
+        ${row("Reference", ref)}${row("Company", data.company_name)}${row("Contact", data.contact_name)}${row("Email", data.email)}
         ${row("Phone", data.phone)}${row("Product/Service", data.product_service)}${row("Quantity", data.quantity)}
         ${row("Delivery Location", data.delivery_location)}${row("Timeline", data.timeline)}${row("Budget", data.budget)}${row("Notes", data.notes)}
       </table>
       <p style="margin-top:16px;font-size:12px;color:#64748b">Open in admin → /admin/quotes</p>`);
 
     return dispatch(
-      { email: data.email, subject: "We received your quote request — OJEX", html: customerHtml },
-      { subject: `New quote: ${data.company_name} — ${data.product_service}`.slice(0, 180), html: adminHtml },
+      { email: data.email, subject: `Quote request ${ref || ""} received — OJEX`.trim(), html: customerHtml },
+      { subject: `New quote ${ref}: ${data.company_name} — ${data.product_service}`.slice(0, 180), html: adminHtml },
+      { kind: "quote", related_id: data.id ?? null, related_reference: ref || null },
     );
   });
 
@@ -181,6 +190,7 @@ const contactSchema = z.object({
   company: z.string().max(200).nullable().optional(),
   subject: z.string().max(200).nullable().optional(),
   message: z.string().min(1).max(5000),
+  id: z.string().uuid().nullable().optional(),
 });
 
 export const sendContactEmails = createServerFn({ method: "POST" })
@@ -200,6 +210,7 @@ export const sendContactEmails = createServerFn({ method: "POST" })
     return dispatch(
       { email: data.email, subject: "We received your message — OJEX", html: customerHtml },
       { subject: `Contact: ${data.subject || data.name}`.slice(0, 180), html: adminHtml },
+      { kind: "contact", related_id: data.id ?? null },
     );
   });
 
@@ -212,6 +223,7 @@ const jobAppSchema = z.object({
   experience_years: z.number().nullable().optional(),
   cover_letter: z.string().max(5000).nullable().optional(),
   resume_url: z.string().max(500).nullable().optional(),
+  id: z.string().uuid().nullable().optional(),
 });
 
 export const sendJobApplicationEmails = createServerFn({ method: "POST" })
@@ -219,10 +231,10 @@ export const sendJobApplicationEmails = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const customerHtml = shell("Application received", `
       <h2 style="color:#0a1f44;margin-top:0">Thank you, ${esc(data.full_name)}!</h2>
-      <p style="color:#475569;line-height:1.6">We have received your application for <strong>${esc(data.position_applied)}</strong>.</p>
+      <p style="color:#475569;line-height:1.6">We have received your application for the position of <strong>${esc(data.position_applied)}</strong>.</p>
       <p style="color:#475569;line-height:1.6">Our recruitment team reviews every application carefully and will contact shortlisted candidates within <strong>5–10 business days</strong>.</p>`);
 
-    const adminHtml = shell("👤 New Job Application", `
+    const adminHtml = shell(`👤 New Job Application — ${data.position_applied}`, `
       <table style="width:100%;border-collapse:collapse">
         ${row("Name", data.full_name)}${row("Email", data.email)}${row("Phone", data.phone)}
         ${row("Position", data.position_applied)}${row("Experience (yrs)", data.experience_years)}${row("Resume URL", data.resume_url)}
@@ -231,7 +243,69 @@ export const sendJobApplicationEmails = createServerFn({ method: "POST" })
       <p style="margin-top:16px;font-size:12px;color:#64748b">Open in admin → /admin/jobs</p>`);
 
     return dispatch(
-      { email: data.email, subject: "We received your application — OJEX", html: customerHtml },
+      { email: data.email, subject: `Application received: ${data.position_applied} — OJEX`.slice(0, 180), html: customerHtml },
       { subject: `Application: ${data.full_name} — ${data.position_applied}`.slice(0, 180), html: adminHtml },
+      { kind: "job-application", related_id: data.id ?? null },
     );
   });
+
+// ====================== VENDOR REGISTRATION ======================
+const vendorSchema = z.object({
+  company_name: z.string().min(1).max(200),
+  contact_name: z.string().min(1).max(200),
+  email: z.string().email().max(255),
+  phone: z.string().max(40).nullable().optional(),
+  country: z.string().max(120).nullable().optional(),
+  website: z.string().max(255).nullable().optional(),
+  category: z.string().min(1).max(200),
+  capabilities: z.string().max(3000).nullable().optional(),
+  id: z.string().uuid().nullable().optional(),
+});
+
+export const sendVendorEmails = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => vendorSchema.parse(input))
+  .handler(async ({ data }) => {
+    const customerHtml = shell("Vendor registration received", `
+      <h2 style="color:#0a1f44;margin-top:0">Welcome, ${esc(data.contact_name)}!</h2>
+      <p style="color:#475569;line-height:1.6">Thank you for registering <strong>${esc(data.company_name)}</strong> as a vendor with OJEX Oil and Gas Services.</p>
+      <p style="color:#475569;line-height:1.6">Our procurement team will review your submission for the <strong>${esc(data.category)}</strong> category and contact you with next steps within <strong>5–7 business days</strong>.</p>`);
+
+    const safeWebsite = data.website && /^https?:\/\//i.test(data.website) ? data.website : "";
+    const adminHtml = shell("🏭 New Vendor Registration", `
+      <table style="width:100%;border-collapse:collapse">
+        ${row("Company", data.company_name)}${row("Contact", data.contact_name)}${row("Email", data.email)}
+        ${row("Phone", data.phone)}${row("Country", data.country)}${row("Website", safeWebsite)}${row("Category", data.category)}
+      </table>
+      ${data.capabilities ? `<div style="margin-top:12px;padding:12px;background:#f8fafc;border-radius:6px;font-size:14px;white-space:pre-wrap">${esc(data.capabilities)}</div>` : ""}
+      <p style="margin-top:16px;font-size:12px;color:#64748b">Open in admin → /admin/vendors</p>`);
+
+    return dispatch(
+      { email: data.email, subject: "Vendor registration received — OJEX", html: customerHtml },
+      { subject: `Vendor: ${data.company_name} — ${data.category}`.slice(0, 180), html: adminHtml },
+      { kind: "vendor", related_id: data.id ?? null },
+    );
+  });
+
+// ====================== NEWSLETTER ======================
+const newsletterSchema = z.object({
+  email: z.string().email().max(255),
+});
+
+export const sendNewsletterWelcome = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => newsletterSchema.parse(input))
+  .handler(async ({ data }) => {
+    const customerHtml = shell("Welcome to the OJEX newsletter", `
+      <h2 style="color:#0a1f44;margin-top:0">You're in!</h2>
+      <p style="color:#475569;line-height:1.6">Thanks for subscribing to OJEX Oil and Gas Services updates. You'll receive industry insights, product launches, and tender opportunities straight to your inbox.</p>
+      <p style="color:#475569;line-height:1.6">Need anything sooner? Reach us at <a href="mailto:${ADMIN_EMAIL}" style="color:#d4af37">${ADMIN_EMAIL}</a>.</p>`);
+
+    const adminHtml = shell("✉️ New Newsletter Subscriber", `
+      <table style="width:100%;border-collapse:collapse">${row("Email", data.email)}</table>`);
+
+    return dispatch(
+      { email: data.email, subject: "Welcome to OJEX updates", html: customerHtml },
+      { subject: `Newsletter subscriber: ${data.email}`.slice(0, 180), html: adminHtml },
+      { kind: "newsletter" },
+    );
+  });
+

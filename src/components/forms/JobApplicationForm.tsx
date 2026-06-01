@@ -66,6 +66,7 @@ export function JobApplicationForm({ jobId, position }: { jobId?: string; positi
       return;
     }
 
+    void ext;
     const payload = {
       job_id: jobId ?? null,
       full_name: parsed.data.full_name,
@@ -76,9 +77,7 @@ export function JobApplicationForm({ jobId, position }: { jobId?: string; positi
       cover_letter: parsed.data.cover_letter || null,
       resume_url: path, // storage object path, NOT a public URL
       reference,
-      _ = ext, // keep ext referenced if needed
-    } as any;
-    delete payload._;
+    };
 
     const { error } = await supabase.from("job_applications").insert({
       job_id: payload.job_id,

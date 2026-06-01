@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { sendJobStatusEmail, getResumeSignedUrl } from "@/lib/email.functions";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { downloadCSV, toCSV } from "@/lib/csv";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Download, Plus } from "lucide-react";
+import { Download, Plus, FileDown } from "lucide-react";
 
 export const Route = createFileRoute("/_admin/admin/jobs")({ component: Jobs });
 
@@ -15,6 +17,8 @@ function Jobs() {
   const qc = useQueryClient();
   const [tab, setTab] = useState<"applications" | "listings">("applications");
   const [showNew, setShowNew] = useState(false);
+  const sendStatus = useServerFn(sendJobStatusEmail);
+  const getResumeUrl = useServerFn(getResumeSignedUrl);
 
   const apps = useQuery({
     queryKey: ["admin-applications"],
@@ -38,8 +42,15 @@ function Jobs() {
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
       const { error } = await supabase.from("job_applications").update({ status }).eq("id", id);
       if (error) throw error;
+      // Fire status email — non-blocking but awaited for toast
+      try {
+        await sendStatus({ data: { id, status: status as any } });
+      } catch (e) {
+        console.warn("status email failed", e);
+        toast.warning("Status updated, but email failed to send.");
+      }
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-applications"] }); toast.success("Updated"); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-applications"] }); toast.success("Status updated — applicant notified by email."); },
   });
 
   const toggleListing = useMutation({
@@ -57,6 +68,19 @@ function Jobs() {
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-listings"] }); setShowNew(false); toast.success("Listing created"); },
   });
+
+  async function downloadResume(path: string) {
+    try {
+      const { url } = await getResumeUrl({ data: { path } });
+      window.open(url, "_blank", "noopener,noreferrer");
+    } catch (e: any) {
+      toast.error(e?.message || "Could not generate download link.");
+    }
+  }
+
+  function isStoragePath(s?: string | null) {
+    return !!s && !/^https?:\/\//i.test(s);
+  }
 
   return (
     <div className="space-y-5">
@@ -97,17 +121,51 @@ function Jobs() {
         <div className="overflow-x-auto rounded-lg border border-border bg-card">
           <table className="w-full text-sm">
             <thead className="bg-muted text-left text-xs uppercase tracking-wider text-muted-foreground">
-              <tr><th className="p-3">Date</th><th className="p-3">Applicant</th><th className="p-3">Position</th><th className="p-3">Experience</th><th className="p-3">Status</th><th className="p-3"></th></tr>
+              <tr>
+                <th className="p-3">Date</th>
+                <th className="p-3">Reference</th>
+                <th className="p-3">Applicant</th>
+                <th className="p-3">Position</th>
+                <th className="p-3">Resume</th>
+                <th className="p-3">Status</th>
+                <th className="p-3">Update</th>
+              </tr>
             </thead>
             <tbody>
               {(apps.data ?? []).map((a) => (
                 <tr key={a.id} className="border-t border-border align-top">
                   <td className="p-3 text-xs text-muted-foreground">{new Date(a.created_at).toLocaleDateString()}</td>
+                  <td className="p-3 font-mono text-xs">{(a as any).reference ?? "—"}</td>
                   <td className="p-3"><div className="font-medium">{a.full_name}</div><div className="text-xs text-muted-foreground">{a.email}</div><div className="text-xs text-muted-foreground">{a.phone ?? ""}</div></td>
-                  <td className="p-3 max-w-xs"><div>{a.position_applied}</div>{a.cover_letter && <div className="mt-1 line-clamp-2 text-xs text-muted-foreground">{a.cover_letter}</div>}{a.resume_url && /^https?:\/\//i.test(a.resume_url) && <a href={a.resume_url} target="_blank" rel="noopener noreferrer" className="text-xs text-[color:var(--gold-deep)] underline">Resume</a>}</td>
-                  <td className="p-3">{a.experience_years ?? "—"} yrs</td>
+                  <td className="p-3 max-w-xs">
+                    <div>{a.position_applied}</div>
+                    <div className="text-xs text-muted-foreground">{a.experience_years ?? "—"} yrs experience</div>
+                    {a.cover_letter && <div className="mt-1 line-clamp-2 text-xs text-muted-foreground">{a.cover_letter}</div>}
+                  </td>
+                  <td className="p-3">
+                    {isStoragePath(a.resume_url) ? (
+                      <button
+                        onClick={() => downloadResume(a.resume_url!)}
+                        className="inline-flex items-center gap-1 rounded border border-[color:var(--gold)] px-2 py-1 text-xs font-semibold text-[color:var(--gold-deep)] hover:bg-[color:var(--gold)]/10"
+                      >
+                        <FileDown className="h-3 w-3" /> Download
+                      </button>
+                    ) : a.resume_url && /^https?:\/\//i.test(a.resume_url) ? (
+                      <a href={a.resume_url} target="_blank" rel="noopener noreferrer" className="text-xs text-[color:var(--gold-deep)] underline">External link</a>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    )}
+                  </td>
                   <td className="p-3"><StatusBadge status={a.status} /></td>
-                  <td className="p-3"><select defaultValue={a.status} onChange={(e) => updateApp.mutate({ id: a.id, status: e.target.value })} className="rounded border border-input bg-background px-2 py-1 text-xs">{APP_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}</select></td>
+                  <td className="p-3">
+                    <select
+                      defaultValue={a.status}
+                      onChange={(e) => updateApp.mutate({ id: a.id, status: e.target.value })}
+                      className="rounded border border-input bg-background px-2 py-1 text-xs"
+                    >
+                      {APP_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </td>
                 </tr>
               ))}
             </tbody>

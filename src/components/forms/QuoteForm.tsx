@@ -19,6 +19,15 @@ const schema = z.object({
   notes: z.string().trim().max(2000).optional().or(z.literal("")),
 });
 
+function generateReference() {
+  const d = new Date();
+  const yy = String(d.getFullYear()).slice(-2);
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  const rand = Math.random().toString(36).slice(2, 8).toUpperCase();
+  return `OJX-${yy}${mm}${dd}-${rand}`;
+}
+
 export function QuoteForm({ defaultProduct }: { defaultProduct?: string }) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState<null | { name: string; product: string; email: string; reference: string }>(null);
@@ -33,6 +42,7 @@ export function QuoteForm({ defaultProduct }: { defaultProduct?: string }) {
       return;
     }
     setLoading(true);
+    const reference = generateReference();
     const payload = {
       ...parsed.data,
       phone: parsed.data.phone || null,
@@ -41,21 +51,20 @@ export function QuoteForm({ defaultProduct }: { defaultProduct?: string }) {
       timeline: parsed.data.timeline || null,
       budget: parsed.data.budget || null,
       notes: parsed.data.notes || null,
+      reference,
     };
 
-    const { data: inserted, error } = await supabase
-      .from("quote_requests")
-      .insert(payload)
-      .select("id, reference")
-      .single();
-    if (error || !inserted) {
+    // Anonymous public has INSERT-only RLS; do NOT chain .select() — it requires SELECT privilege
+    const { error } = await supabase.from("quote_requests").insert(payload);
+    if (error) {
       setLoading(false);
-      toast.error("Could not submit. Try again.");
+      console.error("quote insert failed", error);
+      toast.error(error.message || "Could not submit. Try again.");
       return;
     }
 
     sendEmails({
-      data: { ...payload, reference: inserted.reference, id: inserted.id },
+      data: { ...payload, id: null },
     }).catch((err) => console.warn("email send failed", err));
 
     setLoading(false);
@@ -63,7 +72,7 @@ export function QuoteForm({ defaultProduct }: { defaultProduct?: string }) {
       name: parsed.data.contact_name,
       product: parsed.data.product_service,
       email: parsed.data.email,
-      reference: inserted.reference,
+      reference,
     });
   }
 

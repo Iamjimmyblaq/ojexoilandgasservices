@@ -25,6 +25,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CareersRouteImport } from './routes/careers'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ApplicationStatusRouteImport } from './routes/application-status'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/_admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -126,6 +127,11 @@ const BlogRoute = BlogRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApplicationStatusRoute = ApplicationStatusRouteImport.update({
+  id: '/application-status',
+  path: '/application-status',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -242,6 +248,7 @@ const AdminAdminProcurementIdRoute = AdminAdminProcurementIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/application-status': typeof ApplicationStatusRoute
   '/auth': typeof AuthRoute
   '/blog': typeof BlogRoute
   '/careers': typeof CareersRoute
@@ -281,6 +288,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/application-status': typeof ApplicationStatusRoute
   '/auth': typeof AuthRoute
   '/blog': typeof BlogRoute
   '/careers': typeof CareersRoute
@@ -322,6 +330,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_admin': typeof AdminRouteWithChildren
   '/about': typeof AboutRoute
+  '/application-status': typeof ApplicationStatusRoute
   '/auth': typeof AuthRoute
   '/blog': typeof BlogRoute
   '/careers': typeof CareersRoute
@@ -363,6 +372,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/application-status'
     | '/auth'
     | '/blog'
     | '/careers'
@@ -402,6 +412,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/application-status'
     | '/auth'
     | '/blog'
     | '/careers'
@@ -442,6 +453,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_admin'
     | '/about'
+    | '/application-status'
     | '/auth'
     | '/blog'
     | '/careers'
@@ -483,6 +495,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   AboutRoute: typeof AboutRoute
+  ApplicationStatusRoute: typeof ApplicationStatusRoute
   AuthRoute: typeof AuthRoute
   BlogRoute: typeof BlogRoute
   CareersRoute: typeof CareersRoute
@@ -613,6 +626,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/application-status': {
+      id: '/application-status'
+      path: '/application-status'
+      fullPath: '/application-status'
+      preLoaderRoute: typeof ApplicationStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -853,6 +873,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AboutRoute: AboutRoute,
+  ApplicationStatusRoute: ApplicationStatusRoute,
   AuthRoute: AuthRoute,
   BlogRoute: BlogRoute,
   CareersRoute: CareersRoute,

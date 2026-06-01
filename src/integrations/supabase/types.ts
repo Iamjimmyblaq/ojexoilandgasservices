@@ -94,6 +94,7 @@ export type Database = {
           job_id: string | null
           phone: string | null
           position_applied: string
+          reference: string
           resume_url: string | null
           status: string
         }
@@ -107,6 +108,7 @@ export type Database = {
           job_id?: string | null
           phone?: string | null
           position_applied: string
+          reference?: string
           resume_url?: string | null
           status?: string
         }
@@ -120,6 +122,7 @@ export type Database = {
           job_id?: string | null
           phone?: string | null
           position_applied?: string
+          reference?: string
           resume_url?: string | null
           status?: string
         }

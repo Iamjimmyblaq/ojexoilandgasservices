@@ -223,8 +223,10 @@ const jobAppSchema = z.object({
   experience_years: z.number().nullable().optional(),
   cover_letter: z.string().max(5000).nullable().optional(),
   resume_url: z.string().max(500).nullable().optional(),
+  reference: z.string().max(60).nullable().optional(),
   id: z.string().uuid().nullable().optional(),
 });
+
 
 export const sendJobApplicationEmails = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => jobAppSchema.parse(input))
@@ -309,3 +311,115 @@ export const sendNewsletterWelcome = createServerFn({ method: "POST" })
     );
   });
 
+
+// ====================== JOB APPLICATION STATUS CHANGES ======================
+const statusSchema = z.object({
+  id: z.string().uuid(),
+  status: z.enum(["new", "reviewing", "shortlisted", "rejected", "hired"]),
+});
+
+const STATUS_COPY: Record<string, { subject: (pos: string) => string; heading: string; body: string; color: string }> = {
+  reviewing: {
+    subject: (p) => `Your application for ${p} is under review — OJEX`,
+    heading: "Your application is being reviewed",
+    body: "Good news — our recruitment team has begun reviewing your application. We'll let you know as soon as there's an update. This typically takes 5–10 business days.",
+    color: "#0a1f44",
+  },
+  shortlisted: {
+    subject: (p) => `🎉 You've been shortlisted for ${p} — OJEX`,
+    heading: "Congratulations — you've been shortlisted!",
+    body: "We're impressed with your background. Our hiring manager will be in touch shortly with next steps, which may include an interview or assessment. Please keep an eye on your inbox (and spam folder).",
+    color: "#d4af37",
+  },
+  rejected: {
+    subject: (p) => `Update on your application for ${p} — OJEX`,
+    heading: "Update on your application",
+    body: "Thank you for your interest in joining OJEX Oil and Gas Services. After careful review, we have decided to move forward with other candidates whose experience more closely matches the current requirements. We genuinely appreciate the time you invested in applying and encourage you to apply for future openings that match your profile.",
+    color: "#64748b",
+  },
+  hired: {
+    subject: (p) => `🎊 Welcome to OJEX — Offer for ${p}`,
+    heading: "Welcome aboard!",
+    body: "We're delighted to extend you an offer for this role. Our HR team will reach out directly to share your offer details, paperwork, and onboarding schedule. Welcome to the OJEX family!",
+    color: "#0d7a3f",
+  },
+  new: {
+    subject: (p) => `Application received: ${p} — OJEX`,
+    heading: "Application received",
+    body: "We have received your application and it is now in our queue. You'll hear from us soon.",
+    color: "#0a1f44",
+  },
+};
+
+export const sendJobStatusEmail = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => statusSchema.parse(input))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: app, error } = await supabaseAdmin
+      .from("job_applications")
+      .select("id, full_name, email, position_applied, reference, status")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (error || !app) throw new Error("Application not found");
+
+    const copy = STATUS_COPY[data.status] ?? STATUS_COPY.new;
+    const refBlock = app.reference
+      ? `<div style="margin:14px 0;padding:10px 14px;background:#f8fafc;border-left:4px solid ${copy.color};border-radius:4px"><div style="font-size:11px;color:#64748b;letter-spacing:.5px">REFERENCE</div><div style="font-size:15px;font-weight:700;color:#0a1f44;font-family:monospace">${esc(app.reference)}</div></div>`
+      : "";
+
+    const html = shell(copy.heading, `
+      <h2 style="color:${copy.color};margin-top:0">${esc(copy.heading)}, ${esc(app.full_name)}</h2>
+      ${refBlock}
+      <p style="color:#475569;line-height:1.7">${esc(copy.body)}</p>
+      <p style="color:#475569;line-height:1.7;margin-top:18px">Position: <strong>${esc(app.position_applied)}</strong></p>
+      <p style="color:#475569;line-height:1.6;margin-top:18px;font-size:13px">You can check your status anytime using your reference number at our careers page.</p>
+      <p style="color:#475569;line-height:1.6;margin-top:18px;font-size:13px">Questions? Reply to this email or contact <a href="mailto:${ADMIN_EMAIL}" style="color:#d4af37">${ADMIN_EMAIL}</a>.</p>`);
+
+    const result = await Promise.allSettled([sendOne(app.email, copy.subject(app.position_applied), html)]);
+    const failed = result[0].status === "rejected";
+    await logEmail({
+      kind: `job-status-${data.status}`,
+      recipient: app.email,
+      subject: copy.subject(app.position_applied),
+      status: failed ? "failed" : "sent",
+      error: failed ? String((result[0] as PromiseRejectedResult).reason?.message ?? "") : null,
+      related_id: app.id,
+      related_reference: app.reference ?? null,
+    });
+    return { ok: !failed };
+  });
+
+// ====================== JOB APPLICATION LOOKUP (PUBLIC) ======================
+const lookupSchema = z.object({
+  reference: z.string().trim().min(4).max(60),
+  email: z.string().trim().email().max(255),
+});
+
+export const lookupJobApplication = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => lookupSchema.parse(input))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: app, error } = await supabaseAdmin
+      .from("job_applications")
+      .select("reference, full_name, position_applied, status, created_at")
+      .eq("reference", data.reference.trim())
+      .ilike("email", data.email.trim())
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!app) return { found: false as const };
+    return { found: true as const, application: app };
+  });
+
+// ====================== ADMIN: SIGNED URL FOR RESUME ======================
+const resumeUrlSchema = z.object({ path: z.string().min(1).max(500) });
+
+export const getResumeSignedUrl = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => resumeUrlSchema.parse(input))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: signed, error } = await supabaseAdmin.storage
+      .from("resumes")
+      .createSignedUrl(data.path, 60 * 10); // 10 minutes
+    if (error || !signed) throw new Error(error?.message || "Could not create download link");
+    return { url: signed.signedUrl };
+  });

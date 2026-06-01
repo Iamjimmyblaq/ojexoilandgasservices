@@ -223,8 +223,10 @@ const jobAppSchema = z.object({
   experience_years: z.number().nullable().optional(),
   cover_letter: z.string().max(5000).nullable().optional(),
   resume_url: z.string().max(500).nullable().optional(),
+  reference: z.string().max(60).nullable().optional(),
   id: z.string().uuid().nullable().optional(),
 });
+
 
 export const sendJobApplicationEmails = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => jobAppSchema.parse(input))

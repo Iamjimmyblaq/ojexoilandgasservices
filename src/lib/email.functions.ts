@@ -423,3 +423,57 @@ export const getResumeSignedUrl = createServerFn({ method: "POST" })
     if (error || !signed) throw new Error(error?.message || "Could not create download link");
     return { url: signed.signedUrl };
   });
+
+// ====================== BLOG POST → NEWSLETTER BLAST ======================
+const blogBlastSchema = z.object({ post_id: z.string().uuid() });
+
+export const sendBlogPostNewsletter = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => blogBlastSchema.parse(input))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: post, error } = await supabaseAdmin
+      .from("blog_posts")
+      .select("id, title, slug, excerpt, cover_image_url, author")
+      .eq("id", data.post_id)
+      .maybeSingle();
+    if (error || !post) throw new Error("Post not found");
+
+    const { data: subs, error: subErr } = await supabaseAdmin
+      .from("newsletter_subscribers")
+      .select("email");
+    if (subErr) throw new Error(subErr.message);
+    const recipients = (subs ?? []).map((s) => s.email).filter(Boolean);
+    if (recipients.length === 0) return { ok: true, sent: 0, failed: 0 };
+
+    const url = `https://ojexoilandgasservices.lovable.app/blog/${encodeURIComponent(post.slug)}`;
+    const safeCover = post.cover_image_url && /^https?:\/\//i.test(post.cover_image_url) ? post.cover_image_url : "";
+    const coverHtml = safeCover
+      ? `<img src="${esc(safeCover)}" alt="" style="width:100%;max-height:320px;object-fit:cover;border-radius:6px;margin:0 0 16px" />`
+      : "";
+    const excerptHtml = post.excerpt
+      ? `<p style="color:#475569;line-height:1.6;font-size:15px">${esc(post.excerpt)}</p>`
+      : "";
+    const html = shell("New from OJEX", `
+      ${coverHtml}
+      <h2 style="color:#0a1f44;margin:0 0 10px">${esc(post.title)}</h2>
+      ${post.author ? `<p style="color:#94a3b8;font-size:12px;margin:0 0 14px">By ${esc(post.author)}</p>` : ""}
+      ${excerptHtml}
+      <p style="margin-top:22px"><a href="${esc(url)}" style="display:inline-block;background:#d4af37;color:#0a1f44;padding:12px 22px;text-decoration:none;border-radius:4px;font-weight:600">Read the full article →</a></p>
+      <p style="color:#94a3b8;font-size:11px;margin-top:24px">You are receiving this because you subscribed to OJEX Oil and Gas Services updates.</p>`);
+
+    const subject = `${post.title} — OJEX`.slice(0, 180);
+    let sent = 0;
+    let failed = 0;
+    // Send sequentially with small delay to be gentle on Gmail API
+    for (const r of recipients) {
+      try {
+        await sendOne(r, subject, html);
+        sent++;
+        await logEmail({ kind: "blog-newsletter", recipient: r, subject, status: "sent", related_id: post.id, related_reference: post.slug });
+      } catch (e: any) {
+        failed++;
+        await logEmail({ kind: "blog-newsletter", recipient: r, subject, status: "failed", error: String(e?.message ?? e), related_id: post.id, related_reference: post.slug });
+      }
+    }
+    return { ok: failed === 0, sent, failed };
+  });

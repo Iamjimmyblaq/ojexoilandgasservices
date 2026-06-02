@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { LayoutDashboard, Package, FileText, MessageSquare, Building2, Briefcase, ShoppingCart, BarChart3, LogOut, ChevronLeft, Users } from "lucide-react";
+import { LayoutDashboard, Package, FileText, MessageSquare, Building2, Briefcase, ShoppingCart, BarChart3, LogOut, ChevronLeft, Users, Newspaper } from "lucide-react";
 import logo from "@/assets/ojex-logo.png";
 
 export const Route = createFileRoute("/_admin")({
@@ -12,6 +12,7 @@ export const Route = createFileRoute("/_admin")({
 const NAV = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/products", label: "Products", icon: Package, exact: false },
+  { to: "/admin/blog", label: "Blog & Newsletter", icon: Newspaper, exact: false },
   { to: "/admin/quotes", label: "Quote Requests", icon: FileText, exact: false },
   { to: "/admin/contacts", label: "Contact Messages", icon: MessageSquare, exact: false },
   { to: "/admin/vendors", label: "Vendors", icon: Building2, exact: false },

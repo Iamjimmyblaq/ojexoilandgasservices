@@ -38,6 +38,7 @@ import { Route as ServicesLogisticsRouteImport } from './routes/services.logisti
 import { Route as ServicesEquipmentRouteImport } from './routes/services.equipment'
 import { Route as ServicesDieselRouteImport } from './routes/services.diesel'
 import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin.admin.index'
 import { Route as AdminAdminVendorsRouteImport } from './routes/_admin.admin.vendors'
 import { Route as AdminAdminUsersRouteImport } from './routes/_admin.admin.users'
@@ -47,6 +48,7 @@ import { Route as AdminAdminProductsRouteImport } from './routes/_admin.admin.pr
 import { Route as AdminAdminProcurementRouteImport } from './routes/_admin.admin.procurement'
 import { Route as AdminAdminJobsRouteImport } from './routes/_admin.admin.jobs'
 import { Route as AdminAdminContactsRouteImport } from './routes/_admin.admin.contacts'
+import { Route as AdminAdminBlogRouteImport } from './routes/_admin.admin.blog'
 import { Route as AdminAdminProcurementIdRouteImport } from './routes/_admin.admin.procurement.$id'
 
 const VendorRegistrationRoute = VendorRegistrationRouteImport.update({
@@ -194,6 +196,11 @@ const ProductsSlugRoute = ProductsSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => ProductsRoute,
 } as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => BlogRoute,
+} as any)
 const AdminAdminIndexRoute = AdminAdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
@@ -239,6 +246,11 @@ const AdminAdminContactsRoute = AdminAdminContactsRouteImport.update({
   path: '/admin/contacts',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAdminBlogRoute = AdminAdminBlogRouteImport.update({
+  id: '/admin/blog',
+  path: '/admin/blog',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAdminProcurementIdRoute = AdminAdminProcurementIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -250,7 +262,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/application-status': typeof ApplicationStatusRoute
   '/auth': typeof AuthRoute
-  '/blog': typeof BlogRoute
+  '/blog': typeof BlogRouteWithChildren
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/faqs': typeof FaqsRoute
@@ -265,6 +277,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/vendor-registration': typeof VendorRegistrationRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/services/diesel': typeof ServicesDieselRoute
   '/services/equipment': typeof ServicesEquipmentRoute
@@ -274,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/services/recruitment': typeof ServicesRecruitmentRoute
   '/services/safety': typeof ServicesSafetyRoute
   '/services/vendor-management': typeof ServicesVendorManagementRoute
+  '/admin/blog': typeof AdminAdminBlogRoute
   '/admin/contacts': typeof AdminAdminContactsRoute
   '/admin/jobs': typeof AdminAdminJobsRoute
   '/admin/procurement': typeof AdminAdminProcurementRouteWithChildren
@@ -290,7 +304,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/application-status': typeof ApplicationStatusRoute
   '/auth': typeof AuthRoute
-  '/blog': typeof BlogRoute
+  '/blog': typeof BlogRouteWithChildren
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/faqs': typeof FaqsRoute
@@ -305,6 +319,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/vendor-registration': typeof VendorRegistrationRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/services/diesel': typeof ServicesDieselRoute
   '/services/equipment': typeof ServicesEquipmentRoute
@@ -314,6 +329,7 @@ export interface FileRoutesByTo {
   '/services/recruitment': typeof ServicesRecruitmentRoute
   '/services/safety': typeof ServicesSafetyRoute
   '/services/vendor-management': typeof ServicesVendorManagementRoute
+  '/admin/blog': typeof AdminAdminBlogRoute
   '/admin/contacts': typeof AdminAdminContactsRoute
   '/admin/jobs': typeof AdminAdminJobsRoute
   '/admin/procurement': typeof AdminAdminProcurementRouteWithChildren
@@ -332,7 +348,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/application-status': typeof ApplicationStatusRoute
   '/auth': typeof AuthRoute
-  '/blog': typeof BlogRoute
+  '/blog': typeof BlogRouteWithChildren
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/faqs': typeof FaqsRoute
@@ -347,6 +363,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/vendor-registration': typeof VendorRegistrationRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/services/diesel': typeof ServicesDieselRoute
   '/services/equipment': typeof ServicesEquipmentRoute
@@ -356,6 +373,7 @@ export interface FileRoutesById {
   '/services/recruitment': typeof ServicesRecruitmentRoute
   '/services/safety': typeof ServicesSafetyRoute
   '/services/vendor-management': typeof ServicesVendorManagementRoute
+  '/_admin/admin/blog': typeof AdminAdminBlogRoute
   '/_admin/admin/contacts': typeof AdminAdminContactsRoute
   '/_admin/admin/jobs': typeof AdminAdminJobsRoute
   '/_admin/admin/procurement': typeof AdminAdminProcurementRouteWithChildren
@@ -389,6 +407,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/vendor-registration'
+    | '/blog/$slug'
     | '/products/$slug'
     | '/services/diesel'
     | '/services/equipment'
@@ -398,6 +417,7 @@ export interface FileRouteTypes {
     | '/services/recruitment'
     | '/services/safety'
     | '/services/vendor-management'
+    | '/admin/blog'
     | '/admin/contacts'
     | '/admin/jobs'
     | '/admin/procurement'
@@ -429,6 +449,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/vendor-registration'
+    | '/blog/$slug'
     | '/products/$slug'
     | '/services/diesel'
     | '/services/equipment'
@@ -438,6 +459,7 @@ export interface FileRouteTypes {
     | '/services/recruitment'
     | '/services/safety'
     | '/services/vendor-management'
+    | '/admin/blog'
     | '/admin/contacts'
     | '/admin/jobs'
     | '/admin/procurement'
@@ -470,6 +492,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/vendor-registration'
+    | '/blog/$slug'
     | '/products/$slug'
     | '/services/diesel'
     | '/services/equipment'
@@ -479,6 +502,7 @@ export interface FileRouteTypes {
     | '/services/recruitment'
     | '/services/safety'
     | '/services/vendor-management'
+    | '/_admin/admin/blog'
     | '/_admin/admin/contacts'
     | '/_admin/admin/jobs'
     | '/_admin/admin/procurement'
@@ -497,7 +521,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ApplicationStatusRoute: typeof ApplicationStatusRoute
   AuthRoute: typeof AuthRoute
-  BlogRoute: typeof BlogRoute
+  BlogRoute: typeof BlogRouteWithChildren
   CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
   FaqsRoute: typeof FaqsRoute
@@ -719,6 +743,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsSlugRouteImport
       parentRoute: typeof ProductsRoute
     }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof BlogRoute
+    }
     '/_admin/admin/': {
       id: '/_admin/admin/'
       path: '/admin'
@@ -782,6 +813,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminContactsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_admin/admin/blog': {
+      id: '/_admin/admin/blog'
+      path: '/admin/blog'
+      fullPath: '/admin/blog'
+      preLoaderRoute: typeof AdminAdminBlogRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_admin/admin/procurement/$id': {
       id: '/_admin/admin/procurement/$id'
       path: '/$id'
@@ -806,6 +844,7 @@ const AdminAdminProcurementRouteWithChildren =
   )
 
 interface AdminRouteChildren {
+  AdminAdminBlogRoute: typeof AdminAdminBlogRoute
   AdminAdminContactsRoute: typeof AdminAdminContactsRoute
   AdminAdminJobsRoute: typeof AdminAdminJobsRoute
   AdminAdminProcurementRoute: typeof AdminAdminProcurementRouteWithChildren
@@ -818,6 +857,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAdminBlogRoute: AdminAdminBlogRoute,
   AdminAdminContactsRoute: AdminAdminContactsRoute,
   AdminAdminJobsRoute: AdminAdminJobsRoute,
   AdminAdminProcurementRoute: AdminAdminProcurementRouteWithChildren,
@@ -830,6 +870,16 @@ const AdminRouteChildren: AdminRouteChildren = {
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface BlogRouteChildren {
+  BlogSlugRoute: typeof BlogSlugRoute
+}
+
+const BlogRouteChildren: BlogRouteChildren = {
+  BlogSlugRoute: BlogSlugRoute,
+}
+
+const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
 interface ProductsRouteChildren {
   ProductsSlugRoute: typeof ProductsSlugRoute
@@ -875,7 +925,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   ApplicationStatusRoute: ApplicationStatusRoute,
   AuthRoute: AuthRoute,
-  BlogRoute: BlogRoute,
+  BlogRoute: BlogRouteWithChildren,
   CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
   FaqsRoute: FaqsRoute,

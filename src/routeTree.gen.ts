@@ -23,12 +23,12 @@ import { Route as IndustriesRouteImport } from './routes/industries'
 import { Route as FaqsRouteImport } from './routes/faqs'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CareersRouteImport } from './routes/careers'
-import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApplicationStatusRouteImport } from './routes/application-status'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/_admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as ServicesVendorManagementRouteImport } from './routes/services.vendor-management'
 import { Route as ServicesSafetyRouteImport } from './routes/services.safety'
 import { Route as ServicesRecruitmentRouteImport } from './routes/services.recruitment'
@@ -121,11 +121,6 @@ const CareersRoute = CareersRouteImport.update({
   path: '/careers',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogRoute = BlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -148,6 +143,11 @@ const AdminRoute = AdminRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServicesVendorManagementRoute =
@@ -262,7 +262,6 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/application-status': typeof ApplicationStatusRoute
   '/auth': typeof AuthRoute
-  '/blog': typeof BlogRouteWithChildren
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/faqs': typeof FaqsRoute
@@ -287,6 +286,7 @@ export interface FileRoutesByFullPath {
   '/services/recruitment': typeof ServicesRecruitmentRoute
   '/services/safety': typeof ServicesSafetyRoute
   '/services/vendor-management': typeof ServicesVendorManagementRoute
+  '/blog/': typeof BlogIndexRoute
   '/admin/blog': typeof AdminAdminBlogRoute
   '/admin/contacts': typeof AdminAdminContactsRoute
   '/admin/jobs': typeof AdminAdminJobsRoute
@@ -304,7 +304,6 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/application-status': typeof ApplicationStatusRoute
   '/auth': typeof AuthRoute
-  '/blog': typeof BlogRouteWithChildren
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/faqs': typeof FaqsRoute
@@ -329,6 +328,7 @@ export interface FileRoutesByTo {
   '/services/recruitment': typeof ServicesRecruitmentRoute
   '/services/safety': typeof ServicesSafetyRoute
   '/services/vendor-management': typeof ServicesVendorManagementRoute
+  '/blog': typeof BlogIndexRoute
   '/admin/blog': typeof AdminAdminBlogRoute
   '/admin/contacts': typeof AdminAdminContactsRoute
   '/admin/jobs': typeof AdminAdminJobsRoute
@@ -348,7 +348,6 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/application-status': typeof ApplicationStatusRoute
   '/auth': typeof AuthRoute
-  '/blog': typeof BlogRouteWithChildren
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/faqs': typeof FaqsRoute
@@ -373,6 +372,7 @@ export interface FileRoutesById {
   '/services/recruitment': typeof ServicesRecruitmentRoute
   '/services/safety': typeof ServicesSafetyRoute
   '/services/vendor-management': typeof ServicesVendorManagementRoute
+  '/blog/': typeof BlogIndexRoute
   '/_admin/admin/blog': typeof AdminAdminBlogRoute
   '/_admin/admin/contacts': typeof AdminAdminContactsRoute
   '/_admin/admin/jobs': typeof AdminAdminJobsRoute
@@ -392,7 +392,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/application-status'
     | '/auth'
-    | '/blog'
     | '/careers'
     | '/contact'
     | '/faqs'
@@ -417,6 +416,7 @@ export interface FileRouteTypes {
     | '/services/recruitment'
     | '/services/safety'
     | '/services/vendor-management'
+    | '/blog/'
     | '/admin/blog'
     | '/admin/contacts'
     | '/admin/jobs'
@@ -434,7 +434,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/application-status'
     | '/auth'
-    | '/blog'
     | '/careers'
     | '/contact'
     | '/faqs'
@@ -459,6 +458,7 @@ export interface FileRouteTypes {
     | '/services/recruitment'
     | '/services/safety'
     | '/services/vendor-management'
+    | '/blog'
     | '/admin/blog'
     | '/admin/contacts'
     | '/admin/jobs'
@@ -477,7 +477,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/application-status'
     | '/auth'
-    | '/blog'
     | '/careers'
     | '/contact'
     | '/faqs'
@@ -502,6 +501,7 @@ export interface FileRouteTypes {
     | '/services/recruitment'
     | '/services/safety'
     | '/services/vendor-management'
+    | '/blog/'
     | '/_admin/admin/blog'
     | '/_admin/admin/contacts'
     | '/_admin/admin/jobs'
@@ -521,7 +521,6 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ApplicationStatusRoute: typeof ApplicationStatusRoute
   AuthRoute: typeof AuthRoute
-  BlogRoute: typeof BlogRouteWithChildren
   CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
   FaqsRoute: typeof FaqsRoute
@@ -536,6 +535,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   VendorRegistrationRoute: typeof VendorRegistrationRoute
+  BlogIndexRoute: typeof BlogIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -638,13 +638,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CareersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blog': {
-      id: '/blog'
-      path: '/blog'
-      fullPath: '/blog'
-      preLoaderRoute: typeof BlogRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -678,6 +671,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/services/vendor-management': {
@@ -871,16 +871,6 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
-interface BlogRouteChildren {
-  BlogSlugRoute: typeof BlogSlugRoute
-}
-
-const BlogRouteChildren: BlogRouteChildren = {
-  BlogSlugRoute: BlogSlugRoute,
-}
-
-const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
-
 interface ProductsRouteChildren {
   ProductsSlugRoute: typeof ProductsSlugRoute
 }
@@ -925,7 +915,6 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   ApplicationStatusRoute: ApplicationStatusRoute,
   AuthRoute: AuthRoute,
-  BlogRoute: BlogRouteWithChildren,
   CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
   FaqsRoute: FaqsRoute,
@@ -940,6 +929,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   VendorRegistrationRoute: VendorRegistrationRoute,
+  BlogIndexRoute: BlogIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

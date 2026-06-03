@@ -19,6 +19,7 @@ import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as ProcurementRouteImport } from './routes/procurement'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as MyApplicationsRouteImport } from './routes/my-applications'
 import { Route as IndustriesRouteImport } from './routes/industries'
 import { Route as FaqsRouteImport } from './routes/faqs'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -99,6 +100,11 @@ const ProcurementRoute = ProcurementRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyApplicationsRoute = MyApplicationsRouteImport.update({
+  id: '/my-applications',
+  path: '/my-applications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndustriesRoute = IndustriesRouteImport.update({
@@ -266,6 +272,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/faqs': typeof FaqsRoute
   '/industries': typeof IndustriesRoute
+  '/my-applications': typeof MyApplicationsRoute
   '/privacy': typeof PrivacyRoute
   '/procurement': typeof ProcurementRoute
   '/products': typeof ProductsRouteWithChildren
@@ -308,6 +315,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/faqs': typeof FaqsRoute
   '/industries': typeof IndustriesRoute
+  '/my-applications': typeof MyApplicationsRoute
   '/privacy': typeof PrivacyRoute
   '/procurement': typeof ProcurementRoute
   '/products': typeof ProductsRouteWithChildren
@@ -352,6 +360,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/faqs': typeof FaqsRoute
   '/industries': typeof IndustriesRoute
+  '/my-applications': typeof MyApplicationsRoute
   '/privacy': typeof PrivacyRoute
   '/procurement': typeof ProcurementRoute
   '/products': typeof ProductsRouteWithChildren
@@ -396,6 +405,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/faqs'
     | '/industries'
+    | '/my-applications'
     | '/privacy'
     | '/procurement'
     | '/products'
@@ -438,6 +448,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/faqs'
     | '/industries'
+    | '/my-applications'
     | '/privacy'
     | '/procurement'
     | '/products'
@@ -481,6 +492,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/faqs'
     | '/industries'
+    | '/my-applications'
     | '/privacy'
     | '/procurement'
     | '/products'
@@ -525,6 +537,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   FaqsRoute: typeof FaqsRoute
   IndustriesRoute: typeof IndustriesRoute
+  MyApplicationsRoute: typeof MyApplicationsRoute
   PrivacyRoute: typeof PrivacyRoute
   ProcurementRoute: typeof ProcurementRoute
   ProductsRoute: typeof ProductsRouteWithChildren
@@ -609,6 +622,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-applications': {
+      id: '/my-applications'
+      path: '/my-applications'
+      fullPath: '/my-applications'
+      preLoaderRoute: typeof MyApplicationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/industries': {
@@ -920,6 +940,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   FaqsRoute: FaqsRoute,
   IndustriesRoute: IndustriesRoute,
+  MyApplicationsRoute: MyApplicationsRoute,
   PrivacyRoute: PrivacyRoute,
   ProcurementRoute: ProcurementRoute,
   ProductsRoute: ProductsRouteWithChildren,

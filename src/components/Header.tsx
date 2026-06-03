@@ -36,8 +36,8 @@ export function Header() {
           </a>
           {user ? (
             <>
-              <Link to={isAdmin ? "/admin" : "/procurement"} className="text-sm font-medium text-white/80 hover:text-[color:var(--gold)]">
-                {isAdmin ? "Admin" : "Portal"}
+              <Link to={isAdmin ? "/admin" : "/my-applications"} className="text-sm font-medium text-white/80 hover:text-[color:var(--gold)]">
+                {isAdmin ? "Admin" : "My Applications"}
               </Link>
               <button onClick={() => signOut()} className="text-sm font-medium text-white/80 hover:text-[color:var(--gold)]">Sign out</button>
             </>
@@ -62,8 +62,8 @@ export function Header() {
             ))}
             {user ? (
               <>
-                <Link to={isAdmin ? "/admin" : "/procurement"} onClick={() => setOpen(false)} className="rounded px-2 py-2 text-sm text-white/80">
-                  {isAdmin ? "Admin Dashboard" : "My Portal"}
+                <Link to={isAdmin ? "/admin" : "/my-applications"} onClick={() => setOpen(false)} className="rounded px-2 py-2 text-sm text-white/80">
+                  {isAdmin ? "Admin Dashboard" : "My Applications"}
                 </Link>
                 <button onClick={() => { setOpen(false); signOut(); }} className="rounded px-2 py-2 text-left text-sm text-white/80">Sign out</button>
               </>

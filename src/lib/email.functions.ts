@@ -31,16 +31,43 @@ function esc(s: string | number | null | undefined): string {
 }
 
 function sanitizeHeader(s: string): string {
-  return String(s ?? "").replace(/[\r\n]+/g, " ").trim();
+  return String(s ?? "").replace(/[\r\n\t]+/g, " ").trim();
+}
+
+// Normalize problem characters in subjects so they read cleanly in all mail clients.
+function sanitizeSubject(s: string): string {
+  let out = String(s ?? "")
+    // Normalize Unicode so accented chars combine into single codepoints
+    .normalize("NFC")
+    // Smart quotes -> straight quotes
+    .replace(/[\u2018\u2019\u201A\u201B\u2032]/g, "'")
+    .replace(/[\u201C\u201D\u201E\u201F\u2033]/g, '"')
+    // Dashes -> hyphen
+    .replace(/[\u2013\u2014\u2015\u2212]/g, "-")
+    // Ellipsis -> three dots
+    .replace(/\u2026/g, "...")
+    // Non-breaking / zero-width / BOM
+    .replace(/[\u00A0\u2007\u202F]/g, " ")
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    // Strip emoji and pictographs (incl. variation selectors and ZWJ sequences)
+    .replace(/\p{Extended_Pictographic}/gu, "")
+    .replace(/[\uFE0E\uFE0F]/g, "")
+    // Drop any remaining control chars
+    .replace(/[\x00-\x1F\x7F]/g, " ")
+    // Collapse whitespace
+    .replace(/\s+/g, " ")
+    .trim();
+  return sanitizeHeader(out);
 }
 
 function encodeHeaderValue(s: string): string {
-  const clean = sanitizeHeader(s);
+  const clean = sanitizeSubject(s);
   // ASCII-only -> send as-is. Otherwise RFC 2047 encoded-word (UTF-8, Base64).
   if (/^[\x20-\x7E]*$/.test(clean)) return clean;
   const b64 = btoa(unescape(encodeURIComponent(clean)));
   return `=?UTF-8?B?${b64}?=`;
 }
+
 
 function rfc2822(to: string, subject: string, html: string, from: string) {
   const safeTo = sanitizeHeader(to);

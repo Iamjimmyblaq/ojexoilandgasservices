@@ -34,15 +34,23 @@ function sanitizeHeader(s: string): string {
   return String(s ?? "").replace(/[\r\n]+/g, " ").trim();
 }
 
+function encodeHeaderValue(s: string): string {
+  const clean = sanitizeHeader(s);
+  // ASCII-only -> send as-is. Otherwise RFC 2047 encoded-word (UTF-8, Base64).
+  if (/^[\x20-\x7E]*$/.test(clean)) return clean;
+  const b64 = btoa(unescape(encodeURIComponent(clean)));
+  return `=?UTF-8?B?${b64}?=`;
+}
+
 function rfc2822(to: string, subject: string, html: string, from: string) {
   const safeTo = sanitizeHeader(to);
   const safeFrom = sanitizeHeader(from);
-  const safeSubject = sanitizeHeader(subject);
   const boundary = "----=_OJEX_" + Math.random().toString(36).slice(2);
   const msg = [
-    `From: OJEX Oil and Gas Services <${safeFrom}>`,
+    `From: =?UTF-8?B?${btoa(unescape(encodeURIComponent("OJEX Oil and Gas Services")))}?= <${safeFrom}>`,
     `To: ${safeTo}`,
-    `Subject: ${safeSubject}`,
+    `Subject: ${encodeHeaderValue(subject)}`,
+
     "MIME-Version: 1.0",
     `Content-Type: multipart/alternative; boundary="${boundary}"`,
     "",

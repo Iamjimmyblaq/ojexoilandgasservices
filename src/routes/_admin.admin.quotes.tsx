@@ -5,7 +5,7 @@ import { StatusBadge } from "@/components/admin/StatusBadge";
 import { downloadCSV, toCSV } from "@/lib/csv";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Download } from "lucide-react";
+import { Download, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/_admin/admin/quotes")({ component: Quotes });
 

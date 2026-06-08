@@ -33,14 +33,12 @@ export function VendorForm() {
       website: parsed.data.website || null,
       capabilities: parsed.data.capabilities || null,
     };
-    const { data: inserted, error } = await supabase
+    const { error } = await supabase
       .from("vendor_registrations")
-      .insert(payload)
-      .select("id")
-      .single();
+      .insert(payload);
     setLoading(false);
     if (error) { toast.error("Could not submit registration."); return; }
-    sendEmails({ data: { ...payload, id: inserted?.id ?? null } })
+    sendEmails({ data: { ...payload, id: null } })
       .catch((err) => console.warn("vendor email send failed", err));
     toast.success("Vendor registration received. A confirmation email is on its way.");
     form.reset();

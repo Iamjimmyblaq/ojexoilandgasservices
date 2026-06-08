@@ -8,6 +8,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/_admin/admin/vendors")({ component: Vendors });
 
 function Vendors() {
+  const qc = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ["admin-vendors"],
     queryFn: async () => {
@@ -15,6 +16,14 @@ function Vendors() {
       if (error) throw error;
       return data;
     },
+  });
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("vendor_registrations").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-vendors"] }); toast.success("Deleted"); },
+    onError: (e: Error) => toast.error(e.message || "Delete failed"),
   });
   const rows = data ?? [];
 

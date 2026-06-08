@@ -296,32 +296,46 @@ const vendorSchema = z.object({
   website: z.string().max(255).nullable().optional(),
   category: z.string().min(1).max(200),
   capabilities: z.string().max(3000).nullable().optional(),
+  reference: z.string().max(60).nullable().optional(),
   id: z.string().uuid().nullable().optional(),
 });
 
 export const sendVendorEmails = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => vendorSchema.parse(input))
   .handler(async ({ data }) => {
+    const ref = data.reference || "";
+    const refBlock = ref
+      ? `<div style="margin:14px 0;padding:12px 16px;background:#fef3c7;border-left:4px solid #d4af37;border-radius:4px"><div style="font-size:12px;color:#78350f;letter-spacing:.5px">REFERENCE NUMBER</div><div style="font-size:18px;font-weight:700;color:#0a1f44;font-family:monospace">${esc(ref)}</div></div>`
+      : "";
+
     const customerHtml = shell("Vendor registration received", `
       <h2 style="color:#0a1f44;margin-top:0">Welcome, ${esc(data.contact_name)}!</h2>
-      <p style="color:#475569;line-height:1.6">Thank you for registering <strong>${esc(data.company_name)}</strong> as a vendor with OJEX Oil and Gas Services.</p>
-      <p style="color:#475569;line-height:1.6">Our procurement team will review your submission for the <strong>${esc(data.category)}</strong> category and contact you with next steps within <strong>5–7 business days</strong>.</p>`);
+      ${refBlock}
+      <p style="color:#475569;line-height:1.6">Thank you for registering <strong>${esc(data.company_name)}</strong> as a vendor with OJEX Oil and Gas Services under the <strong>${esc(data.category)}</strong> category.</p>
+      <h3 style="color:#0a1f44;margin:18px 0 8px;font-size:15px">What happens next</h3>
+      <ol style="color:#475569;line-height:1.7;padding-left:20px;margin:0">
+        <li>Our procurement team reviews your submission within <strong>5–7 business days</strong>.</li>
+        <li>We may reach out for supporting documents (company profile, certifications, references).</li>
+        <li>Approved vendors are added to our pre-qualified supplier pool and notified by email.</li>
+      </ol>
+      <p style="color:#475569;line-height:1.6;margin-top:16px">Please quote your reference number <strong style="font-family:monospace">${esc(ref)}</strong> in any future correspondence. For urgent matters, WhatsApp <a href="https://wa.me/2347075728373" style="color:#d4af37">+234 707 572 8373</a>.</p>`);
 
     const safeWebsite = data.website && /^https?:\/\//i.test(data.website) ? data.website : "";
-    const adminHtml = shell("🏭 New Vendor Registration", `
+    const adminHtml = shell(`🏭 New Vendor Registration${ref ? ` — ${ref}` : ""}`, `
       <table style="width:100%;border-collapse:collapse">
-        ${row("Company", data.company_name)}${row("Contact", data.contact_name)}${row("Email", data.email)}
+        ${row("Reference", ref)}${row("Company", data.company_name)}${row("Contact", data.contact_name)}${row("Email", data.email)}
         ${row("Phone", data.phone)}${row("Country", data.country)}${row("Website", safeWebsite)}${row("Category", data.category)}
       </table>
       ${data.capabilities ? `<div style="margin-top:12px;padding:12px;background:#f8fafc;border-radius:6px;font-size:14px;white-space:pre-wrap">${esc(data.capabilities)}</div>` : ""}
       <p style="margin-top:16px;font-size:12px;color:#64748b">Open in admin → /admin/vendors</p>`);
 
     return dispatch(
-      { email: data.email, subject: "Vendor registration received — OJEX", html: customerHtml },
-      { subject: `Vendor: ${data.company_name} — ${data.category}`.slice(0, 180), html: adminHtml },
-      { kind: "vendor", related_id: data.id ?? null },
+      { email: data.email, subject: `Vendor registration ${ref || ""} received — OJEX`.trim(), html: customerHtml },
+      { subject: `Vendor ${ref}: ${data.company_name} — ${data.category}`.slice(0, 180), html: adminHtml },
+      { kind: "vendor", related_id: data.id ?? null, related_reference: ref || null },
     );
   });
+
 
 // ====================== NEWSLETTER ======================
 const newsletterSchema = z.object({

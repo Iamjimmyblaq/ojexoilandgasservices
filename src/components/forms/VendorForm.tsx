@@ -16,8 +16,26 @@ const schema = z.object({
   capabilities: z.string().trim().max(2000).optional().or(z.literal("")),
 });
 
+export function generateVendorReference(now: Date = new Date()): string {
+  const yy = String(now.getUTCFullYear()).slice(-2);
+  const mm = String(now.getUTCMonth() + 1).padStart(2, "0");
+  const dd = String(now.getUTCDate()).padStart(2, "0");
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let rand = "";
+  const cryptoObj = typeof globalThis !== "undefined" ? (globalThis.crypto as Crypto | undefined) : undefined;
+  if (cryptoObj?.getRandomValues) {
+    const buf = new Uint32Array(6);
+    cryptoObj.getRandomValues(buf);
+    for (let i = 0; i < 6; i++) rand += alphabet[buf[i] % alphabet.length];
+  } else {
+    for (let i = 0; i < 6; i++) rand += alphabet[Math.floor(Math.random() * alphabet.length)];
+  }
+  return `VEN-${yy}${mm}${dd}-${rand}`;
+}
+
 export function VendorForm() {
   const [loading, setLoading] = useState(false);
+  const [reference, setReference] = useState<string | null>(null);
   const sendEmails = useServerFn(sendVendorEmails);
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -26,6 +44,7 @@ export function VendorForm() {
     const parsed = schema.safeParse(Object.fromEntries(fd));
     if (!parsed.success) { toast.error("Please complete the required fields."); return; }
     setLoading(true);
+    const ref = generateVendorReference();
     const payload = {
       ...parsed.data,
       phone: parsed.data.phone || null,
@@ -33,18 +52,24 @@ export function VendorForm() {
       website: parsed.data.website || null,
       capabilities: parsed.data.capabilities || null,
     };
-    const { error } = await supabase
-      .from("vendor_registrations")
-      .insert(payload);
+    const { error } = await supabase.from("vendor_registrations").insert(payload);
     setLoading(false);
     if (error) { toast.error("Could not submit registration."); return; }
-    sendEmails({ data: { ...payload, id: null } })
+    setReference(ref);
+    sendEmails({ data: { ...payload, id: null, reference: ref } })
       .catch((err) => console.warn("vendor email send failed", err));
-    toast.success("Vendor registration received. A confirmation email is on its way.");
+    toast.success(`Registered. Your reference is ${ref}.`);
     form.reset();
   }
   return (
     <form onSubmit={onSubmit} className="grid gap-4">
+      {reference && (
+        <div className="rounded-md border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/10 p-4">
+          <div className="text-xs font-semibold uppercase tracking-wider text-[color:var(--gold)]">Your reference</div>
+          <div className="font-mono text-lg font-bold">{reference}</div>
+          <p className="mt-1 text-xs text-muted-foreground">Keep this number for follow-up. A confirmation email is on its way.</p>
+        </div>
+      )}
       <div className="grid gap-4 sm:grid-cols-2">
         <Field name="company_name" label="Company name" required />
         <Field name="contact_name" label="Contact person" required />

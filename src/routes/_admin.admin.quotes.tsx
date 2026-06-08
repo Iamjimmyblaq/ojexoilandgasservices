@@ -31,6 +31,15 @@ function Quotes() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-quotes"] }); toast.success("Updated"); },
   });
 
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("quote_requests").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-quotes"] }); toast.success("Deleted"); },
+    onError: (e: Error) => toast.error(e.message || "Delete failed"),
+  });
+
   const rows = (data ?? []).filter((r) => !filter || r.status === filter);
 
   return (

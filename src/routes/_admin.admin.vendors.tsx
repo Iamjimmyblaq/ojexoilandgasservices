@@ -1,12 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { downloadCSV, toCSV } from "@/lib/csv";
-import { Download } from "lucide-react";
+import { Download, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_admin/admin/vendors")({ component: Vendors });
 
 function Vendors() {
+  const qc = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ["admin-vendors"],
     queryFn: async () => {
@@ -14,6 +16,14 @@ function Vendors() {
       if (error) throw error;
       return data;
     },
+  });
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("vendor_registrations").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-vendors"] }); toast.success("Deleted"); },
+    onError: (e: Error) => toast.error(e.message || "Delete failed"),
   });
   const rows = data ?? [];
 
@@ -30,11 +40,11 @@ function Vendors() {
       <div className="overflow-x-auto rounded-lg border border-border bg-card">
         <table className="w-full text-sm">
           <thead className="bg-muted text-left text-xs uppercase tracking-wider text-muted-foreground">
-            <tr><th className="p-3">Date</th><th className="p-3">Company</th><th className="p-3">Contact</th><th className="p-3">Category</th><th className="p-3">Country</th><th className="p-3">Capabilities</th></tr>
+            <tr><th className="p-3">Date</th><th className="p-3">Company</th><th className="p-3">Contact</th><th className="p-3">Category</th><th className="p-3">Country</th><th className="p-3">Capabilities</th><th className="p-3"></th></tr>
           </thead>
           <tbody>
-            {isLoading && <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">Loading…</td></tr>}
-            {!isLoading && rows.length === 0 && <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">No vendors registered.</td></tr>}
+            {isLoading && <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">Loading…</td></tr>}
+            {!isLoading && rows.length === 0 && <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">No vendors registered.</td></tr>}
             {rows.map((v) => (
               <tr key={v.id} className="border-t border-border align-top">
                 <td className="p-3 text-xs text-muted-foreground">{new Date(v.created_at).toLocaleDateString()}</td>
@@ -43,6 +53,16 @@ function Vendors() {
                 <td className="p-3">{v.category}</td>
                 <td className="p-3">{v.country ?? "—"}</td>
                 <td className="p-3 max-w-xs"><p className="line-clamp-3 text-xs text-muted-foreground">{v.capabilities ?? ""}</p></td>
+                <td className="p-3">
+                  <button
+                    onClick={() => { if (confirm(`Delete vendor ${v.company_name}? This cannot be undone.`)) remove.mutate(v.id); }}
+                    className="rounded border border-destructive/30 p-1.5 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                    title="Delete"
+                    aria-label="Delete vendor"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

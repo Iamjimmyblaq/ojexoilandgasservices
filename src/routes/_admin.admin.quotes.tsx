@@ -5,7 +5,7 @@ import { StatusBadge } from "@/components/admin/StatusBadge";
 import { downloadCSV, toCSV } from "@/lib/csv";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Download } from "lucide-react";
+import { Download, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/_admin/admin/quotes")({ component: Quotes });
 
@@ -29,6 +29,15 @@ function Quotes() {
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-quotes"] }); toast.success("Updated"); },
+  });
+
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("quote_requests").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-quotes"] }); toast.success("Deleted"); },
+    onError: (e: Error) => toast.error(e.message || "Delete failed"),
   });
 
   const rows = (data ?? []).filter((r) => !filter || r.status === filter);
@@ -67,9 +76,19 @@ function Quotes() {
                 <td className="p-3 max-w-xs"><div className="font-medium">{r.product_service}</div><div className="text-xs text-muted-foreground">Qty: {r.quantity ?? "—"} · {r.timeline ?? ""}</div>{r.notes && <div className="mt-1 text-xs text-muted-foreground line-clamp-2">{r.notes}</div>}</td>
                 <td className="p-3"><StatusBadge status={r.status} /></td>
                 <td className="p-3">
-                  <select defaultValue={r.status} onChange={(e) => update.mutate({ id: r.id, status: e.target.value })} className="rounded border border-input bg-background px-2 py-1 text-xs">
-                    {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-                  </select>
+                  <div className="flex items-center gap-2">
+                    <select defaultValue={r.status} onChange={(e) => update.mutate({ id: r.id, status: e.target.value })} className="rounded border border-input bg-background px-2 py-1 text-xs">
+                      {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                    <button
+                      onClick={() => { if (confirm(`Delete quote request from ${r.company_name}? This cannot be undone.`)) remove.mutate(r.id); }}
+                      className="rounded border border-destructive/30 p-1.5 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                      title="Delete"
+                      aria-label="Delete quote request"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

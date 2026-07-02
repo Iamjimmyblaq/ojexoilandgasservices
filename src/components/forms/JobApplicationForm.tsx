@@ -3,7 +3,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
-import { sendJobApplicationEmails } from "@/lib/email.functions";
+import { sendJobApplicationEmails, createJobApplication, attachResumeToApplication } from "@/lib/email.functions";
 import { CheckCircle2, FileText, Link as LinkIcon } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
@@ -37,6 +37,8 @@ export function JobApplicationForm({ jobId, position }: { jobId?: string; positi
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [success, setSuccess] = useState<null | { name: string; reference: string; email: string; position: string }>(null);
   const sendEmails = useServerFn(sendJobApplicationEmails);
+  const createApp = useServerFn(createJobApplication);
+  const attachResume = useServerFn(attachResumeToApplication);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -50,66 +52,62 @@ export function JobApplicationForm({ jobId, position }: { jobId?: string; positi
 
     setLoading(true);
     const reference = generateReference();
-
-    // Upload resume to private bucket
-    const ext = resumeFile.name.split(".").pop()?.toLowerCase() || "pdf";
     const safeName = resumeFile.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 80);
     const path = `${reference}/${Date.now()}_${safeName}`;
+
+    // 1. Insert application row via admin server fn (bypasses ordering/RLS issues)
+    try {
+      await createApp({
+        data: {
+          job_id: jobId ?? null,
+          full_name: parsed.data.full_name,
+          email: parsed.data.email,
+          phone: parsed.data.phone || null,
+          position_applied: parsed.data.position_applied,
+          experience_years: parsed.data.experience_years ? Number(parsed.data.experience_years) : null,
+          cover_letter: parsed.data.cover_letter || null,
+          reference,
+        },
+      });
+    } catch (err: any) {
+      setLoading(false);
+      console.error("application insert failed", err);
+      toast.error(err?.message || "Could not submit application. Please try again.");
+      return;
+    }
+
+    // 2. Upload resume — storage policy now finds the matching row
     const up = await supabase.storage.from("resumes").upload(path, resumeFile, {
       contentType: resumeFile.type,
       upsert: false,
     });
     if (up.error) {
-      setLoading(false);
-      console.error("resume upload failed", up.error);
-      toast.error("Could not upload resume. Try again.");
-      return;
-    }
-
-    void ext;
-    const payload = {
-      job_id: jobId ?? null,
-      full_name: parsed.data.full_name,
-      email: parsed.data.email,
-      phone: parsed.data.phone || null,
-      position_applied: parsed.data.position_applied,
-      experience_years: parsed.data.experience_years ? Number(parsed.data.experience_years) : null,
-      cover_letter: parsed.data.cover_letter || null,
-      resume_url: path, // storage object path, NOT a public URL
-      reference,
-    };
-
-    const { error } = await supabase.from("job_applications").insert({
-      job_id: payload.job_id,
-      full_name: payload.full_name,
-      email: payload.email,
-      phone: payload.phone,
-      position_applied: payload.position_applied,
-      experience_years: payload.experience_years,
-      cover_letter: payload.cover_letter,
-      resume_url: payload.resume_url,
-      reference: payload.reference,
-    });
-    setLoading(false);
-    if (error) {
-      console.error("application insert failed", error);
-      toast.error(error.message || "Could not submit application.");
-      return;
+      console.warn("resume upload failed", up.error);
+      toast.warning("Application received, but resume upload failed. We'll email you to request it.");
+    } else {
+      // 3. Attach path (anon has no UPDATE policy → server fn with admin)
+      try {
+        await attachResume({ data: { reference, path } });
+      } catch (err) {
+        console.warn("attach resume path failed", err);
+      }
     }
 
     sendEmails({
       data: {
-        full_name: payload.full_name,
-        email: payload.email,
-        phone: payload.phone,
-        position_applied: payload.position_applied,
-        experience_years: payload.experience_years,
-        cover_letter: payload.cover_letter,
-        resume_url: null, // do not email storage paths
+        full_name: parsed.data.full_name,
+        email: parsed.data.email,
+        phone: parsed.data.phone || null,
+        position_applied: parsed.data.position_applied,
+        experience_years: parsed.data.experience_years ? Number(parsed.data.experience_years) : null,
+        cover_letter: parsed.data.cover_letter || null,
+        resume_url: null,
         reference,
         id: null,
       },
     }).catch((err) => console.warn("email send failed", err));
+
+    setLoading(false);
 
     setSuccess({
       name: parsed.data.full_name,

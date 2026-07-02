@@ -37,6 +37,8 @@ export function JobApplicationForm({ jobId, position }: { jobId?: string; positi
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [success, setSuccess] = useState<null | { name: string; reference: string; email: string; position: string }>(null);
   const sendEmails = useServerFn(sendJobApplicationEmails);
+  const createApp = useServerFn(createJobApplication);
+  const attachResume = useServerFn(attachResumeToApplication);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

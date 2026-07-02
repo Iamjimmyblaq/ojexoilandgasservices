@@ -286,6 +286,56 @@ export const sendJobApplicationEmails = createServerFn({ method: "POST" })
     );
   });
 
+// Create the job_applications row using admin (bypasses ordering issues with resume upload RLS)
+const createJobApplicationSchema = z.object({
+  job_id: z.string().uuid().nullable().optional(),
+  full_name: z.string().min(1).max(200),
+  email: z.string().email().max(255),
+  phone: z.string().max(40).nullable().optional(),
+  position_applied: z.string().min(1).max(200),
+  experience_years: z.number().nullable().optional(),
+  cover_letter: z.string().max(5000).nullable().optional(),
+  reference: z.string().min(4).max(60),
+});
+
+export const createJobApplication = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => createJobApplicationSchema.parse(input))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("job_applications").insert({
+      job_id: data.job_id ?? null,
+      full_name: data.full_name,
+      email: data.email,
+      phone: data.phone ?? null,
+      position_applied: data.position_applied,
+      experience_years: data.experience_years ?? null,
+      cover_letter: data.cover_letter ?? null,
+      resume_url: null,
+      reference: data.reference,
+      status: "new",
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true, reference: data.reference };
+  });
+
+// Attach resume storage path after upload (admin bypass since anon has no UPDATE)
+const attachResumeSchema = z.object({
+  reference: z.string().min(4).max(60),
+  path: z.string().min(1).max(500),
+});
+
+export const attachResumeToApplication = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => attachResumeSchema.parse(input))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("job_applications")
+      .update({ resume_url: data.path })
+      .eq("reference", data.reference);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 // ====================== VENDOR REGISTRATION ======================
 const vendorSchema = z.object({
   company_name: z.string().min(1).max(200),

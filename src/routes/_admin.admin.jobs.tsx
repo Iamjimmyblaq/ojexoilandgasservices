@@ -72,7 +72,23 @@ function Jobs() {
   async function downloadResume(path: string) {
     try {
       const { url } = await getResumeUrl({ data: { path } });
-      window.open(url, "_blank", "noopener,noreferrer");
+      const filename = path.split("/").pop() || "resume";
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+      } catch (fetchErr) {
+        console.warn("blob download failed, falling back to open", fetchErr);
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
     } catch (e: any) {
       toast.error(e?.message || "Could not generate download link.");
     }

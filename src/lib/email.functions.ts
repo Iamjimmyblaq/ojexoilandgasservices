@@ -516,12 +516,19 @@ export const getResumeSignedUrl = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => resumeUrlSchema.parse(input))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const path = data.path.replace(/^\/+/, "").replace(/^resumes\//, "");
     const { data: signed, error } = await supabaseAdmin.storage
       .from("resumes")
-      .createSignedUrl(data.path, 60 * 10); // 10 minutes
-    if (error || !signed) throw new Error(error?.message || "Could not create download link");
+      .createSignedUrl(path, 60 * 10); // 10 minutes
+    if (error || !signed) {
+      const msg = /not.?found/i.test(error?.message || "")
+        ? "Resume file is missing from storage — the applicant's upload didn't complete. Please email them to resend."
+        : error?.message || "Could not create download link";
+      throw new Error(msg);
+    }
     return { url: signed.signedUrl };
   });
+
 
 // ====================== BLOG POST → NEWSLETTER BLAST ======================
 const blogBlastSchema = z.object({ post_id: z.string().uuid() });

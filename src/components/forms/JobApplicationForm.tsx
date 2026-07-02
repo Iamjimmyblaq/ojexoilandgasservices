@@ -3,7 +3,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
-import { sendJobApplicationEmails } from "@/lib/email.functions";
+import { sendJobApplicationEmails, createJobApplication, attachResumeToApplication } from "@/lib/email.functions";
 import { CheckCircle2, FileText, Link as LinkIcon } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 

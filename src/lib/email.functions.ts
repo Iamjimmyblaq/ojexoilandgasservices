@@ -551,7 +551,8 @@ export const sendBlogPostNewsletter = createServerFn({ method: "POST" })
     const recipients = (subs ?? []).map((s) => s.email).filter(Boolean);
     if (recipients.length === 0) return { ok: true, sent: 0, failed: 0 };
 
-    const url = `https://ojexoilandgasservices.lovable.app/blog/${encodeURIComponent(post.slug)}`;
+    const siteUrl = (process.env.SITE_URL || process.env.PUBLIC_SITE_URL || "https://ojexoilandgas.com").replace(/\/$/, "");
+    const url = `${siteUrl}/blog/${encodeURIComponent(post.slug)}`;
     const safeCover = post.cover_image_url && /^https?:\/\//i.test(post.cover_image_url) ? post.cover_image_url : "";
     const coverHtml = safeCover
       ? `<img src="${esc(safeCover)}" alt="" style="width:100%;max-height:320px;object-fit:cover;border-radius:6px;margin:0 0 16px" />`

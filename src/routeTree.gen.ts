@@ -21,6 +21,7 @@ import { Route as ProcurementRouteImport } from './routes/procurement'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as MyApplicationsRouteImport } from './routes/my-applications'
 import { Route as IndustriesRouteImport } from './routes/industries'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FaqsRouteImport } from './routes/faqs'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CareersRouteImport } from './routes/careers'
@@ -110,6 +111,11 @@ const MyApplicationsRoute = MyApplicationsRouteImport.update({
 const IndustriesRoute = IndustriesRouteImport.update({
   id: '/industries',
   path: '/industries',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqsRoute = FaqsRouteImport.update({
@@ -271,6 +277,7 @@ export interface FileRoutesByFullPath {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/faqs': typeof FaqsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/industries': typeof IndustriesRoute
   '/my-applications': typeof MyApplicationsRoute
   '/privacy': typeof PrivacyRoute
@@ -314,6 +321,7 @@ export interface FileRoutesByTo {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/faqs': typeof FaqsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/industries': typeof IndustriesRoute
   '/my-applications': typeof MyApplicationsRoute
   '/privacy': typeof PrivacyRoute
@@ -359,6 +367,7 @@ export interface FileRoutesById {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/faqs': typeof FaqsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/industries': typeof IndustriesRoute
   '/my-applications': typeof MyApplicationsRoute
   '/privacy': typeof PrivacyRoute
@@ -404,6 +413,7 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/faqs'
+    | '/forgot-password'
     | '/industries'
     | '/my-applications'
     | '/privacy'
@@ -447,6 +457,7 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/faqs'
+    | '/forgot-password'
     | '/industries'
     | '/my-applications'
     | '/privacy'
@@ -491,6 +502,7 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/faqs'
+    | '/forgot-password'
     | '/industries'
     | '/my-applications'
     | '/privacy'
@@ -536,6 +548,7 @@ export interface RootRouteChildren {
   CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
   FaqsRoute: typeof FaqsRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   IndustriesRoute: typeof IndustriesRoute
   MyApplicationsRoute: typeof MyApplicationsRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -636,6 +649,13 @@ declare module '@tanstack/react-router' {
       path: '/industries'
       fullPath: '/industries'
       preLoaderRoute: typeof IndustriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faqs': {
@@ -939,6 +959,7 @@ const rootRouteChildren: RootRouteChildren = {
   CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
   FaqsRoute: FaqsRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   IndustriesRoute: IndustriesRoute,
   MyApplicationsRoute: MyApplicationsRoute,
   PrivacyRoute: PrivacyRoute,

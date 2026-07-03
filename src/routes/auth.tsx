@@ -71,7 +71,12 @@ function AuthPage() {
               <input type="email" className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2" required value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div>
-              <label className="block text-sm font-medium">Password</label>
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-medium">Password</label>
+                {mode === "signin" && (
+                  <Link to="/forgot-password" className="text-xs text-[color:var(--gold-deep)] underline">Forgot password?</Link>
+                )}
+              </div>
               <input type="password" minLength={8} className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2" required value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
             <button disabled={busy} className="btn-gold w-full">{busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}</button>

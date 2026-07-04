@@ -4,10 +4,64 @@ import { supabase } from "@/integrations/supabase/client";
 import { QuoteForm } from "@/components/forms/QuoteForm";
 import { BackButton } from "@/components/BackButton";
 import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
+import { SITE } from "@/lib/site";
 
 export const Route = createFileRoute("/products/$slug")({
   component: ProductDetail,
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from("products")
+      .select("name, short_description, description, image_url, manufacturer, category")
+      .eq("slug", params.slug)
+      .maybeSingle();
+    return { product: data };
+  },
+  head: ({ params, loaderData }) => {
+    const p = loaderData?.product;
+    const url = `https://ojexoilandgasservices.lovable.app/products/${params.slug}`;
+    const title = p
+      ? `${p.name} — ${SITE.short} Catalog`
+      : `Product — ${SITE.name}`;
+    const description = p
+      ? (p.short_description || p.description || `${p.name} available from ${SITE.name}.`).slice(0, 158)
+      : `Industrial product from ${SITE.name}.`;
+    const meta: any[] = [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:url", content: url },
+      { property: "og:type", content: "product" },
+    ];
+    if (p?.image_url) {
+      meta.push({ property: "og:image", content: p.image_url });
+      meta.push({ name: "twitter:image", content: p.image_url });
+    }
+    const scripts: any[] = [];
+    if (p) {
+      scripts.push({
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: p.name,
+          description: p.description || p.short_description || undefined,
+          image: p.image_url || undefined,
+          category: p.category || undefined,
+          manufacturer: p.manufacturer
+            ? { "@type": "Organization", name: p.manufacturer }
+            : undefined,
+          brand: p.manufacturer
+            ? { "@type": "Brand", name: p.manufacturer }
+            : undefined,
+          url,
+        }),
+      });
+    }
+    return { meta, links: [{ rel: "canonical", href: url }], scripts };
+  },
 });
+
 
 interface Product {
   id: string; name: string; slug: string; category: string; sku?: string | null;

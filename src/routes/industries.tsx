@@ -9,7 +9,7 @@ export const Route = createFileRoute("/industries")({
       <section className="section"><div className="container-x grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {INDUSTRIES.map(i => (
           <div key={i.name} className="card-elevated">
-            <h3 className="text-lg font-bold">{i.name}</h3>
+            <h2 className="text-lg font-bold">{i.name}</h2>
             <p className="mt-2 text-sm text-muted-foreground">{i.desc}</p>
           </div>
         ))}

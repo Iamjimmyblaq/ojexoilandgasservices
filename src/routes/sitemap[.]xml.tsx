@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
+const BASE_URL = "https://ojexoilandgasservices.lovable.app";
+
 const STATIC_PATHS = [
   "/", "/about", "/services", "/products", "/industries", "/projects",
   "/careers", "/contact", "/quote", "/blog", "/faqs", "/vendor-registration",
@@ -13,9 +15,9 @@ const STATIC_PATHS = [
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
-      GET: async ({ request }) => {
-        const origin = new URL(request.url).origin;
+      GET: async () => {
         let productSlugs: string[] = [];
+        let blogSlugs: string[] = [];
         try {
           const { data } = await supabaseAdmin
             .from("products")
@@ -25,9 +27,18 @@ export const Route = createFileRoute("/sitemap.xml")({
         } catch {
           // ignore
         }
-        const all = [...STATIC_PATHS, ...productSlugs];
+        try {
+          const { data } = await supabaseAdmin
+            .from("blog_posts")
+            .select("slug")
+            .eq("published", true);
+          blogSlugs = (data ?? []).map((p) => `/blog/${p.slug}`);
+        } catch {
+          // ignore
+        }
+        const all = [...STATIC_PATHS, ...productSlugs, ...blogSlugs];
         const urls = all
-          .map((p) => `  <url><loc>${origin}${p}</loc></url>`)
+          .map((p) => `  <url><loc>${BASE_URL}${p}</loc></url>`)
           .join("\n");
         const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`;
         return new Response(xml, {
@@ -37,3 +48,4 @@ export const Route = createFileRoute("/sitemap.xml")({
     },
   },
 });
+

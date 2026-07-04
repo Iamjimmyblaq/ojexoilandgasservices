@@ -38,7 +38,7 @@ function Services() {
             return (
               <div key={link.to} className="card-elevated group flex flex-col">
                 <span className="text-[10px] font-semibold uppercase tracking-widest text-[color:var(--gold-deep)]">{s.eyebrow}</span>
-                <h3 className="mt-2 text-xl font-bold leading-tight">{link.label}</h3>
+                <h2 className="mt-2 text-xl font-bold leading-tight">{link.label}</h2>
                 <p className="mt-3 text-sm text-muted-foreground line-clamp-3">{s.layman}</p>
                 <div className="mt-5 flex flex-wrap items-center gap-3 pt-2">
                   <Link

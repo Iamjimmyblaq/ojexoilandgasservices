@@ -39,10 +39,12 @@ function Products() {
         <div className="container-x">
           <div className="flex flex-wrap items-center gap-3">
             <div className="relative flex-1 min-w-[220px]">
+              <label htmlFor="product-search" className="sr-only">Search products</label>
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search products..." className="w-full rounded-md border border-input bg-card py-2.5 pl-10 pr-3 text-sm focus:border-[color:var(--gold)] focus:outline-none" />
+              <input id="product-search" aria-label="Search products" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search products..." className="w-full rounded-md border border-input bg-card py-2.5 pl-10 pr-3 text-sm focus:border-[color:var(--gold)] focus:outline-none" />
             </div>
-            <select value={cat} onChange={(e) => setCat(e.target.value)} className="rounded-md border border-input bg-card px-3 py-2.5 text-sm focus:border-[color:var(--gold)] focus:outline-none">
+            <label htmlFor="product-category" className="sr-only">Filter by category</label>
+            <select id="product-category" aria-label="Filter by category" value={cat} onChange={(e) => setCat(e.target.value)} className="rounded-md border border-input bg-card px-3 py-2.5 text-sm focus:border-[color:var(--gold)] focus:outline-none">
               <option value="all">All categories</option>
               {PRODUCT_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
@@ -56,7 +58,7 @@ function Products() {
                     <span className="text-xs font-semibold uppercase tracking-widest text-[color:var(--gold)]">{p.category}</span>
                     {p.featured && <span className="rounded-full bg-[color:var(--gold)]/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--navy-deep)]">Featured</span>}
                   </div>
-                  <h3 className="mt-3 text-lg font-bold">{p.name}</h3>
+                  <h2 className="mt-3 text-lg font-bold">{p.name}</h2>
                 </div>
                 {(p.image_url || (p.gallery_urls && p.gallery_urls[0])) && (
                   <div className="aspect-[4/3] w-full overflow-hidden bg-muted">

@@ -1,0 +1,36 @@
+# OJEX Oil and Gas Services
+
+> Industrial procurement, equipment supply, base oil & diesel distribution, logistics, and oilfield manpower recruitment across West Africa.
+
+OJEX Oil and Gas Services is a Nigerian-incorporated procurement and manpower partner for upstream operators, EPC contractors, and industrial clients across Nigeria, West Africa, and beyond. Based in Port Harcourt, Rivers State.
+
+## Pages
+
+- [Home](/): Overview of OJEX services and industries served.
+- [About](/about): Company background, mission, and capabilities.
+- [Services](/services): Full list of energy-sector service lines.
+- [Products](/products): Catalog of industrial equipment, tools, PPE, and consumables.
+- [Industries](/industries): Sectors OJEX serves.
+- [Projects](/projects): Past project highlights.
+- [Careers](/careers): Open positions and general applications.
+- [Blog](/blog): News, industry insights, and updates.
+- [FAQs](/faqs): Common questions on sourcing, lead times, and vendor onboarding.
+- [Contact](/contact): Office, phone, email, and WhatsApp.
+- [Request a Quote](/quote): Submit an RFQ for equipment, fuel, or manpower.
+- [Vendor Registration](/vendor-registration): Register as an OJEX supplier.
+
+## Services
+
+- [Procurement & Sourcing](/services/procurement): Global sourcing of certified industrial equipment and consumables.
+- [Industrial Equipment Supply](/services/equipment): Shale shakers, mud cleaners, drilling tools, offshore equipment.
+- [Base Oil & Diesel Supply](/services/diesel): Bulk AGO/diesel and base oil distribution.
+- [Manpower & Recruitment](/services/recruitment): Technical, engineering, and offshore staffing.
+- [Logistics Support](/services/logistics): Customs clearance, freight forwarding, on-site delivery.
+- [Safety Equipment](/services/safety): Certified PPE, FRC coveralls, safety supplies.
+- [Offshore Support](/services/offshore): Marine equipment and offshore platform supplies.
+- [Vendor Management](/services/vendor-management): Pre-qualified vendor pool with contract administration.
+
+## Optional
+
+- [Privacy Policy](/privacy)
+- [Terms](/terms)

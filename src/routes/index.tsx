@@ -12,13 +12,15 @@ export const Route = createFileRoute("/")({
   component: Home,
   head: () => ({
     meta: [
-      { title: `${SITE.name} — ${SITE.tagline}` },
+      { title: "OJEX — Industrial Sourcing & Oilfield Manpower" },
       { name: "description", content: SITE.description },
-      { property: "og:title", content: SITE.name },
+      { property: "og:title", content: `${SITE.name} — Industrial Sourcing & Manpower` },
       { property: "og:description", content: SITE.description },
-      { property: "og:url", content: "/" },
+      { property: "og:url", content: "https://ojexoilandgasservices.lovable.app/" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/c2c106a6-f1ab-4322-a57d-978d7e1ef220" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/c2c106a6-f1ab-4322-a57d-978d7e1ef220" },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [{ rel: "canonical", href: "https://ojexoilandgasservices.lovable.app/" }],
   }),
 });
 

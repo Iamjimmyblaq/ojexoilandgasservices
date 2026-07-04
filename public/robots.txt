@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /auth
+Disallow: /procurement
+Disallow: /my-applications
+Disallow: /reset-password
+Disallow: /forgot-password
+
+Sitemap: https://ojexoilandgasservices.lovable.app/sitemap.xml

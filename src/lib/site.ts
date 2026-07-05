@@ -48,6 +48,7 @@ export const PRODUCT_CATEGORIES = [
   "Oilfield Consumables",
   "Chemicals",
   "Base Oil/Diesel",
+  "LPG Skids & Accessories",
 ] as const;
 
 export const INDUSTRIES = [

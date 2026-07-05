@@ -1,3 +1,5 @@
+import lpgSkidImage from "@/assets/lpg-skid.jpg";
+
 export interface ServiceDef {
   slug: string;
   eyebrow: string;
@@ -7,6 +9,8 @@ export interface ServiceDef {
   intro: string;
   bullets: string[];
   categories: string[]; // product categories shown on this service page
+  heroImage?: string;
+  steps?: { title: string; body: string }[];
 }
 
 export const SERVICES: Record<string, ServiceDef> = {

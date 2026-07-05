@@ -1,0 +1,20 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { ServicePage } from "@/components/ServicePage";
+import { SERVICES } from "@/lib/services-data";
+import { SITE } from "@/lib/site";
+
+const S = SERVICES.lpg;
+export const Route = createFileRoute("/services/lpg")({
+  component: () => <ServicePage service={S} />,
+  head: () => ({
+    meta: [
+      { title: `${S.eyebrow} — ${SITE.name}` },
+      { name: "description", content: S.layman },
+      { property: "og:title", content: `${S.eyebrow} — OJEX` },
+      { property: "og:description", content: S.subtitle },
+      { property: "og:url", content: `/services/${S.slug}` },
+      ...(S.heroImage ? [{ property: "og:image", content: S.heroImage }] : []),
+    ],
+    links: [{ rel: "canonical", href: `/services/${S.slug}` }],
+  }),
+});

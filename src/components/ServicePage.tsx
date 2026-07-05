@@ -27,6 +27,23 @@ export function ServicePage({ service }: { service: ServiceDef }) {
     <>
       <PageHero eyebrow={service.eyebrow} title={service.title} subtitle={service.subtitle} />
 
+      {service.heroImage && (
+        <section className="bg-[color:var(--navy-deep)]">
+          <div className="container-x pb-10">
+            <div className="overflow-hidden rounded-xl border border-white/10 shadow-2xl">
+              <img
+                src={service.heroImage}
+                alt={service.title}
+                width={1024}
+                height={1024}
+                loading="lazy"
+                className="h-auto w-full object-cover"
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
       <section className="section">
         <div className="container-x grid gap-12 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-8">
@@ -44,6 +61,20 @@ export function ServicePage({ service }: { service: ServiceDef }) {
               <h2 className="text-2xl font-bold">The full picture</h2>
               <p className="mt-3 text-muted-foreground">{service.intro}</p>
             </div>
+
+            {service.steps && service.steps.length > 0 && (
+              <div>
+                <h3 className="text-lg font-bold">How we work</h3>
+                <ol className="mt-3 grid gap-3 sm:grid-cols-2">
+                  {service.steps.map((step) => (
+                    <li key={step.title} className="rounded-md border border-border bg-card p-4">
+                      <p className="text-sm font-bold text-[color:var(--navy)]">{step.title}</p>
+                      <p className="mt-1.5 text-sm text-muted-foreground">{step.body}</p>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
 
             <div>
               <h3 className="text-lg font-bold">What's included</h3>

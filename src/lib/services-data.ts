@@ -1,3 +1,5 @@
+import lpgSkidImage from "@/assets/lpg-skid.jpg";
+
 export interface ServiceDef {
   slug: string;
   eyebrow: string;
@@ -7,6 +9,8 @@ export interface ServiceDef {
   intro: string;
   bullets: string[];
   categories: string[]; // product categories shown on this service page
+  heroImage?: string;
+  steps?: { title: string; body: string }[];
 }
 
 export const SERVICES: Record<string, ServiceDef> = {
@@ -66,6 +70,32 @@ export const SERVICES: Record<string, ServiceDef> = {
       "Depot fulfilment and direct-to-site",
     ],
     categories: ["Base Oil/Diesel", "Chemicals"],
+  },
+  lpg: {
+    slug: "lpg",
+    eyebrow: "LPG Skid & Franchising",
+    title: "LPG skid procurement, installation & franchising.",
+    subtitle: "We help you build and operate a complete LPG retail business under the OJEX brand — from skid to steady supply.",
+    layman:
+      "In simple terms: we set you up with your own cooking gas station — we source the skid and accessories, install and commission it, license you to trade as an OJEX outlet, and keep supplying you the LPG. You own the business and keep the profits; we keep the products flowing.",
+    intro:
+      "The LPG market in Nigeria continues to present enormous opportunities for entrepreneurs, but setting up an LPG retail business can be challenging. At OJEX Oil and Gas Services Ltd, we've simplified the process. We don't just sell gas — we help you build and operate a complete LPG business, from equipment procurement through installation, commissioning, franchising under the OJEX brand, and ongoing LPG supply. It's a model similar to how major downstream brands expand their retail footprint through independently owned outlets operating within an established network.",
+    bullets: [
+      "Procurement of LPG gas skids and all required accessories",
+      "Professional installation and commissioning to safety standards",
+      "Franchise licensing to operate under the OJEX brand",
+      "Operational support, staff training, and HSE guidance",
+      "You own the outlet and enjoy the profits",
+      "Long-term LPG supply partnership — consistent product availability",
+    ],
+    categories: ["LPG Skids & Accessories"],
+    heroImage: lpgSkidImage,
+    steps: [
+      { title: "1. LPG Gas Skid Procurement", body: "We source the skid, dispensers, valves, hoses, and all accessories from vetted manufacturers — right-sized for your location and budget." },
+      { title: "2. Installation & Commissioning", body: "Our engineers handle site preparation, mechanical installation, safety testing, and regulatory commissioning end to end." },
+      { title: "3. Franchising Under OJEX", body: "You operate the outlet under the OJEX brand and licensing framework — carrying our name, standards, and reputation." },
+      { title: "4. LPG Supply to Retailers", body: "OJEX remains your trusted supplier of LPG, ensuring consistent product availability and a long-term partnership as you grow." },
+    ],
   },
   recruitment: {
     slug: "recruitment",

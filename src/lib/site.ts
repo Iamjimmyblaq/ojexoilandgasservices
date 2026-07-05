@@ -28,6 +28,7 @@ export const SERVICE_LINKS = [
   { to: "/services/procurement", label: "Procurement & Sourcing" },
   { to: "/services/equipment", label: "Industrial Equipment Supply" },
   { to: "/services/diesel", label: "Base Oil & Diesel Supply" },
+  { to: "/services/lpg", label: "LPG Skid & Franchising" },
   { to: "/services/recruitment", label: "Manpower & Recruitment" },
   { to: "/services/logistics", label: "Logistics Support" },
   { to: "/services/safety", label: "Safety Equipment" },

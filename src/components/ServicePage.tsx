@@ -75,22 +75,6 @@ export function ServicePage({ service }: { service: ServiceDef }) {
                 </ol>
               </div>
             )}
-        <div className="container-x grid gap-12 lg:grid-cols-3">
-          <div className="lg:col-span-2 space-y-8">
-            <div className="rounded-lg border-l-4 border-[color:var(--gold)] bg-[color:var(--gold)]/5 p-5">
-              <div className="flex items-start gap-3">
-                <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-[color:var(--gold-deep)]" />
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--gold-deep)]">In Plain English</p>
-                  <p className="mt-1.5 text-base leading-relaxed text-foreground">{service.layman}</p>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h2 className="text-2xl font-bold">The full picture</h2>
-              <p className="mt-3 text-muted-foreground">{service.intro}</p>
-            </div>
 
             <div>
               <h3 className="text-lg font-bold">What's included</h3>

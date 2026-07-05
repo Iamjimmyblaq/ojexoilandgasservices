@@ -37,6 +37,7 @@ import { Route as ServicesSafetyRouteImport } from './routes/services.safety'
 import { Route as ServicesRecruitmentRouteImport } from './routes/services.recruitment'
 import { Route as ServicesProcurementRouteImport } from './routes/services.procurement'
 import { Route as ServicesOffshoreRouteImport } from './routes/services.offshore'
+import { Route as ServicesLpgRouteImport } from './routes/services.lpg'
 import { Route as ServicesLogisticsRouteImport } from './routes/services.logistics'
 import { Route as ServicesEquipmentRouteImport } from './routes/services.equipment'
 import { Route as ServicesDieselRouteImport } from './routes/services.diesel'
@@ -194,6 +195,11 @@ const ServicesOffshoreRoute = ServicesOffshoreRouteImport.update({
   path: '/offshore',
   getParentRoute: () => ServicesRoute,
 } as any)
+const ServicesLpgRoute = ServicesLpgRouteImport.update({
+  id: '/lpg',
+  path: '/lpg',
+  getParentRoute: () => ServicesRoute,
+} as any)
 const ServicesLogisticsRoute = ServicesLogisticsRouteImport.update({
   id: '/logistics',
   path: '/logistics',
@@ -302,6 +308,7 @@ export interface FileRoutesByFullPath {
   '/services/diesel': typeof ServicesDieselRoute
   '/services/equipment': typeof ServicesEquipmentRoute
   '/services/logistics': typeof ServicesLogisticsRoute
+  '/services/lpg': typeof ServicesLpgRoute
   '/services/offshore': typeof ServicesOffshoreRoute
   '/services/procurement': typeof ServicesProcurementRoute
   '/services/recruitment': typeof ServicesRecruitmentRoute
@@ -347,6 +354,7 @@ export interface FileRoutesByTo {
   '/services/diesel': typeof ServicesDieselRoute
   '/services/equipment': typeof ServicesEquipmentRoute
   '/services/logistics': typeof ServicesLogisticsRoute
+  '/services/lpg': typeof ServicesLpgRoute
   '/services/offshore': typeof ServicesOffshoreRoute
   '/services/procurement': typeof ServicesProcurementRoute
   '/services/recruitment': typeof ServicesRecruitmentRoute
@@ -394,6 +402,7 @@ export interface FileRoutesById {
   '/services/diesel': typeof ServicesDieselRoute
   '/services/equipment': typeof ServicesEquipmentRoute
   '/services/logistics': typeof ServicesLogisticsRoute
+  '/services/lpg': typeof ServicesLpgRoute
   '/services/offshore': typeof ServicesOffshoreRoute
   '/services/procurement': typeof ServicesProcurementRoute
   '/services/recruitment': typeof ServicesRecruitmentRoute
@@ -441,6 +450,7 @@ export interface FileRouteTypes {
     | '/services/diesel'
     | '/services/equipment'
     | '/services/logistics'
+    | '/services/lpg'
     | '/services/offshore'
     | '/services/procurement'
     | '/services/recruitment'
@@ -486,6 +496,7 @@ export interface FileRouteTypes {
     | '/services/diesel'
     | '/services/equipment'
     | '/services/logistics'
+    | '/services/lpg'
     | '/services/offshore'
     | '/services/procurement'
     | '/services/recruitment'
@@ -532,6 +543,7 @@ export interface FileRouteTypes {
     | '/services/diesel'
     | '/services/equipment'
     | '/services/logistics'
+    | '/services/lpg'
     | '/services/offshore'
     | '/services/procurement'
     | '/services/recruitment'
@@ -776,6 +788,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesOffshoreRouteImport
       parentRoute: typeof ServicesRoute
     }
+    '/services/lpg': {
+      id: '/services/lpg'
+      path: '/lpg'
+      fullPath: '/services/lpg'
+      preLoaderRoute: typeof ServicesLpgRouteImport
+      parentRoute: typeof ServicesRoute
+    }
     '/services/logistics': {
       id: '/services/logistics'
       path: '/logistics'
@@ -948,6 +967,7 @@ interface ServicesRouteChildren {
   ServicesDieselRoute: typeof ServicesDieselRoute
   ServicesEquipmentRoute: typeof ServicesEquipmentRoute
   ServicesLogisticsRoute: typeof ServicesLogisticsRoute
+  ServicesLpgRoute: typeof ServicesLpgRoute
   ServicesOffshoreRoute: typeof ServicesOffshoreRoute
   ServicesProcurementRoute: typeof ServicesProcurementRoute
   ServicesRecruitmentRoute: typeof ServicesRecruitmentRoute
@@ -959,6 +979,7 @@ const ServicesRouteChildren: ServicesRouteChildren = {
   ServicesDieselRoute: ServicesDieselRoute,
   ServicesEquipmentRoute: ServicesEquipmentRoute,
   ServicesLogisticsRoute: ServicesLogisticsRoute,
+  ServicesLpgRoute: ServicesLpgRoute,
   ServicesOffshoreRoute: ServicesOffshoreRoute,
   ServicesProcurementRoute: ServicesProcurementRoute,
   ServicesRecruitmentRoute: ServicesRecruitmentRoute,

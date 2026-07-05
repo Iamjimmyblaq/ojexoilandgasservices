@@ -101,8 +101,21 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         </div>
       </section>
 
+      <section id="quote-form" className="section bg-muted/30">
+        <div className="container-x mx-auto max-w-3xl">
+          <div className="mb-6 text-center">
+            <span className="eyebrow">Request a quote</span>
+            <h2 className="mt-2 text-3xl font-bold">Get pricing for {service.eyebrow}</h2>
+            <p className="mt-2 text-muted-foreground">Tell us what you need — no jargon required. Our team responds within 24 hours.</p>
+          </div>
+          <div className="rounded-lg border border-border bg-card p-6 shadow-sm sm:p-8">
+            <QuoteForm defaultProduct={service.eyebrow} />
+          </div>
+        </div>
+      </section>
+
       {service.categories.length > 0 && (
-        <section className="section bg-muted/30">
+        <section className="section">
           <div className="container-x">
             <div className="mb-8 flex items-end justify-between gap-4">
               <div>
@@ -155,18 +168,6 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         </section>
       )}
 
-      <section id="quote-form" className="section">
-        <div className="container-x mx-auto max-w-3xl">
-          <div className="mb-6 text-center">
-            <span className="eyebrow">RFQ</span>
-            <h2 className="mt-2 text-3xl font-bold">Request a quote for {service.eyebrow}</h2>
-            <p className="mt-2 text-muted-foreground">Fill out the form below — our team responds within 24 hours.</p>
-          </div>
-          <div className="rounded-lg border border-border bg-card p-6 sm:p-8">
-            <QuoteForm defaultProduct={service.eyebrow} />
-          </div>
-        </div>
-      </section>
     </>
   );
 }

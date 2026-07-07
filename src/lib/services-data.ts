@@ -3,10 +3,10 @@ import procurementImage from "@/assets/service-procurement.jpg";
 import equipmentImage from "@/assets/service-equipment.jpg";
 import dieselImage from "@/assets/service-diesel.jpg";
 import recruitmentImage from "@/assets/service-recruitment.jpg";
-import logisticsImage from "@/assets/service-logistics.jpg";
-import safetyImage from "@/assets/service-safety.jpg";
-import offshoreImage from "@/assets/service-offshore.jpg";
-import vendorManagementImage from "@/assets/service-vendor-management.jpg";
+import logisticsImage from "@/assets/diesel-supply.jpg";
+import safetyImage from "@/assets/equipment.jpg";
+import offshoreImage from "@/assets/hero-rig.jpg";
+import vendorManagementImage from "@/assets/manpower.jpg";
 
 export interface ServiceDef {
   slug: string;

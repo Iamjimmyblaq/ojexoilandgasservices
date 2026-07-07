@@ -7,7 +7,7 @@ import { StatusBadge } from "@/components/admin/StatusBadge";
 import { downloadCSV, toCSV } from "@/lib/csv";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Download, Plus, FileDown } from "lucide-react";
+import { Download, Plus, FileDown, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/_admin/admin/jobs")({ component: Jobs });
 
@@ -51,6 +51,15 @@ function Jobs() {
       }
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-applications"] }); toast.success("Status updated — applicant notified by email."); },
+  });
+
+  const deleteApp = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("job_applications").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-applications"] }); toast.success("Application deleted."); },
+    onError: (e: any) => toast.error(e?.message || "Delete failed."),
   });
 
   const toggleListing = useMutation({
@@ -145,6 +154,7 @@ function Jobs() {
                 <th className="p-3">Resume</th>
                 <th className="p-3">Status</th>
                 <th className="p-3">Update</th>
+                <th className="p-3">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -181,6 +191,19 @@ function Jobs() {
                     >
                       {APP_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
                     </select>
+                  </td>
+                  <td className="p-3">
+                    <button
+                      onClick={() => {
+                        if (confirm(`Delete application from ${a.full_name}? This cannot be undone.`)) {
+                          deleteApp.mutate(a.id);
+                        }
+                      }}
+                      className="inline-flex items-center gap-1 rounded border border-red-300 px-2 py-1 text-xs font-semibold text-red-600 hover:bg-red-50"
+                      title="Delete application"
+                    >
+                      <Trash2 className="h-3 w-3" /> Delete
+                    </button>
                   </td>
                 </tr>
               ))}

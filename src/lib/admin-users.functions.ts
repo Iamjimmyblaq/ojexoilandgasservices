@@ -43,6 +43,10 @@ const setRoleSchema = z.object({
   enabled: z.boolean(),
 });
 
+const deleteUserSchema = z.object({
+  user_id: z.string().uuid(),
+});
+
 export const setUserRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => setRoleSchema.parse(input))
@@ -70,5 +74,26 @@ export const setUserRole = createServerFn({ method: "POST" })
         .eq("role", data.role);
       if (error) throw error;
     }
+    return { ok: true };
+  });
+
+export const deleteAdminUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => deleteUserSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+
+    if (data.user_id === context.userId) {
+      throw new Error("You cannot delete your own admin account while signed in.");
+    }
+
+    const { data: target, error: targetError } = await supabaseAdmin.auth.admin.getUserById(data.user_id);
+    if (targetError) throw targetError;
+    if (target?.user?.email?.toLowerCase() === OFFICIAL_ADMIN) {
+      throw new Error("Cannot delete the official OJEX admin account.");
+    }
+
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(data.user_id);
+    if (error) throw error;
     return { ok: true };
   });

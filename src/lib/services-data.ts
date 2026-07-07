@@ -1,4 +1,12 @@
 import lpgSkidImage from "@/assets/lpg-skid.jpg";
+import procurementImage from "@/assets/equipment.jpg";
+import equipmentImage from "@/assets/equipment.jpg";
+import dieselImage from "@/assets/diesel-supply.jpg";
+import recruitmentImage from "@/assets/manpower.jpg";
+import logisticsImage from "@/assets/diesel-supply.jpg";
+import safetyImage from "@/assets/equipment.jpg";
+import offshoreImage from "@/assets/hero-rig.jpg";
+import vendorManagementImage from "@/assets/manpower.jpg";
 
 export interface ServiceDef {
   slug: string;
@@ -32,6 +40,7 @@ export const SERVICES: Record<string, ServiceDef> = {
       "Transparent pricing with full traceability",
     ],
     categories: ["Drilling Equipment", "Industrial Tools", "Oilfield Consumables", "Chemicals"],
+    heroImage: procurementImage,
   },
   equipment: {
     slug: "equipment",
@@ -51,6 +60,7 @@ export const SERVICES: Record<string, ServiceDef> = {
       "OEM-original spare parts and rebuild kits",
     ],
     categories: ["Shale Shakers", "Mud Cleaners", "Shaker Screens", "Drilling Equipment", "Industrial Tools"],
+    heroImage: equipmentImage,
   },
   diesel: {
     slug: "diesel",
@@ -70,6 +80,7 @@ export const SERVICES: Record<string, ServiceDef> = {
       "Depot fulfilment and direct-to-site",
     ],
     categories: ["Base Oil/Diesel", "Chemicals"],
+    heroImage: dieselImage,
   },
   lpg: {
     slug: "lpg",
@@ -115,6 +126,7 @@ export const SERVICES: Record<string, ServiceDef> = {
       "Rapid mobilisation across West Africa",
     ],
     categories: [],
+    heroImage: recruitmentImage,
   },
   logistics: {
     slug: "logistics",
@@ -134,6 +146,7 @@ export const SERVICES: Record<string, ServiceDef> = {
       "Offshore vessel coordination",
     ],
     categories: ["Industrial Vehicles"],
+    heroImage: logisticsImage,
   },
   safety: {
     slug: "safety",
@@ -153,6 +166,7 @@ export const SERVICES: Record<string, ServiceDef> = {
       "Fire suppression and emergency kits",
     ],
     categories: ["PPE & Safety Wears"],
+    heroImage: safetyImage,
   },
   offshore: {
     slug: "offshore",
@@ -172,6 +186,7 @@ export const SERVICES: Record<string, ServiceDef> = {
       "Diving and ROV support coordination",
     ],
     categories: ["Marine Equipment"],
+    heroImage: offshoreImage,
   },
   "vendor-management": {
     slug: "vendor-management",
@@ -191,5 +206,6 @@ export const SERVICES: Record<string, ServiceDef> = {
       "Risk and continuity management",
     ],
     categories: [],
+    heroImage: vendorManagementImage,
   },
 };

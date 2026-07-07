@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { listAdminUsers, setUserRole } from "@/lib/admin-users.functions";
+import { deleteAdminUser, listAdminUsers, setUserRole } from "@/lib/admin-users.functions";
 import { toast } from "sonner";
-import { ShieldCheck, User as UserIcon } from "lucide-react";
+import { ShieldCheck, Trash2, User as UserIcon } from "lucide-react";
 
 export const Route = createFileRoute("/_admin/admin/users")({ component: UsersPage });
 
@@ -13,6 +13,7 @@ function UsersPage() {
   const qc = useQueryClient();
   const fetchUsers = useServerFn(listAdminUsers);
   const updateRole = useServerFn(setUserRole);
+  const deleteUser = useServerFn(deleteAdminUser);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-users"],
@@ -25,6 +26,15 @@ function UsersPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-users"] });
       toast.success("Role updated");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const deleteMutate = useMutation({
+    mutationFn: (vars: { user_id: string }) => deleteUser({ data: vars }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+      toast.success("User deleted");
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -47,12 +57,14 @@ function UsersPage() {
               <th className="p-3">Joined</th>
               <th className="p-3">Last sign-in</th>
               <th className="p-3">Roles</th>
+              <th className="p-3">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {isLoading && <tr><td colSpan={4} className="p-6 text-center text-muted-foreground">Loading…</td></tr>}
+            {isLoading && <tr><td colSpan={5} className="p-6 text-center text-muted-foreground">Loading…</td></tr>}
             {(data ?? []).map((u) => {
               const isAdmin = u.roles.includes("admin");
+              const isOfficialAdmin = u.email.toLowerCase() === "ojexoilandgasservices@gmail.com";
               return (
                 <tr key={u.id} className="border-t border-border">
                   <td className="p-3">
@@ -84,6 +96,19 @@ function UsersPage() {
                         );
                       })}
                     </div>
+                  </td>
+                  <td className="p-3">
+                    <button
+                      onClick={() => {
+                        if (confirm(`Delete ${u.email || "this user"}? This permanently removes their login account.`)) {
+                          deleteMutate.mutate({ user_id: u.id });
+                        }
+                      }}
+                      disabled={deleteMutate.isPending || isOfficialAdmin}
+                      className="inline-flex items-center gap-1.5 rounded-md border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-45"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" /> Delete
+                    </button>
                   </td>
                 </tr>
               );

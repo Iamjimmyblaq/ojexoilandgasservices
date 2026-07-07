@@ -30,14 +30,14 @@ export function ServicePage({ service }: { service: ServiceDef }) {
       {service.heroImage && (
         <section className="bg-[color:var(--navy-deep)]">
           <div className="container-x pb-10">
-            <div className="overflow-hidden rounded-xl border border-white/10 shadow-2xl">
+            <div className="aspect-[16/9] overflow-hidden rounded-xl border border-white/10 bg-muted shadow-2xl">
               <img
                 src={service.heroImage}
                 alt={service.title}
-                width={1024}
-                height={1024}
-                loading="lazy"
-                className="h-auto w-full object-cover"
+                width={1280}
+                height={800}
+                loading="eager"
+                className="h-full w-full object-cover"
               />
             </div>
           </div>

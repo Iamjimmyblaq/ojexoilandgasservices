@@ -31,6 +31,7 @@ import { Route as ApplicationStatusRouteImport } from './routes/application-stat
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/_admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as ServicesVendorManagementRouteImport } from './routes/services.vendor-management'
 import { Route as ServicesSafetyRouteImport } from './routes/services.safety'
@@ -163,6 +164,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesIndexRoute = ServicesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ServicesRoute,
 } as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
@@ -315,6 +321,7 @@ export interface FileRoutesByFullPath {
   '/services/safety': typeof ServicesSafetyRoute
   '/services/vendor-management': typeof ServicesVendorManagementRoute
   '/blog/': typeof BlogIndexRoute
+  '/services/': typeof ServicesIndexRoute
   '/admin/blog': typeof AdminAdminBlogRoute
   '/admin/contacts': typeof AdminAdminContactsRoute
   '/admin/jobs': typeof AdminAdminJobsRoute
@@ -345,7 +352,6 @@ export interface FileRoutesByTo {
   '/quote': typeof QuoteRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
-  '/services': typeof ServicesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/vendor-registration': typeof VendorRegistrationRoute
@@ -361,6 +367,7 @@ export interface FileRoutesByTo {
   '/services/safety': typeof ServicesSafetyRoute
   '/services/vendor-management': typeof ServicesVendorManagementRoute
   '/blog': typeof BlogIndexRoute
+  '/services': typeof ServicesIndexRoute
   '/admin/blog': typeof AdminAdminBlogRoute
   '/admin/contacts': typeof AdminAdminContactsRoute
   '/admin/jobs': typeof AdminAdminJobsRoute
@@ -409,6 +416,7 @@ export interface FileRoutesById {
   '/services/safety': typeof ServicesSafetyRoute
   '/services/vendor-management': typeof ServicesVendorManagementRoute
   '/blog/': typeof BlogIndexRoute
+  '/services/': typeof ServicesIndexRoute
   '/_admin/admin/blog': typeof AdminAdminBlogRoute
   '/_admin/admin/contacts': typeof AdminAdminContactsRoute
   '/_admin/admin/jobs': typeof AdminAdminJobsRoute
@@ -457,6 +465,7 @@ export interface FileRouteTypes {
     | '/services/safety'
     | '/services/vendor-management'
     | '/blog/'
+    | '/services/'
     | '/admin/blog'
     | '/admin/contacts'
     | '/admin/jobs'
@@ -487,7 +496,6 @@ export interface FileRouteTypes {
     | '/quote'
     | '/reset-password'
     | '/robots.txt'
-    | '/services'
     | '/sitemap.xml'
     | '/terms'
     | '/vendor-registration'
@@ -503,6 +511,7 @@ export interface FileRouteTypes {
     | '/services/safety'
     | '/services/vendor-management'
     | '/blog'
+    | '/services'
     | '/admin/blog'
     | '/admin/contacts'
     | '/admin/jobs'
@@ -550,6 +559,7 @@ export interface FileRouteTypes {
     | '/services/safety'
     | '/services/vendor-management'
     | '/blog/'
+    | '/services/'
     | '/_admin/admin/blog'
     | '/_admin/admin/contacts'
     | '/_admin/admin/jobs'
@@ -745,6 +755,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/services/': {
+      id: '/services/'
+      path: '/'
+      fullPath: '/services/'
+      preLoaderRoute: typeof ServicesIndexRouteImport
+      parentRoute: typeof ServicesRoute
     }
     '/blog/': {
       id: '/blog/'
@@ -973,6 +990,7 @@ interface ServicesRouteChildren {
   ServicesRecruitmentRoute: typeof ServicesRecruitmentRoute
   ServicesSafetyRoute: typeof ServicesSafetyRoute
   ServicesVendorManagementRoute: typeof ServicesVendorManagementRoute
+  ServicesIndexRoute: typeof ServicesIndexRoute
 }
 
 const ServicesRouteChildren: ServicesRouteChildren = {
@@ -985,6 +1003,7 @@ const ServicesRouteChildren: ServicesRouteChildren = {
   ServicesRecruitmentRoute: ServicesRecruitmentRoute,
   ServicesSafetyRoute: ServicesSafetyRoute,
   ServicesVendorManagementRoute: ServicesVendorManagementRoute,
+  ServicesIndexRoute: ServicesIndexRoute,
 }
 
 const ServicesRouteWithChildren = ServicesRoute._addFileChildren(

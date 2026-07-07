@@ -1,11 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 const OFFICIAL_ADMIN = "ojexoilandgasservices@gmail.com";
 
+async function getAdminClient() {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  return supabaseAdmin;
+}
+
 async function assertAdmin(userId: string) {
+  const supabaseAdmin = await getAdminClient();
   const { data, error } = await supabaseAdmin
     .from("user_roles")
     .select("role")
@@ -19,6 +24,7 @@ export const listAdminUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertAdmin(context.userId);
+    const supabaseAdmin = await getAdminClient();
     const { data: users, error } = await supabaseAdmin.auth.admin.listUsers({ perPage: 200 });
     if (error) throw error;
     const { data: roles } = await supabaseAdmin.from("user_roles").select("user_id, role");
@@ -52,6 +58,7 @@ export const setUserRole = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => setRoleSchema.parse(input))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
+    const supabaseAdmin = await getAdminClient();
 
     // Protect the official admin account: cannot remove admin from it
     if (data.role === "admin" && !data.enabled) {
@@ -82,6 +89,7 @@ export const deleteAdminUser = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => deleteUserSchema.parse(input))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
+    const supabaseAdmin = await getAdminClient();
 
     if (data.user_id === context.userId) {
       throw new Error("You cannot delete your own admin account while signed in.");

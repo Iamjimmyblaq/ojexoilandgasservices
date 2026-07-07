@@ -44,7 +44,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
         </section>
       )}
 
-      <section className="section">
+      <section id="overview" className="section scroll-mt-24">
         <div className="container-x grid gap-12 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-8">
             <div className="rounded-lg border-l-4 border-[color:var(--gold)] bg-[color:var(--gold)]/5 p-5">

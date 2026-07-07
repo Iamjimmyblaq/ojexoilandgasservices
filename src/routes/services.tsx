@@ -48,7 +48,7 @@ function Services() {
                   >
                     <FileText className="h-3 w-3" /> Request quote
                   </Link>
-                  <Link to={link.to} className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-widest text-[color:var(--navy)] hover:text-[color:var(--gold-deep)]">
+                  <Link to={link.to} hash="overview" className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-widest text-[color:var(--navy)] hover:text-[color:var(--gold-deep)]">
                     Details <ArrowRight className="h-3 w-3" />
                   </Link>
                 </div>

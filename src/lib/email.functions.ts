@@ -125,7 +125,7 @@ function shell(title: string, body: string) {
     </div>
     <div style="background:#d4af37;color:#0a1f44;padding:10px 20px;font-size:14px;font-weight:600">${esc(title)}</div>
     <div style="padding:22px;border:1px solid #e5e7eb;border-top:none">${body}</div>
-    <p style="text-align:center;color:#94a3b8;font-size:11px;margin:12px 0">No 18 Okporo Road, Port Harcourt, Rivers State · +234 707 572 8373</p>
+    <p style="text-align:center;color:#94a3b8;font-size:11px;margin:12px 0">No. 183 Okporo Road, Rumuodara, Port Harcourt, Rivers State · +234 707 572 8373</p>
   </div>`;
 }
 

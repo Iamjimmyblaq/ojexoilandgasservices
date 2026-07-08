@@ -9,7 +9,7 @@ export const SITE = {
   phoneHref: "tel:+2347075728373",
   whatsapp: "https://wa.me/2347075728373",
   whatsappNumber: "+234 707 572 8373",
-  address: "No 18 Okporo Road, Rumuodara, Artillery Road, Port Harcourt, Rivers State, Nigeria",
+  address: "No. 183 Okporo Road, Rumuodara, Artillery Road, Port Harcourt, Rivers State, Nigeria",
   addressShort: "Port Harcourt, Rivers State, Nigeria",
 } as const;
 

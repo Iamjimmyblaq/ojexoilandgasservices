@@ -1,12 +1,12 @@
 import lpgSkidImage from "@/assets/lpg-skid.jpg";
-import procurementImage from "@/assets/equipment.jpg";
+import procurementImage from "@/assets/procurement.jpg";
 import equipmentImage from "@/assets/equipment.jpg";
 import dieselImage from "@/assets/diesel-supply.jpg";
-import recruitmentImage from "@/assets/manpower.jpg";
-import logisticsImage from "@/assets/diesel-supply.jpg";
-import safetyImage from "@/assets/equipment.jpg";
+import recruitmentImage from "@/assets/recruitment.jpg";
+import logisticsImage from "@/assets/logistics.jpg";
+import safetyImage from "@/assets/safety.jpg";
 import offshoreImage from "@/assets/hero-rig.jpg";
-import vendorManagementImage from "@/assets/manpower.jpg";
+import vendorManagementImage from "@/assets/vendor-management.jpg";
 
 export interface ServiceDef {
   slug: string;

@@ -7,6 +7,7 @@ import logisticsImage from "@/assets/logistics.jpg";
 import safetyImage from "@/assets/safety.jpg";
 import offshoreImage from "@/assets/hero-rig.jpg";
 import vendorManagementImage from "@/assets/vendor-management.jpg";
+import chemicalsImage from "@/assets/chemicals.jpg";
 
 export interface ServiceDef {
   slug: string;
@@ -110,23 +111,51 @@ export const SERVICES: Record<string, ServiceDef> = {
   },
   recruitment: {
     slug: "recruitment",
-    eyebrow: "Manpower & Recruitment",
-    title: "Oilfield manpower and recruitment services.",
-    subtitle: "Skilled crew, engineers, and technicians — vetted and deployment-ready.",
+    eyebrow: "Manpower & HR Management",
+    title: "Manpower recruitment, deployment & HR management.",
+    subtitle: "We recruit, deploy, and fully manage talents and contract staff on behalf of energy companies.",
     layman:
-      "In simple terms: we find and supply the right people for your project — drillers, engineers, HSE officers, technicians — already trained, certified, and ready to work.",
+      "In simple terms: after a company (like Sterling Oil Exploration & Energy Production Corporation) interviews and selects staff, they hand them over to us. We become the official employer — we issue the contract letters, run the onboarding, pay salaries, handle every HR letter, and manage the staff throughout the contract. The company gets the workforce; we carry the HR load.",
     intro:
-      "Specialist recruitment for the upstream, midstream, and downstream sectors. We screen, certify, and supply skilled personnel — from roustabouts and roughnecks to senior engineers and offshore captains — for short-term contracts and permanent placement.",
+      "OJEX provides end-to-end manpower and HR management services for oil & gas operators, EPCs, and industrial companies. We recruit and deploy skilled talents across every discipline, and we also take over the management of contract staff on behalf of client companies — issuing employment/contract letters, onboarding, payroll, statutory remittances, performance management, and off-boarding — so our clients focus on operations while we handle the people.",
     bullets: [
-      "Drillers, derrickmen, mud engineers, MWD/LWD",
-      "HSE officers and safety supervisors",
-      "Marine crew (captains, AB seamen, engineers)",
-      "Procurement, logistics, and operations staff",
-      "Full background and certification verification",
-      "Rapid mobilisation across West Africa",
+      "Talent sourcing, screening & deployment across all disciplines",
+      "Full contract-staff management on behalf of client companies",
+      "Employment & contract letter issuance and all HR correspondence",
+      "Onboarding of employees after the client completes interviews",
+      "Monthly payroll processing and salary payment to workers",
+      "Statutory compliance: PAYE, pension, NSITF, ITF, HMO",
+      "Performance management, discipline & off-boarding support",
+      "Rapid mobilisation across Nigeria and West Africa",
     ],
     categories: [],
     heroImage: recruitmentImage,
+    steps: [
+      { title: "1. Client selects the staff", body: "The client company (e.g. Sterling Oil E&P) conducts interviews and selects the candidates they want on the job." },
+      { title: "2. OJEX onboards & contracts", body: "We take over from there — issue the contract/employment letter, complete onboarding, HMO enrolment, and statutory registration." },
+      { title: "3. We pay & manage the staff", body: "OJEX pays the workers monthly, sends all HR letters, manages leave, discipline, and performance throughout the contract." },
+      { title: "4. Ongoing HR partnership", body: "The client focuses on operations; we handle every people-related task, reporting, and compliance for the duration of the engagement." },
+    ],
+  },
+  chemicals: {
+    slug: "chemicals",
+    eyebrow: "Chemicals Supply",
+    title: "Drilling, completion & production chemicals supply.",
+    subtitle: "Full-range oilfield chemicals — sourced, certified, and delivered on spec.",
+    layman:
+      "In simple terms: we supply the chemicals used at every stage of an oil well — from drilling the hole, to completing it, to keeping production flowing. Barite, bentonite, calcium bromide, corrosion inhibitors, and more — all delivered on spec, on time.",
+    intro:
+      "OJEX supplies the full spectrum of oilfield chemicals for drilling, completion, and production operations. Every batch ships with certificates of analysis and meets API/operator specifications, backed by a global supplier network for consistent availability and pricing.",
+    bullets: [
+      "Drilling chemicals: Barite, CaCO₃, Bentonite, Mica, Fibroseal, LCM range",
+      "Completion chemicals: Calcium Bromide, Calcium Chloride, Sodium Chloride, Oxygen Scavenger, HEC Liquid",
+      "Production chemicals: corrosion inhibitors, scale inhibitors, demulsifiers, biocides, H₂S scavengers",
+      "Certificates of analysis on every batch",
+      "Bulk, big-bag, drum, and IBC packaging options",
+      "Rig-site and depot delivery across Nigeria",
+    ],
+    categories: ["Chemicals", "Oilfield Consumables"],
+    heroImage: chemicalsImage,
   },
   logistics: {
     slug: "logistics",

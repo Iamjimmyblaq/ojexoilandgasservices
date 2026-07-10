@@ -42,6 +42,7 @@ import { Route as ServicesLpgRouteImport } from './routes/services.lpg'
 import { Route as ServicesLogisticsRouteImport } from './routes/services.logistics'
 import { Route as ServicesEquipmentRouteImport } from './routes/services.equipment'
 import { Route as ServicesDieselRouteImport } from './routes/services.diesel'
+import { Route as ServicesChemicalsRouteImport } from './routes/services.chemicals'
 import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin.admin.index'
@@ -221,6 +222,11 @@ const ServicesDieselRoute = ServicesDieselRouteImport.update({
   path: '/diesel',
   getParentRoute: () => ServicesRoute,
 } as any)
+const ServicesChemicalsRoute = ServicesChemicalsRouteImport.update({
+  id: '/chemicals',
+  path: '/chemicals',
+  getParentRoute: () => ServicesRoute,
+} as any)
 const ProductsSlugRoute = ProductsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -311,6 +317,7 @@ export interface FileRoutesByFullPath {
   '/vendor-registration': typeof VendorRegistrationRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
+  '/services/chemicals': typeof ServicesChemicalsRoute
   '/services/diesel': typeof ServicesDieselRoute
   '/services/equipment': typeof ServicesEquipmentRoute
   '/services/logistics': typeof ServicesLogisticsRoute
@@ -357,6 +364,7 @@ export interface FileRoutesByTo {
   '/vendor-registration': typeof VendorRegistrationRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
+  '/services/chemicals': typeof ServicesChemicalsRoute
   '/services/diesel': typeof ServicesDieselRoute
   '/services/equipment': typeof ServicesEquipmentRoute
   '/services/logistics': typeof ServicesLogisticsRoute
@@ -406,6 +414,7 @@ export interface FileRoutesById {
   '/vendor-registration': typeof VendorRegistrationRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
+  '/services/chemicals': typeof ServicesChemicalsRoute
   '/services/diesel': typeof ServicesDieselRoute
   '/services/equipment': typeof ServicesEquipmentRoute
   '/services/logistics': typeof ServicesLogisticsRoute
@@ -455,6 +464,7 @@ export interface FileRouteTypes {
     | '/vendor-registration'
     | '/blog/$slug'
     | '/products/$slug'
+    | '/services/chemicals'
     | '/services/diesel'
     | '/services/equipment'
     | '/services/logistics'
@@ -501,6 +511,7 @@ export interface FileRouteTypes {
     | '/vendor-registration'
     | '/blog/$slug'
     | '/products/$slug'
+    | '/services/chemicals'
     | '/services/diesel'
     | '/services/equipment'
     | '/services/logistics'
@@ -549,6 +560,7 @@ export interface FileRouteTypes {
     | '/vendor-registration'
     | '/blog/$slug'
     | '/products/$slug'
+    | '/services/chemicals'
     | '/services/diesel'
     | '/services/equipment'
     | '/services/logistics'
@@ -833,6 +845,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesDieselRouteImport
       parentRoute: typeof ServicesRoute
     }
+    '/services/chemicals': {
+      id: '/services/chemicals'
+      path: '/chemicals'
+      fullPath: '/services/chemicals'
+      preLoaderRoute: typeof ServicesChemicalsRouteImport
+      parentRoute: typeof ServicesRoute
+    }
     '/products/$slug': {
       id: '/products/$slug'
       path: '/$slug'
@@ -981,6 +1000,7 @@ const ProductsRouteWithChildren = ProductsRoute._addFileChildren(
 )
 
 interface ServicesRouteChildren {
+  ServicesChemicalsRoute: typeof ServicesChemicalsRoute
   ServicesDieselRoute: typeof ServicesDieselRoute
   ServicesEquipmentRoute: typeof ServicesEquipmentRoute
   ServicesLogisticsRoute: typeof ServicesLogisticsRoute
@@ -994,6 +1014,7 @@ interface ServicesRouteChildren {
 }
 
 const ServicesRouteChildren: ServicesRouteChildren = {
+  ServicesChemicalsRoute: ServicesChemicalsRoute,
   ServicesDieselRoute: ServicesDieselRoute,
   ServicesEquipmentRoute: ServicesEquipmentRoute,
   ServicesLogisticsRoute: ServicesLogisticsRoute,

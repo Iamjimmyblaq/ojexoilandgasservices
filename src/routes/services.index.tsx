@@ -28,7 +28,7 @@ function ServicesIndex() {
       <PageHero
         eyebrow="What We Do"
         title="Services built for the energy sector."
-        subtitle="Nine integrated service lines, one accountable partner. Click any service card to open the full service page, then request a quote underneath."
+        subtitle="Ten integrated service lines, one accountable partner. Click any service card to open the full service page, then request a quote underneath."
       />
       <section className="section">
         <div className="container-x grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

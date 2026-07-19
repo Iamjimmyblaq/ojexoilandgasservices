@@ -55,6 +55,7 @@ import { Route as AdminAdminProcurementRouteImport } from './routes/_admin.admin
 import { Route as AdminAdminJobsRouteImport } from './routes/_admin.admin.jobs'
 import { Route as AdminAdminContactsRouteImport } from './routes/_admin.admin.contacts'
 import { Route as AdminAdminBlogRouteImport } from './routes/_admin.admin.blog'
+import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as AdminAdminProcurementIdRouteImport } from './routes/_admin.admin.procurement.$id'
 
 const VendorRegistrationRoute = VendorRegistrationRouteImport.update({
@@ -287,6 +288,12 @@ const AdminAdminBlogRoute = AdminAdminBlogRouteImport.update({
   path: '/admin/blog',
   getParentRoute: () => AdminRoute,
 } as any)
+const LovableEmailQueueProcessRoute =
+  LovableEmailQueueProcessRouteImport.update({
+    id: '/lovable/email/queue/process',
+    path: '/lovable/email/queue/process',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminAdminProcurementIdRoute = AdminAdminProcurementIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -340,6 +347,7 @@ export interface FileRoutesByFullPath {
   '/admin/vendors': typeof AdminAdminVendorsRoute
   '/admin/': typeof AdminAdminIndexRoute
   '/admin/procurement/$id': typeof AdminAdminProcurementIdRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -387,6 +395,7 @@ export interface FileRoutesByTo {
   '/admin/vendors': typeof AdminAdminVendorsRoute
   '/admin': typeof AdminAdminIndexRoute
   '/admin/procurement/$id': typeof AdminAdminProcurementIdRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -437,6 +446,7 @@ export interface FileRoutesById {
   '/_admin/admin/vendors': typeof AdminAdminVendorsRoute
   '/_admin/admin/': typeof AdminAdminIndexRoute
   '/_admin/admin/procurement/$id': typeof AdminAdminProcurementIdRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -487,6 +497,7 @@ export interface FileRouteTypes {
     | '/admin/vendors'
     | '/admin/'
     | '/admin/procurement/$id'
+    | '/lovable/email/queue/process'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -534,6 +545,7 @@ export interface FileRouteTypes {
     | '/admin/vendors'
     | '/admin'
     | '/admin/procurement/$id'
+    | '/lovable/email/queue/process'
   id:
     | '__root__'
     | '/'
@@ -583,6 +595,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/vendors'
     | '/_admin/admin/'
     | '/_admin/admin/procurement/$id'
+    | '/lovable/email/queue/process'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -610,6 +623,7 @@ export interface RootRouteChildren {
   VendorRegistrationRoute: typeof VendorRegistrationRoute
   BlogSlugRoute: typeof BlogSlugRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -936,6 +950,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminBlogRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/lovable/email/queue/process': {
+      id: '/lovable/email/queue/process'
+      path: '/lovable/email/queue/process'
+      fullPath: '/lovable/email/queue/process'
+      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_admin/admin/procurement/$id': {
       id: '/_admin/admin/procurement/$id'
       path: '/$id'
@@ -1056,6 +1077,7 @@ const rootRouteChildren: RootRouteChildren = {
   VendorRegistrationRoute: VendorRegistrationRoute,
   BlogSlugRoute: BlogSlugRoute,
   BlogIndexRoute: BlogIndexRoute,
+  LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

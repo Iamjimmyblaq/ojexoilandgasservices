@@ -121,6 +121,7 @@ async function sendOne(to: string, subject: string, html: string) {
 function shell(title: string, body: string) {
   return `<div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;background:#fff">
     <div style="background:#0a1f44;color:#fff;padding:18px 20px;text-align:center">
+      <img src="https://www.ojexoilandgasservices.com/ojex-logo.png" alt="OJEX Oil and Gas Services" style="height:48px;width:auto;display:inline-block;margin-bottom:8px;border:0" />
       <h1 style="margin:0;font-size:20px;color:#d4af37">OJEX Oil and Gas Services</h1>
     </div>
     <div style="background:#d4af37;color:#0a1f44;padding:10px 20px;font-size:14px;font-weight:600">${esc(title)}</div>

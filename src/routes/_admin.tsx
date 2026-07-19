@@ -56,7 +56,7 @@ function AdminLayout() {
           })}
         </nav>
         <div className="border-t border-white/10 p-3">
-          <p className="truncate px-2 pb-2 text-xs text-white/50">{user.email}</p>
+          <p className="truncate px-2 pb-2 text-xs text-white/80">{user.email}</p>
           <Link to="/" className="flex items-center gap-2 rounded px-3 py-2 text-xs text-white/70 hover:bg-white/5"><ChevronLeft className="h-3 w-3" /> View website</Link>
           <button onClick={() => signOut()} className="mt-1 flex w-full items-center gap-2 rounded px-3 py-2 text-xs text-white/70 hover:bg-white/5">
             <LogOut className="h-3 w-3" /> Sign out

@@ -93,7 +93,7 @@ export function ServicePage({ service }: { service: ServiceDef }) {
             <p className="text-sm text-white/70">Send us your specifications and we'll respond within 24 hours.</p>
             <a href="#quote-form" className="btn-gold w-full">Request a Quote</a>
             <a href={SITE.whatsapp} target="_blank" rel="noopener noreferrer" className="btn-outline-gold w-full">WhatsApp Us</a>
-            <div className="mt-4 border-t border-white/10 pt-4 text-xs text-white/60">
+            <div className="mt-4 border-t border-white/10 pt-4 text-xs text-white/80">
               <div>📞 {SITE.phone}</div>
               <div className="mt-1">✉ {SITE.email}</div>
             </div>

@@ -49,7 +49,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="container-x flex flex-col items-start justify-between gap-3 py-5 text-xs text-white/60 sm:flex-row sm:items-center">
+        <div className="container-x flex flex-col items-start justify-between gap-3 py-5 text-xs text-white/80 sm:flex-row sm:items-center">
           <p>© {new Date().getFullYear()} {SITE.name}. All rights reserved. RC: Registered in Nigeria.</p>
           <div className="flex gap-5">
             <Link to="/privacy" className="hover:text-[color:var(--gold)]">Privacy Policy</Link>

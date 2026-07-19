@@ -62,6 +62,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:description", content: "OJEX Oil and Gas Services delivers end-to-end procurement, chemical supply, equipment supply, base oil distribution, logistics, and oilfield manpower Management" },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/c2c106a6-f1ab-4322-a57d-978d7e1ef220" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/c2c106a6-f1ab-4322-a57d-978d7e1ef220" },
+      { name: "google-site-verification", content: "xGt1fcyHfQ6a3VIEy72RWBnsh0ICY_dui7Ql8vajSkY" },
     ],
     links: [{ rel: "stylesheet", href: appCss }, { rel: "icon", type: "image/png", href: "/ojex-logo.png" }],
     scripts: [{

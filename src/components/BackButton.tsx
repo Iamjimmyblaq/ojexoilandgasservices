@@ -1,9 +1,13 @@
+import { useEffect, useState } from "react";
 import { useRouter, Link } from "@tanstack/react-router";
 import { ArrowLeft, Home } from "lucide-react";
 
 export function BackButton({ className = "" }: { className?: string }) {
   const router = useRouter();
-  const canGoBack = typeof window !== "undefined" && window.history.length > 1;
+  const [canGoBack, setCanGoBack] = useState(false);
+  useEffect(() => {
+    setCanGoBack(window.history.length > 1);
+  }, []);
   return (
     <div className={`flex items-center gap-3 text-sm ${className}`}>
       {canGoBack ? (

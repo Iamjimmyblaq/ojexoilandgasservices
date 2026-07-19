@@ -1,8 +1,10 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { PageHero } from "@/components/PageHero";
 import { toast } from "sonner";
+
 
 export const Route = createFileRoute("/auth")({
   component: AuthPage,

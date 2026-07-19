@@ -20,7 +20,10 @@ export const Route = createFileRoute("/")({
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/c2c106a6-f1ab-4322-a57d-978d7e1ef220" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/c2c106a6-f1ab-4322-a57d-978d7e1ef220" },
     ],
-    links: [{ rel: "canonical", href: "https://ojexoilandgasservices.lovable.app/" }],
+    links: [
+      { rel: "canonical", href: "https://ojexoilandgasservices.lovable.app/" },
+      { rel: "preload", as: "image", href: heroImg, fetchpriority: "high" } as any,
+    ],
   }),
 });
 

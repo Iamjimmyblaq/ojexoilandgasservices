@@ -89,7 +89,7 @@ function Home() {
             <img src={equipmentImg} alt="Oilfield engineers inspecting equipment" loading="lazy" width={1280} height={800} className="rounded-lg shadow-2xl" />
             <div className="absolute -bottom-6 -left-6 hidden rounded-lg bg-[color:var(--navy-deep)] p-6 text-white shadow-2xl sm:block">
               <p className="text-3xl font-bold text-[color:var(--gold)]">RC Registered</p>
-              <p className="text-xs uppercase tracking-widest text-white/60">Nigerian-incorporated company</p>
+              <p className="text-xs uppercase tracking-widest text-white/80">Nigerian-incorporated company</p>
             </div>
           </div>
         </div>
@@ -211,7 +211,7 @@ function Stat({ n, l }: { n: string; l: string }) {
   return (
     <div>
       <p className="text-3xl font-bold text-[color:var(--gold)] sm:text-4xl">{n}</p>
-      <p className="mt-1 text-xs uppercase tracking-widest text-white/60">{l}</p>
+      <p className="mt-1 text-xs uppercase tracking-widest text-white/80">{l}</p>
     </div>
   );
 }

@@ -37,7 +37,7 @@ export function NewsletterForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Your email"
-        className="flex-1 rounded-md border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white placeholder:text-white/40 focus:border-[color:var(--gold)] focus:outline-none"
+        className="flex-1 rounded-md border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white placeholder:text-white/75 focus:border-[color:var(--gold)] focus:outline-none"
       />
       <button disabled={loading} className="btn-gold !py-2.5 !text-xs disabled:opacity-60">
         {loading ? "..." : "Join"}

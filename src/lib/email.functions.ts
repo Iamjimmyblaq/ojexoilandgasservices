@@ -75,9 +75,7 @@ function encodeHeaderValue(s: string): string {
 // Lovable email queue (retries, suppression and logging handled for us).
 async function sendOne(to: string, subject: string, html: string) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const cleanSubject = encodeHeaderValue(subject) === sanitizeSubject(subject)
-    ? sanitizeSubject(subject)
-    : sanitizeSubject(subject);
+  const cleanSubject = sanitizeSubject(subject);
   const messageId = crypto.randomUUID();
 
   const { error } = await supabaseAdmin.rpc("enqueue_email", {

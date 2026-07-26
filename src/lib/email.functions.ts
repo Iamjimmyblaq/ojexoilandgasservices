@@ -62,14 +62,6 @@ function sanitizeSubject(s: string): string {
   return sanitizeHeader(out);
 }
 
-function encodeHeaderValue(s: string): string {
-  const clean = sanitizeSubject(s);
-  // ASCII-only -> send as-is. Otherwise RFC 2047 encoded-word (UTF-8, Base64).
-  if (/^[\x20-\x7E]*$/.test(clean)) return clean;
-  const b64 = btoa(unescape(encodeURIComponent(clean)));
-  return `=?UTF-8?B?${b64}?=`;
-}
-
 
 // All app emails are sent from the verified project domain through the
 // Lovable email queue (retries, suppression and logging handled for us).

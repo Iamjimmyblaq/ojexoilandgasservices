@@ -69,53 +69,34 @@ function encodeHeaderValue(s: string): string {
 }
 
 
-function rfc2822(to: string, subject: string, html: string, from: string) {
-  const safeTo = sanitizeHeader(to);
-  const safeFrom = sanitizeHeader(from);
-  const boundary = "----=_OJEX_" + Math.random().toString(36).slice(2);
-  const msg = [
-    `From: =?UTF-8?B?${btoa(unescape(encodeURIComponent("OJEX Oil and Gas Services")))}?= <${safeFrom}>`,
-    `To: ${safeTo}`,
-    `Subject: ${encodeHeaderValue(subject)}`,
-
-    "MIME-Version: 1.0",
-    `Content-Type: multipart/alternative; boundary="${boundary}"`,
-    "",
-    `--${boundary}`,
-    'Content-Type: text/plain; charset="UTF-8"',
-    "",
-    html.replace(/<[^>]+>/g, ""),
-    "",
-    `--${boundary}`,
-    'Content-Type: text/html; charset="UTF-8"',
-    "",
-    html,
-    "",
-    `--${boundary}--`,
-  ].join("\r\n");
-  return btoa(unescape(encodeURIComponent(msg))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-}
-
+// All app emails are sent from the verified project domain through the
+// Lovable email queue (retries, suppression and logging handled for us).
 async function sendOne(to: string, subject: string, html: string) {
-  const lovableKey = process.env.LOVABLE_API_KEY;
-  const gmailKey = process.env.GOOGLE_MAIL_API_KEY;
-  if (!lovableKey || !gmailKey) throw new Error("Email credentials missing");
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const cleanSubject = encodeHeaderValue(subject) === sanitizeSubject(subject)
+    ? sanitizeSubject(subject)
+    : sanitizeSubject(subject);
+  const messageId = crypto.randomUUID();
 
-  const raw = rfc2822(to, subject, html, ADMIN_EMAIL);
-  const res = await fetch(`${GATEWAY_URL}/users/me/messages/send`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${lovableKey}`,
-      "X-Connection-Api-Key": gmailKey,
-      "Content-Type": "application/json",
+  const { error } = await supabaseAdmin.rpc("enqueue_email", {
+    queue_name: "transactional_emails",
+    payload: {
+      message_id: messageId,
+      to: sanitizeHeader(to),
+      from: `${SITE_NAME} <${FROM_ADDRESS}>`,
+      sender_domain: SENDER_DOMAIN,
+      subject: cleanSubject,
+      html,
+      text: html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim(),
+      purpose: "transactional",
+      label: "app-notification",
+      idempotency_key: messageId,
+      queued_at: new Date().toISOString(),
     },
-    body: JSON.stringify({ raw }),
   });
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`Gmail send failed [${res.status}]: ${body.slice(0, 200)}`);
-  }
-  return res.json();
+
+  if (error) throw new Error(`Email enqueue failed: ${error.message}`);
+  return { message_id: messageId };
 }
 
 function shell(title: string, body: string) {

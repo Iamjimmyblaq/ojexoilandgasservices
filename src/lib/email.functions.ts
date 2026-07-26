@@ -1,7 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_mail/gmail/v1";
+const SITE_NAME = "OJEX Oil and Gas Services";
+const SENDER_DOMAIN = "support.ojexoilandgasservices.com";
+const FROM_ADDRESS = "noreply@ojexoilandgasservices.com";
 const ADMIN_EMAIL = "ojexoilandgasservices@gmail.com";
 
 async function logEmail(entry: {

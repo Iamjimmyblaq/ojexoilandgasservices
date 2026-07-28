@@ -12,9 +12,9 @@ export const Route = createFileRoute("/blog/")({
       { name: "description", content: "Industry insights, project updates, and announcements from OJEX Oil and Gas Services." },
       { property: "og:title", content: `Blog & News — ${SITE.name}` },
       { property: "og:description", content: "Industry insights, project updates, and announcements from OJEX Oil and Gas Services." },
-      { property: "og:url", content: "/blog" },
+      { property: "og:url", content: "https://www.ojexoilandgasservices.com/blog" },
     ],
-    links: [{ rel: "canonical", href: "/blog" }],
+    links: [{ rel: "canonical", href: "https://www.ojexoilandgasservices.com/blog" }],
   }),
 });
 

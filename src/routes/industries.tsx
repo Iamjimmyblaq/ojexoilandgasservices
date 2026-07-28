@@ -16,5 +16,5 @@ export const Route = createFileRoute("/industries")({
       </div></section>
     </>
   ),
-  head: () => ({ meta: [{ title: `Industries — ${SITE.name}` }, { name: "description", content: "Industries served by OJEX Oil and Gas Services." }, { property: "og:url", content: "/industries" }], links: [{ rel: "canonical", href: "/industries" }] }),
+  head: () => ({ meta: [{ title: `Industries — ${SITE.name}` }, { name: "description", content: "Industries served by OJEX Oil and Gas Services." }, { property: "og:url", content: "https://www.ojexoilandgasservices.com/industries" }], links: [{ rel: "canonical", href: "https://www.ojexoilandgasservices.com/industries" }] }),
 });

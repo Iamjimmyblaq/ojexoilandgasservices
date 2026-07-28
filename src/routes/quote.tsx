@@ -16,9 +16,9 @@ export const Route = createFileRoute("/quote")({
       { title: `Request a Quote — ${SITE.name}` },
       { name: "description", content: "Request a competitive quote on industrial equipment, base oil/diesel, PPE, or oilfield manpower." },
       { property: "og:title", content: "Request a Quote — OJEX" },
-      { property: "og:url", content: "/quote" },
+      { property: "og:url", content: "https://www.ojexoilandgasservices.com/quote" },
     ],
-    links: [{ rel: "canonical", href: "/quote" }],
+    links: [{ rel: "canonical", href: "https://www.ojexoilandgasservices.com/quote" }],
   }),
 });
 

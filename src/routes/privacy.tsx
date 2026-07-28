@@ -10,9 +10,9 @@ export const Route = createFileRoute("/privacy")({
       { name: "description", content: "How OJEX Oil and Gas Services collects, uses, and protects your personal information." },
       { property: "og:title", content: "Privacy Policy — OJEX" },
       { property: "og:description", content: "Our commitment to data protection and privacy." },
-      { property: "og:url", content: "/privacy" },
+      { property: "og:url", content: "https://www.ojexoilandgasservices.com/privacy" },
     ],
-    links: [{ rel: "canonical", href: "/privacy" }],
+    links: [{ rel: "canonical", href: "https://www.ojexoilandgasservices.com/privacy" }],
   }),
 });
 

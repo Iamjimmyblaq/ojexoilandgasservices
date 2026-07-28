@@ -12,9 +12,9 @@ export const Route = createFileRoute("/contact")({
       { name: "description", content: `Contact OJEX Oil and Gas Services. Phone ${SITE.phone}, email ${SITE.email}, office in Port Harcourt, Nigeria.` },
       { property: "og:title", content: "Contact OJEX" },
       { property: "og:description", content: "Reach our team in Port Harcourt." },
-      { property: "og:url", content: "/contact" },
+      { property: "og:url", content: "https://www.ojexoilandgasservices.com/contact" },
     ],
-    links: [{ rel: "canonical", href: "/contact" }],
+    links: [{ rel: "canonical", href: "https://www.ojexoilandgasservices.com/contact" }],
   }),
 });
 

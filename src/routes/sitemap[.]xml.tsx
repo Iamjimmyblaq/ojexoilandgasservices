@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-const BASE_URL = "https://ojexoilandgasservices.lovable.app";
+const BASE_URL = "https://www.ojexoilandgasservices.com";
 
 const STATIC_PATHS = [
   "/", "/about", "/services", "/products", "/industries", "/projects",

@@ -21,9 +21,9 @@ export const Route = createFileRoute("/application-status")({
       { title: `Track your application — ${SITE.name}` },
       { name: "description", content: "Look up the status of your OJEX job application using your reference number and email." },
       { property: "og:title", content: "Track your application — OJEX" },
-      { property: "og:url", content: "/application-status" },
+      { property: "og:url", content: "https://www.ojexoilandgasservices.com/application-status" },
     ],
-    links: [{ rel: "canonical", href: "/application-status" }],
+    links: [{ rel: "canonical", href: "https://www.ojexoilandgasservices.com/application-status" }],
   }),
 });
 

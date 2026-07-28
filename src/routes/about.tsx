@@ -11,9 +11,9 @@ export const Route = createFileRoute("/about")({
       { name: "description", content: "OJEX Oil and Gas Services — Nigerian-incorporated industrial sourcing, supply, and manpower company serving the energy sector." },
       { property: "og:title", content: "About OJEX Oil and Gas Services" },
       { property: "og:description", content: "Industrial sourcing, supply, and manpower for the energy sector." },
-      { property: "og:url", content: "/about" },
+      { property: "og:url", content: "https://www.ojexoilandgasservices.com/about" },
     ],
-    links: [{ rel: "canonical", href: "/about" }],
+    links: [{ rel: "canonical", href: "https://www.ojexoilandgasservices.com/about" }],
   }),
 });
 

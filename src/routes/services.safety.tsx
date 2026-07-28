@@ -12,8 +12,8 @@ export const Route = createFileRoute("/services/safety")({
       { name: "description", content: S.layman },
       { property: "og:title", content: `${S.eyebrow} — OJEX` },
       { property: "og:description", content: S.subtitle },
-      { property: "og:url", content: `/services/${S.slug}` },
+      { property: "og:url", content: `https://www.ojexoilandgasservices.com/services/${S.slug}` },
     ],
-    links: [{ rel: "canonical", href: `/services/${S.slug}` }],
+    links: [{ rel: "canonical", href: `https://www.ojexoilandgasservices.com/services/${S.slug}` }],
   }),
 });

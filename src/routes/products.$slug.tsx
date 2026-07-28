@@ -18,7 +18,7 @@ export const Route = createFileRoute("/products/$slug")({
   },
   head: ({ params, loaderData }) => {
     const p = loaderData?.product;
-    const url = `https://ojexoilandgasservices.lovable.app/products/${params.slug}`;
+    const url = `https://www.ojexoilandgasservices.com/products/${params.slug}`;
     const title = p
       ? `${p.name} — ${SITE.short} Catalog`
       : `Product — ${SITE.name}`;

@@ -12,9 +12,9 @@ export const Route = createFileRoute("/services/")({
       { name: "description", content: "Procurement, equipment supply, base oil & diesel, manpower, logistics, safety, offshore support, and vendor management — explained in plain English." },
       { property: "og:title", content: "Services — OJEX" },
       { property: "og:description", content: "Full-spectrum oil & gas servicing for energy operators." },
-      { property: "og:url", content: "/services" },
+      { property: "og:url", content: "https://www.ojexoilandgasservices.com/services" },
     ],
-    links: [{ rel: "canonical", href: "/services" }],
+    links: [{ rel: "canonical", href: "https://www.ojexoilandgasservices.com/services" }],
   }),
 });
 

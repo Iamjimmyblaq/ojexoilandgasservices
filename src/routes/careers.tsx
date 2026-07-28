@@ -13,9 +13,9 @@ export const Route = createFileRoute("/careers")({
       { title: `Careers — ${SITE.name}` },
       { name: "description", content: "Join OJEX. Open positions in engineering, offshore operations, HSE, procurement, and logistics." },
       { property: "og:title", content: "Careers at OJEX" },
-      { property: "og:url", content: "/careers" },
+      { property: "og:url", content: "https://www.ojexoilandgasservices.com/careers" },
     ],
-    links: [{ rel: "canonical", href: "/careers" }],
+    links: [{ rel: "canonical", href: "https://www.ojexoilandgasservices.com/careers" }],
   }),
 });
 

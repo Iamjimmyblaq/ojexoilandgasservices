@@ -10,9 +10,9 @@ export const Route = createFileRoute("/vendor-registration")({
       { title: `Vendor Registration — ${SITE.name}` },
       { name: "description", content: "Register as a supplier or vendor with OJEX Oil and Gas Services." },
       { property: "og:title", content: "Vendor Registration — OJEX" },
-      { property: "og:url", content: "/vendor-registration" },
+      { property: "og:url", content: "https://www.ojexoilandgasservices.com/vendor-registration" },
     ],
-    links: [{ rel: "canonical", href: "/vendor-registration" }],
+    links: [{ rel: "canonical", href: "https://www.ojexoilandgasservices.com/vendor-registration" }],
   }),
 });
 

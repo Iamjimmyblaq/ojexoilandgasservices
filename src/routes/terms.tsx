@@ -10,9 +10,9 @@ export const Route = createFileRoute("/terms")({
       { name: "description", content: "Terms governing the use of the OJEX Oil and Gas Services website and services." },
       { property: "og:title", content: "Terms of Service — OJEX" },
       { property: "og:description", content: "Terms and conditions of use." },
-      { property: "og:url", content: "/terms" },
+      { property: "og:url", content: "https://www.ojexoilandgasservices.com/terms" },
     ],
-    links: [{ rel: "canonical", href: "/terms" }],
+    links: [{ rel: "canonical", href: "https://www.ojexoilandgasservices.com/terms" }],
   }),
 });
 

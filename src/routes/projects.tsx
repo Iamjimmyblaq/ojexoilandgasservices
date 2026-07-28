@@ -24,5 +24,5 @@ export const Route = createFileRoute("/projects")({
       </div></section>
     </>
   ),
-  head: () => ({ meta: [{ title: `Projects — ${SITE.name}` }, { name: "description", content: "Recent OJEX projects in supply, procurement, and manpower." }, { property: "og:url", content: "/projects" }], links: [{ rel: "canonical", href: "/projects" }] }),
+  head: () => ({ meta: [{ title: `Projects — ${SITE.name}` }, { name: "description", content: "Recent OJEX projects in supply, procurement, and manpower." }, { property: "og:url", content: "https://www.ojexoilandgasservices.com/projects" }], links: [{ rel: "canonical", href: "https://www.ojexoilandgasservices.com/projects" }] }),
 });

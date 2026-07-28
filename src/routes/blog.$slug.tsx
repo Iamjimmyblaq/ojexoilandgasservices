@@ -20,9 +20,9 @@ export const Route = createFileRoute("/blog/$slug")({
   head: ({ params }) => ({
     meta: [
       { title: `${params.slug} — ${SITE.name} Blog` },
-      { property: "og:url", content: `/blog/${params.slug}` },
+      { property: "og:url", content: `https://www.ojexoilandgasservices.com/blog/${params.slug}` },
     ],
-    links: [{ rel: "canonical", href: `/blog/${params.slug}` }],
+    links: [{ rel: "canonical", href: `https://www.ojexoilandgasservices.com/blog/${params.slug}` }],
   }),
 });
 

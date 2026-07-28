@@ -75,7 +75,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         description: SITE.description,
         email: SITE.email,
         telephone: SITE.phone,
-        url: "https://ojexoilandgasservices.lovable.app",
+        url: "https://www.ojexoilandgasservices.com",
         address: {
           "@type": "PostalAddress",
           streetAddress: SITE.address,

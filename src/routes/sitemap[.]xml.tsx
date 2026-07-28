@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { routeTree } from "@/routeTree.gen";
 
 const BASE_URL = "https://www.ojexoilandgasservices.com";
 
@@ -17,31 +16,31 @@ const EXCLUDED_EXACT = new Set([
 ]);
 const EXCLUDED_PREFIXES = ["/admin", "/_admin", "/lovable", "/api"];
 
-/**
- * Walks the generated TanStack route tree so the sitemap regenerates itself
- * automatically whenever a route file is added, renamed, or removed.
- */
+// Lazy glob: only the module KEYS are used, so no route module is ever loaded.
+// This makes the sitemap regenerate itself whenever a route file is added,
+// renamed, or removed — no manual list to maintain.
+const routeFiles = import.meta.glob("/src/routes/**/*.tsx");
+
 function collectRoutePaths(): string[] {
   const paths = new Set<string>();
-  const visit = (route: any) => {
-    const full: string | undefined = route?.fullPath ?? route?.options?.path;
-    if (typeof full === "string" && full.startsWith("/")) {
-      const clean = full.length > 1 ? full.replace(/\/$/, "") : "/";
-      const isDynamic = clean.includes("$") || clean.includes("*");
-      const isExcluded =
-        EXCLUDED_EXACT.has(clean) ||
-        EXCLUDED_PREFIXES.some((p) => clean === p || clean.startsWith(`${p}/`));
-      if (!isDynamic && !isExcluded) paths.add(clean);
-    }
-    for (const child of route?.children
-      ? Object.values(route.children as Record<string, unknown>)
-      : []) {
-      visit(child);
-    }
-  };
-  visit(routeTree);
+  for (const file of Object.keys(routeFiles)) {
+    let p = file.replace("/src/routes/", "").replace(/\.tsx$/, "");
+    if (p === "__root") continue;
+    p = p.replace(/\[\.\]/g, "."); // escaped dots: robots[.]txt -> robots.txt
+    p = p.split(".").join("/"); // dot-separated segments -> slashes
+    p = p.replace(/\/index$/, "");
+    p = p.replace(/\/txt$/, ".txt").replace(/\/xml$/, ".xml");
+    const clean = p === "" ? "/" : `/${p}`.replace(/\/+/g, "/");
+    if (clean.includes("$") || clean.includes("*")) continue;
+    if (clean.split("/").some((seg) => seg.startsWith("_"))) continue;
+    if (EXCLUDED_EXACT.has(clean)) continue;
+    if (EXCLUDED_PREFIXES.some((x) => clean === x || clean.startsWith(`${x}/`))) continue;
+    paths.add(clean);
+  }
+  paths.add("/");
   return [...paths].sort((a, b) => (a === "/" ? -1 : b === "/" ? 1 : a.localeCompare(b)));
 }
+
 
 function priorityFor(path: string) {
   if (path === "/") return "1.0";

@@ -7,4 +7,4 @@ Disallow: /my-applications
 Disallow: /reset-password
 Disallow: /forgot-password
 
-Sitemap: https://ojexoilandgasservices.lovable.app/sitemap.xml
+Sitemap: https://www.ojexoilandgasservices.com/sitemap.xml

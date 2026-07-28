@@ -66,29 +66,8 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   return brandedErrorResponse();
 }
 
-const CANONICAL_HOST = "www.ojexoilandgasservices.com";
-
-// 301 non-www (and http) -> https://www.ojexoilandgasservices.com
-function canonicalHostRedirect(request: Request): Response | undefined {
-  let url: URL;
-  try {
-    url = new URL(request.url);
-  } catch {
-    return undefined;
-  }
-  const host = url.hostname.toLowerCase();
-  if (host !== "ojexoilandgasservices.com") return undefined;
-
-  url.protocol = "https:";
-  url.hostname = CANONICAL_HOST;
-  url.port = "";
-  return Response.redirect(url.toString(), 301);
-}
-
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
-    const redirect = canonicalHostRedirect(request);
-    if (redirect) return redirect;
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);

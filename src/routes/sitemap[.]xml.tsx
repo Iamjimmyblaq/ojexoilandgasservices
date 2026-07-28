@@ -28,7 +28,7 @@ function collectRoutePaths(): string[] {
     if (p === "__root") continue;
     p = p.replace(/\[\.\]/g, "."); // escaped dots: robots[.]txt -> robots.txt
     p = p.split(".").join("/"); // dot-separated segments -> slashes
-    p = p.replace(/\/index$/, "");
+    p = p === "index" ? "" : p.replace(/\/index$/, "");
     p = p.replace(/\/txt$/, ".txt").replace(/\/xml$/, ".xml");
     const clean = p === "" ? "/" : `/${p}`.replace(/\/+/g, "/");
     if (clean.includes("$") || clean.includes("*")) continue;

@@ -1,16 +1,59 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { routeTree } from "@/routeTree.gen";
 
 const BASE_URL = "https://www.ojexoilandgasservices.com";
 
-const STATIC_PATHS = [
-  "/", "/about", "/services", "/products", "/industries", "/projects",
-  "/careers", "/contact", "/quote", "/blog", "/faqs", "/vendor-registration",
-  "/services/procurement", "/services/equipment", "/services/diesel",
-  "/services/recruitment", "/services/logistics", "/services/safety",
-  "/services/offshore", "/services/vendor-management",
-  "/privacy", "/terms",
-];
+// Paths that must never be indexed (private / auth / machine endpoints).
+const EXCLUDED_EXACT = new Set([
+  "/robots.txt",
+  "/sitemap.xml",
+  "/auth",
+  "/procurement",
+  "/my-applications",
+  "/application-status",
+  "/reset-password",
+  "/forgot-password",
+]);
+const EXCLUDED_PREFIXES = ["/admin", "/_admin", "/lovable", "/api"];
+
+/**
+ * Walks the generated TanStack route tree so the sitemap regenerates itself
+ * automatically whenever a route file is added, renamed, or removed.
+ */
+function collectRoutePaths(): string[] {
+  const paths = new Set<string>();
+  const visit = (route: any) => {
+    const full: string | undefined = route?.fullPath ?? route?.options?.path;
+    if (typeof full === "string" && full.startsWith("/")) {
+      const clean = full.length > 1 ? full.replace(/\/$/, "") : "/";
+      const isDynamic = clean.includes("$") || clean.includes("*");
+      const isExcluded =
+        EXCLUDED_EXACT.has(clean) ||
+        EXCLUDED_PREFIXES.some((p) => clean === p || clean.startsWith(`${p}/`));
+      if (!isDynamic && !isExcluded) paths.add(clean);
+    }
+    for (const child of route?.children
+      ? Object.values(route.children as Record<string, unknown>)
+      : []) {
+      visit(child);
+    }
+  };
+  visit(routeTree);
+  return [...paths].sort((a, b) => (a === "/" ? -1 : b === "/" ? 1 : a.localeCompare(b)));
+}
+
+function priorityFor(path: string) {
+  if (path === "/") return "1.0";
+  if (path.startsWith("/services") || path.startsWith("/products")) return "0.9";
+  if (path.startsWith("/blog")) return "0.7";
+  return "0.8";
+}
+
+function changefreqFor(path: string) {
+  if (path === "/" || path.startsWith("/blog") || path.startsWith("/products")) return "daily";
+  return "weekly";
+}
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
@@ -36,16 +79,22 @@ export const Route = createFileRoute("/sitemap.xml")({
         } catch {
           // ignore
         }
-        const all = [...STATIC_PATHS, ...productSlugs, ...blogSlugs];
+
+        const all = [...new Set([...collectRoutePaths(), ...productSlugs, ...blogSlugs])];
         const urls = all
-          .map((p) => `  <url><loc>${BASE_URL}${p}</loc></url>`)
+          .map(
+            (p) =>
+              `  <url>\n    <loc>${BASE_URL}${p === "/" ? "/" : p}</loc>\n    <changefreq>${changefreqFor(p)}</changefreq>\n    <priority>${priorityFor(p)}</priority>\n  </url>`,
+          )
           .join("\n");
         const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`;
         return new Response(xml, {
-          headers: { "Content-Type": "application/xml; charset=utf-8" },
+          headers: {
+            "Content-Type": "application/xml; charset=utf-8",
+            "Cache-Control": "public, max-age=600",
+          },
         });
       },
     },
   },
 });
-

@@ -67,10 +67,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [{ rel: "stylesheet", href: appCss }, { rel: "icon", type: "image/png", href: "/ojex-logo.png" }],
     scripts: [{
-      async: true,
-      src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4622173803115510",
-      crossOrigin: "anonymous",
-    }, {
       type: "application/ld+json",
       children: JSON.stringify({
         "@context": "https://schema.org",

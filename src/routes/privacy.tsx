@@ -38,7 +38,11 @@ function Privacy() {
           <h2 className="text-2xl font-bold text-foreground">Data sharing</h2>
           <p>We do not sell personal data. We may share information with vetted suppliers strictly to fulfil your request, or with regulators where legally required.</p>
 
+          <h2 className="text-2xl font-bold text-foreground">Cookies & advertising</h2>
+          <p>Essential cookies keep the site working. Advertising cookies — including Google AdSense — are only loaded after you choose "Accept all" in our cookie banner. If you choose "Essential only", no advertising scripts are loaded. You can change your choice by clearing this site's data in your browser.</p>
+
           <h2 className="text-2xl font-bold text-foreground">Data security</h2>
+
           <p>Information is stored on secured infrastructure with role-based access. We retain personal data only as long as necessary for the purposes stated above.</p>
 
           <h2 className="text-2xl font-bold text-foreground">Your rights</h2>

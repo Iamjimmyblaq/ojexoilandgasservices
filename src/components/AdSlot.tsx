@@ -24,7 +24,10 @@ export function AdSlot({ slot, format = "auto", className = "", label = "Adverti
 
   useEffect(() => {
     setConsented(getConsent() === "accepted");
-    return onConsentChange((v) => setConsented(v === "accepted"));
+    const off = onConsentChange((v) => setConsented(v === "accepted"));
+    return () => {
+      off();
+    };
   }, []);
 
   useEffect(() => {

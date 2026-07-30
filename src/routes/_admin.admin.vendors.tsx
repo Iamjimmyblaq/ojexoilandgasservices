@@ -41,15 +41,18 @@ function Vendors() {
       <div className="overflow-x-auto rounded-lg border border-border bg-card">
         <table className="w-full text-sm">
           <thead className="bg-muted text-left text-xs uppercase tracking-wider text-muted-foreground">
-            <tr><th className="p-3">Date</th><th className="p-3">Company</th><th className="p-3">Contact</th><th className="p-3">Category</th><th className="p-3">Country</th><th className="p-3">Capabilities</th><th className="p-3"></th></tr>
+            <tr><th className="p-3">Date</th><th className="p-3">Reference</th><th className="p-3">Company</th><th className="p-3">Contact</th><th className="p-3">Category</th><th className="p-3">Country</th><th className="p-3">Capabilities</th><th className="p-3"></th></tr>
           </thead>
           <tbody>
-            {isLoading && <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">Loading…</td></tr>}
-            {!isLoading && rows.length === 0 && <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">No vendors registered.</td></tr>}
+            {isLoading && <tr><td colSpan={8} className="p-6 text-center text-muted-foreground">Loading…</td></tr>}
+            {!isLoading && error && <tr><td colSpan={8} className="p-6 text-center text-destructive">{(error as Error).message || "Could not load vendors."}</td></tr>}
+            {!isLoading && !error && rows.length === 0 && <tr><td colSpan={8} className="p-6 text-center text-muted-foreground">No vendors registered.</td></tr>}
             {rows.map((v) => (
               <tr key={v.id} className="border-t border-border align-top">
                 <td className="p-3 text-xs text-muted-foreground">{new Date(v.created_at).toLocaleDateString()}</td>
+                <td className="p-3 font-mono text-xs">{v.reference ?? "—"}</td>
                 <td className="p-3"><div className="font-medium">{v.company_name}</div>{v.website && /^https?:\/\//i.test(v.website) && <a className="text-xs text-muted-foreground hover:underline" href={v.website} target="_blank" rel="noopener noreferrer">{v.website}</a>}</td>
+
                 <td className="p-3"><div>{v.contact_name}</div><div className="text-xs text-muted-foreground">{v.email}</div><div className="text-xs text-muted-foreground">{v.phone ?? ""}</div></td>
                 <td className="p-3">{v.category}</td>
                 <td className="p-3">{v.country ?? "—"}</td>

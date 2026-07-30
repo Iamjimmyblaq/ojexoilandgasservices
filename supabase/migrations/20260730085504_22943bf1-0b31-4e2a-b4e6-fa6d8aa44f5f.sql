@@ -1,0 +1,1 @@
+DELETE FROM public.vendor_registrations WHERE company_name = 'QA Diagnostics Ltd';

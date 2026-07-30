@@ -63,18 +63,56 @@ function sanitizeSubject(s: string): string {
 }
 
 
+// Every recipient needs a stable unsubscribe token — the email API rejects
+// transactional sends without one (400 missing_unsubscribe).
+async function getUnsubscribeToken(supabaseAdmin: any, email: string): Promise<string> {
+  const clean = email.trim().toLowerCase();
+  const { data: existing } = await supabaseAdmin
+    .from("email_unsubscribe_tokens")
+    .select("token")
+    .eq("email", clean)
+    .maybeSingle();
+  if (existing?.token) return existing.token as string;
+
+  const token = crypto.randomUUID().replace(/-/g, "");
+  const { error } = await supabaseAdmin
+    .from("email_unsubscribe_tokens")
+    .insert({ email: clean, token });
+  if (error) {
+    const { data: retry } = await supabaseAdmin
+      .from("email_unsubscribe_tokens")
+      .select("token")
+      .eq("email", clean)
+      .maybeSingle();
+    if (retry?.token) return retry.token as string;
+    throw new Error(`Unsubscribe token failed: ${error.message}`);
+  }
+  return token;
+}
+
 // All app emails are sent from the verified project domain through the
 // Lovable email queue (retries, suppression and logging handled for us).
 async function sendOne(to: string, subject: string, html: string) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const cleanSubject = sanitizeSubject(subject);
   const messageId = crypto.randomUUID();
+  const recipient = sanitizeHeader(to);
+
+  // Never send to a suppressed address (bounced / complained / unsubscribed).
+  const { data: suppressed } = await supabaseAdmin
+    .from("suppressed_emails")
+    .select("email")
+    .eq("email", recipient.toLowerCase())
+    .maybeSingle();
+  if (suppressed) return { message_id: messageId, skipped: "suppressed" as const };
+
+  const unsubscribeToken = await getUnsubscribeToken(supabaseAdmin, recipient);
 
   const { error } = await supabaseAdmin.rpc("enqueue_email", {
     queue_name: "transactional_emails",
     payload: {
       message_id: messageId,
-      to: sanitizeHeader(to),
+      to: recipient,
       from: `${SITE_NAME} <${FROM_ADDRESS}>`,
       sender_domain: SENDER_DOMAIN,
       subject: cleanSubject,
@@ -83,6 +121,7 @@ async function sendOne(to: string, subject: string, html: string) {
       purpose: "transactional",
       label: "app-notification",
       idempotency_key: messageId,
+      unsubscribe_token: unsubscribeToken,
       queued_at: new Date().toISOString(),
     },
   });
@@ -90,6 +129,7 @@ async function sendOne(to: string, subject: string, html: string) {
   if (error) throw new Error(`Email enqueue failed: ${error.message}`);
   return { message_id: messageId };
 }
+
 
 function shell(title: string, body: string) {
   return `<div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;background:#fff">

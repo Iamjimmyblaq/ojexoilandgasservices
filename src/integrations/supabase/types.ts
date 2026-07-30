@@ -657,6 +657,7 @@ export type Database = {
           email: string
           id: string
           phone: string | null
+          reference: string | null
           website: string | null
         }
         Insert: {
@@ -669,6 +670,7 @@ export type Database = {
           email: string
           id?: string
           phone?: string | null
+          reference?: string | null
           website?: string | null
         }
         Update: {
@@ -681,6 +683,7 @@ export type Database = {
           email?: string
           id?: string
           phone?: string | null
+          reference?: string | null
           website?: string | null
         }
         Relationships: []

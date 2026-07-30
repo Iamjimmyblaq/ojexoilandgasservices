@@ -51,10 +51,12 @@ export function VendorForm() {
       country: parsed.data.country || null,
       website: parsed.data.website || null,
       capabilities: parsed.data.capabilities || null,
+      reference: ref,
     };
     const { error } = await supabase.from("vendor_registrations").insert(payload);
     setLoading(false);
-    if (error) { toast.error("Could not submit registration."); return; }
+    if (error) { console.error("vendor insert failed", error); toast.error(error.message || "Could not submit registration."); return; }
+
     setReference(ref);
     sendEmails({ data: { ...payload, id: null, reference: ref } })
       .catch((err) => console.warn("vendor email send failed", err));

@@ -9,7 +9,7 @@ export const Route = createFileRoute("/_admin/admin/vendors")({ component: Vendo
 
 function Vendors() {
   const qc = useQueryClient();
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["admin-vendors"],
     queryFn: async () => {
       const { data, error } = await supabase.from("vendor_registrations").select("*").order("created_at", { ascending: false });
@@ -17,6 +17,7 @@ function Vendors() {
       return data;
     },
   });
+
   const remove = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("vendor_registrations").delete().eq("id", id);

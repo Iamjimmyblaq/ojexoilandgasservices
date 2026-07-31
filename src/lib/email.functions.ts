@@ -493,9 +493,9 @@ export const sendJobStatusEmail = createServerFn({ method: "POST" })
       <p style="color:#475569;line-height:1.7">${esc(copy.body)}</p>
       <p style="color:#475569;line-height:1.7;margin-top:18px">Position: <strong>${esc(app.position_applied)}</strong></p>
       <p style="color:#475569;line-height:1.6;margin-top:18px;font-size:13px">You can check your status anytime using your reference number at our careers page.</p>
-      <p style="color:#475569;line-height:1.6;margin-top:18px;font-size:13px">Questions? Reply to this email or contact <a href="mailto:${ADMIN_EMAIL}" style="color:#d4af37">${ADMIN_EMAIL}</a>.</p>`);
+      <p style="color:#475569;line-height:1.6;margin-top:18px;font-size:13px">Questions? Reply to this email or contact <a href="mailto:${HR_REPLY_TO}" style="color:#d4af37">${HR_REPLY_TO}</a>.</p>`);
 
-    const result = await Promise.allSettled([sendOne(app.email, copy.subject(app.position_applied), html)]);
+    const result = await Promise.allSettled([sendOne(app.email, copy.subject(app.position_applied), html, HR_REPLY_TO)]);
     const failed = result[0].status === "rejected";
     await logEmail({
       kind: `job-status-${data.status}`,

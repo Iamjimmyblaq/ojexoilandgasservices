@@ -179,7 +179,7 @@ async function dispatch(
       }),
       logEmail({
         kind: `${log.kind}-admin`,
-        recipient: ADMIN_EMAIL,
+        recipient: adminTo,
         subject: admin.subject,
         status: admRes.status === "fulfilled" ? "sent" : "failed",
         error: admRes.status === "rejected" ? String((admRes as PromiseRejectedResult).reason?.message ?? "") : null,

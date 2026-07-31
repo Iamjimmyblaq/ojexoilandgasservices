@@ -4,7 +4,12 @@ import { z } from "zod";
 const SITE_NAME = "OJEX Oil and Gas Services";
 const SENDER_DOMAIN = "support.ojexoilandgasservices.com";
 const FROM_ADDRESS = "noreply@ojexoilandgasservices.com";
-const ADMIN_EMAIL = "ojexoilandgasservices@gmail.com";
+// Department inboxes — each submission type routes to its own team address.
+const INFO_EMAIL = "info@ojexoilandgasservices.com";
+const CAREERS_EMAIL = "careers@ojexoilandgasservices.com";
+const HR_REPLY_TO = "hr@ojexoilandgasservices.com";
+const SALES_EMAIL = "sales@ojexoilandgasservices.com";
+const ADMIN_EMAIL = INFO_EMAIL;
 
 async function logEmail(entry: {
   kind: string;
@@ -92,7 +97,7 @@ async function getUnsubscribeToken(supabaseAdmin: any, email: string): Promise<s
 
 // All app emails are sent from the verified project domain through the
 // Lovable email queue (retries, suppression and logging handled for us).
-async function sendOne(to: string, subject: string, html: string) {
+async function sendOne(to: string, subject: string, html: string, replyTo?: string) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const cleanSubject = sanitizeSubject(subject);
   const messageId = crypto.randomUUID();
@@ -114,6 +119,7 @@ async function sendOne(to: string, subject: string, html: string) {
       message_id: messageId,
       to: recipient,
       from: `${SITE_NAME} <${FROM_ADDRESS}>`,
+      ...(replyTo ? { reply_to: sanitizeHeader(replyTo) } : {}),
       sender_domain: SENDER_DOMAIN,
       subject: cleanSubject,
       html,
@@ -149,13 +155,14 @@ function row(label: string, value: string | number | null | undefined) {
 }
 
 async function dispatch(
-  customer: { email: string; subject: string; html: string },
-  admin: { subject: string; html: string },
+  customer: { email: string; subject: string; html: string; replyTo?: string },
+  admin: { subject: string; html: string; to?: string; replyTo?: string },
   log?: { kind: string; related_id?: string | null; related_reference?: string | null },
 ) {
+  const adminTo = admin.to ?? ADMIN_EMAIL;
   const results = await Promise.allSettled([
-    sendOne(customer.email, customer.subject, customer.html),
-    sendOne(ADMIN_EMAIL, admin.subject, admin.html),
+    sendOne(customer.email, customer.subject, customer.html, customer.replyTo),
+    sendOne(adminTo, admin.subject, admin.html, admin.replyTo),
   ]);
   const errors = results.filter((r) => r.status === "rejected").map((r) => (r as PromiseRejectedResult).reason?.message ?? "unknown");
   if (log) {
@@ -172,7 +179,7 @@ async function dispatch(
       }),
       logEmail({
         kind: `${log.kind}-admin`,
-        recipient: ADMIN_EMAIL,
+        recipient: adminTo,
         subject: admin.subject,
         status: admRes.status === "fulfilled" ? "sent" : "failed",
         error: admRes.status === "rejected" ? String((admRes as PromiseRejectedResult).reason?.message ?? "") : null,
@@ -225,8 +232,8 @@ export const sendQuoteEmails = createServerFn({ method: "POST" })
       <p style="margin-top:16px;font-size:12px;color:#64748b">Open in admin → /admin/quotes</p>`);
 
     return dispatch(
-      { email: data.email, subject: `Quote request ${ref || ""} received — OJEX`.trim(), html: customerHtml },
-      { subject: `New quote ${ref}: ${data.company_name} — ${data.product_service}`.slice(0, 180), html: adminHtml },
+      { email: data.email, subject: `Quote request ${ref || ""} received — OJEX`.trim(), html: customerHtml, replyTo: SALES_EMAIL },
+      { subject: `New quote ${ref}: ${data.company_name} — ${data.product_service}`.slice(0, 180), html: adminHtml, to: SALES_EMAIL, replyTo: data.email },
       { kind: "quote", related_id: data.id ?? null, related_reference: ref || null },
     );
   });
@@ -257,8 +264,8 @@ export const sendContactEmails = createServerFn({ method: "POST" })
       <div style="margin-top:12px;padding:12px;background:#f8fafc;border-radius:6px;font-size:14px;white-space:pre-wrap">${esc(data.message)}</div>`);
 
     return dispatch(
-      { email: data.email, subject: "We received your message — OJEX", html: customerHtml },
-      { subject: `Contact: ${data.subject || data.name}`.slice(0, 180), html: adminHtml },
+      { email: data.email, subject: "We received your message — OJEX", html: customerHtml, replyTo: INFO_EMAIL },
+      { subject: `Contact: ${data.subject || data.name}`.slice(0, 180), html: adminHtml, to: INFO_EMAIL, replyTo: data.email },
       { kind: "contact", related_id: data.id ?? null },
     );
   });
@@ -294,8 +301,8 @@ export const sendJobApplicationEmails = createServerFn({ method: "POST" })
       <p style="margin-top:16px;font-size:12px;color:#64748b">Open in admin → /admin/jobs</p>`);
 
     return dispatch(
-      { email: data.email, subject: `Application received: ${data.position_applied} — OJEX`.slice(0, 180), html: customerHtml },
-      { subject: `Application: ${data.full_name} — ${data.position_applied}`.slice(0, 180), html: adminHtml },
+      { email: data.email, subject: `Application received: ${data.position_applied} — OJEX`.slice(0, 180), html: customerHtml, replyTo: HR_REPLY_TO },
+      { subject: `Application: ${data.full_name} — ${data.position_applied}`.slice(0, 180), html: adminHtml, to: CAREERS_EMAIL, replyTo: HR_REPLY_TO },
       { kind: "job-application", related_id: data.id ?? null },
     );
   });
@@ -394,8 +401,8 @@ export const sendVendorEmails = createServerFn({ method: "POST" })
       <p style="margin-top:16px;font-size:12px;color:#64748b">Open in admin → /admin/vendors</p>`);
 
     return dispatch(
-      { email: data.email, subject: `Vendor registration ${ref || ""} received — OJEX`.trim(), html: customerHtml },
-      { subject: `Vendor ${ref}: ${data.company_name} — ${data.category}`.slice(0, 180), html: adminHtml },
+      { email: data.email, subject: `Vendor registration ${ref || ""} received — OJEX`.trim(), html: customerHtml, replyTo: SALES_EMAIL },
+      { subject: `Vendor ${ref}: ${data.company_name} — ${data.category}`.slice(0, 180), html: adminHtml, to: SALES_EMAIL, replyTo: data.email },
       { kind: "vendor", related_id: data.id ?? null, related_reference: ref || null },
     );
   });
@@ -418,8 +425,8 @@ export const sendNewsletterWelcome = createServerFn({ method: "POST" })
       <table style="width:100%;border-collapse:collapse">${row("Email", data.email)}</table>`);
 
     return dispatch(
-      { email: data.email, subject: "Welcome to OJEX updates", html: customerHtml },
-      { subject: `Newsletter subscriber: ${data.email}`.slice(0, 180), html: adminHtml },
+      { email: data.email, subject: "Welcome to OJEX updates", html: customerHtml, replyTo: INFO_EMAIL },
+      { subject: `Newsletter subscriber: ${data.email}`.slice(0, 180), html: adminHtml, to: INFO_EMAIL },
       { kind: "newsletter" },
     );
   });
@@ -486,9 +493,9 @@ export const sendJobStatusEmail = createServerFn({ method: "POST" })
       <p style="color:#475569;line-height:1.7">${esc(copy.body)}</p>
       <p style="color:#475569;line-height:1.7;margin-top:18px">Position: <strong>${esc(app.position_applied)}</strong></p>
       <p style="color:#475569;line-height:1.6;margin-top:18px;font-size:13px">You can check your status anytime using your reference number at our careers page.</p>
-      <p style="color:#475569;line-height:1.6;margin-top:18px;font-size:13px">Questions? Reply to this email or contact <a href="mailto:${ADMIN_EMAIL}" style="color:#d4af37">${ADMIN_EMAIL}</a>.</p>`);
+      <p style="color:#475569;line-height:1.6;margin-top:18px;font-size:13px">Questions? Reply to this email or contact <a href="mailto:${HR_REPLY_TO}" style="color:#d4af37">${HR_REPLY_TO}</a>.</p>`);
 
-    const result = await Promise.allSettled([sendOne(app.email, copy.subject(app.position_applied), html)]);
+    const result = await Promise.allSettled([sendOne(app.email, copy.subject(app.position_applied), html, HR_REPLY_TO)]);
     const failed = result[0].status === "rejected";
     await logEmail({
       kind: `job-status-${data.status}`,

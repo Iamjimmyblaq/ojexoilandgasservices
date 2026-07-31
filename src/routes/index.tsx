@@ -49,7 +49,7 @@ function Home() {
     <>
       {/* HERO */}
       <section className="relative isolate overflow-hidden bg-[color:var(--navy-deep)]">
-        <img src={heroImg} alt="Offshore oil and gas drilling rig" width={1920} height={1080} className="absolute inset-0 h-full w-full object-cover opacity-40" fetchPriority="high" />
+        <img src={heroImg} alt="Illuminated onshore drilling rig at dusk" width={1200} height={1600} className="absolute inset-0 h-full w-full object-cover opacity-40" fetchPriority="high" />
         <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--navy-deep)] via-[color:var(--navy-deep)]/80 to-transparent" />
         <div className="container-x relative grid min-h-[88vh] items-center py-24">
           <div className="max-w-3xl">

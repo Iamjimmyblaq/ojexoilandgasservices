@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ShieldCheck, Truck, Wrench, Users, Fuel, Anchor, HardHat, Globe2, CheckCircle2 } from "lucide-react";
-import heroImg from "@/assets/hero-rig.jpg";
+import heroAsset from "@/assets/hero-rig-new.jpg.asset.json";
+const heroImg = heroAsset.url;
 import dieselImg from "@/assets/diesel-supply.jpg";
 import equipmentImg from "@/assets/equipment.jpg";
 import manpowerImg from "@/assets/manpower.jpg";

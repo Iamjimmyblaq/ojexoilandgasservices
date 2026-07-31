@@ -4,7 +4,12 @@ import { z } from "zod";
 const SITE_NAME = "OJEX Oil and Gas Services";
 const SENDER_DOMAIN = "support.ojexoilandgasservices.com";
 const FROM_ADDRESS = "noreply@ojexoilandgasservices.com";
-const ADMIN_EMAIL = "ojexoilandgasservices@gmail.com";
+// Department inboxes — each submission type routes to its own team address.
+const INFO_EMAIL = "info@ojexoilandgasservices.com";
+const CAREERS_EMAIL = "careers@ojexoilandgasservices.com";
+const HR_REPLY_TO = "hr@ojexoilandgasservices.com";
+const SALES_EMAIL = "sales@ojexoilandgasservices.com";
+const ADMIN_EMAIL = INFO_EMAIL;
 
 async function logEmail(entry: {
   kind: string;

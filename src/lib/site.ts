@@ -4,7 +4,10 @@ export const SITE = {
   tagline: "Industrial Sourcing, Procurement & Energy-Sector Manpower",
   description:
     "OJEX Oil and Gas Services delivers industrial procurement, drilling equipment supply, base oil & diesel distribution, logistics, and oilfield manpower recruitment across West Africa and beyond.",
-  email: "ojexoilandgasservices@gmail.com",
+  email: "info@ojexoilandgasservices.com",
+  emailCareers: "careers@ojexoilandgasservices.com",
+  emailHr: "hr@ojexoilandgasservices.com",
+  emailSales: "sales@ojexoilandgasservices.com",
   phone: "+234 707 572 8373",
   phoneHref: "tel:+2347075728373",
   whatsapp: "https://wa.me/2347075728373",

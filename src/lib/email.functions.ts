@@ -97,7 +97,7 @@ async function getUnsubscribeToken(supabaseAdmin: any, email: string): Promise<s
 
 // All app emails are sent from the verified project domain through the
 // Lovable email queue (retries, suppression and logging handled for us).
-async function sendOne(to: string, subject: string, html: string) {
+async function sendOne(to: string, subject: string, html: string, replyTo?: string) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const cleanSubject = sanitizeSubject(subject);
   const messageId = crypto.randomUUID();
@@ -119,6 +119,7 @@ async function sendOne(to: string, subject: string, html: string) {
       message_id: messageId,
       to: recipient,
       from: `${SITE_NAME} <${FROM_ADDRESS}>`,
+      ...(replyTo ? { reply_to: sanitizeHeader(replyTo) } : {}),
       sender_domain: SENDER_DOMAIN,
       subject: cleanSubject,
       html,

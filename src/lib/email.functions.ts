@@ -155,13 +155,14 @@ function row(label: string, value: string | number | null | undefined) {
 }
 
 async function dispatch(
-  customer: { email: string; subject: string; html: string },
-  admin: { subject: string; html: string },
+  customer: { email: string; subject: string; html: string; replyTo?: string },
+  admin: { subject: string; html: string; to?: string; replyTo?: string },
   log?: { kind: string; related_id?: string | null; related_reference?: string | null },
 ) {
+  const adminTo = admin.to ?? ADMIN_EMAIL;
   const results = await Promise.allSettled([
-    sendOne(customer.email, customer.subject, customer.html),
-    sendOne(ADMIN_EMAIL, admin.subject, admin.html),
+    sendOne(customer.email, customer.subject, customer.html, customer.replyTo),
+    sendOne(adminTo, admin.subject, admin.html, admin.replyTo),
   ]);
   const errors = results.filter((r) => r.status === "rejected").map((r) => (r as PromiseRejectedResult).reason?.message ?? "unknown");
   if (log) {

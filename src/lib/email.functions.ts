@@ -232,8 +232,8 @@ export const sendQuoteEmails = createServerFn({ method: "POST" })
       <p style="margin-top:16px;font-size:12px;color:#64748b">Open in admin → /admin/quotes</p>`);
 
     return dispatch(
-      { email: data.email, subject: `Quote request ${ref || ""} received — OJEX`.trim(), html: customerHtml },
-      { subject: `New quote ${ref}: ${data.company_name} — ${data.product_service}`.slice(0, 180), html: adminHtml },
+      { email: data.email, subject: `Quote request ${ref || ""} received — OJEX`.trim(), html: customerHtml, replyTo: SALES_EMAIL },
+      { subject: `New quote ${ref}: ${data.company_name} — ${data.product_service}`.slice(0, 180), html: adminHtml, to: SALES_EMAIL, replyTo: data.email },
       { kind: "quote", related_id: data.id ?? null, related_reference: ref || null },
     );
   });
@@ -264,8 +264,8 @@ export const sendContactEmails = createServerFn({ method: "POST" })
       <div style="margin-top:12px;padding:12px;background:#f8fafc;border-radius:6px;font-size:14px;white-space:pre-wrap">${esc(data.message)}</div>`);
 
     return dispatch(
-      { email: data.email, subject: "We received your message — OJEX", html: customerHtml },
-      { subject: `Contact: ${data.subject || data.name}`.slice(0, 180), html: adminHtml },
+      { email: data.email, subject: "We received your message — OJEX", html: customerHtml, replyTo: INFO_EMAIL },
+      { subject: `Contact: ${data.subject || data.name}`.slice(0, 180), html: adminHtml, to: INFO_EMAIL, replyTo: data.email },
       { kind: "contact", related_id: data.id ?? null },
     );
   });
@@ -301,8 +301,8 @@ export const sendJobApplicationEmails = createServerFn({ method: "POST" })
       <p style="margin-top:16px;font-size:12px;color:#64748b">Open in admin → /admin/jobs</p>`);
 
     return dispatch(
-      { email: data.email, subject: `Application received: ${data.position_applied} — OJEX`.slice(0, 180), html: customerHtml },
-      { subject: `Application: ${data.full_name} — ${data.position_applied}`.slice(0, 180), html: adminHtml },
+      { email: data.email, subject: `Application received: ${data.position_applied} — OJEX`.slice(0, 180), html: customerHtml, replyTo: HR_REPLY_TO },
+      { subject: `Application: ${data.full_name} — ${data.position_applied}`.slice(0, 180), html: adminHtml, to: CAREERS_EMAIL, replyTo: HR_REPLY_TO },
       { kind: "job-application", related_id: data.id ?? null },
     );
   });
@@ -401,8 +401,8 @@ export const sendVendorEmails = createServerFn({ method: "POST" })
       <p style="margin-top:16px;font-size:12px;color:#64748b">Open in admin → /admin/vendors</p>`);
 
     return dispatch(
-      { email: data.email, subject: `Vendor registration ${ref || ""} received — OJEX`.trim(), html: customerHtml },
-      { subject: `Vendor ${ref}: ${data.company_name} — ${data.category}`.slice(0, 180), html: adminHtml },
+      { email: data.email, subject: `Vendor registration ${ref || ""} received — OJEX`.trim(), html: customerHtml, replyTo: SALES_EMAIL },
+      { subject: `Vendor ${ref}: ${data.company_name} — ${data.category}`.slice(0, 180), html: adminHtml, to: SALES_EMAIL, replyTo: data.email },
       { kind: "vendor", related_id: data.id ?? null, related_reference: ref || null },
     );
   });
@@ -425,8 +425,8 @@ export const sendNewsletterWelcome = createServerFn({ method: "POST" })
       <table style="width:100%;border-collapse:collapse">${row("Email", data.email)}</table>`);
 
     return dispatch(
-      { email: data.email, subject: "Welcome to OJEX updates", html: customerHtml },
-      { subject: `Newsletter subscriber: ${data.email}`.slice(0, 180), html: adminHtml },
+      { email: data.email, subject: "Welcome to OJEX updates", html: customerHtml, replyTo: INFO_EMAIL },
+      { subject: `Newsletter subscriber: ${data.email}`.slice(0, 180), html: adminHtml, to: INFO_EMAIL },
       { kind: "newsletter" },
     );
   });

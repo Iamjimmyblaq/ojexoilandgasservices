@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ShieldCheck, Truck, Wrench, Users, Fuel, Anchor, HardHat, Globe2, CheckCircle2 } from "lucide-react";
-import heroAsset from "@/assets/hero-rig-new.jpg.asset.json";
-const heroImg = heroAsset.url;
+import heroImg from "@/assets/hero-rig.jpg";
+import rigCloseAsset from "@/assets/hero-rig-new.jpg.asset.json";
+const rigCloseImg = rigCloseAsset.url;
 import dieselImg from "@/assets/diesel-supply.jpg";
-import equipmentImg from "@/assets/equipment.jpg";
 import manpowerImg from "@/assets/manpower.jpg";
 import { SITE, INDUSTRIES } from "@/lib/site";
 import { useEffect, useState } from "react";
@@ -49,7 +49,7 @@ function Home() {
     <>
       {/* HERO */}
       <section className="relative isolate overflow-hidden bg-[color:var(--navy-deep)]">
-        <img src={heroImg} alt="Illuminated onshore drilling rig at dusk" width={1200} height={1600} className="absolute inset-0 h-full w-full object-cover opacity-40" fetchPriority="high" />
+        <img src={heroImg} alt="Offshore drilling rig silhouetted at sunset" width={1920} height={1080} className="absolute inset-0 h-full w-full object-cover opacity-40" fetchPriority="high" />
         <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--navy-deep)] via-[color:var(--navy-deep)]/80 to-transparent" />
         <div className="container-x relative grid min-h-[88vh] items-center py-24">
           <div className="max-w-3xl">
@@ -90,7 +90,7 @@ function Home() {
             <Link to="/about" className="btn-navy mt-8">More about OJEX</Link>
           </div>
           <div className="relative">
-            <img src={equipmentImg} alt="Oilfield engineers inspecting equipment" loading="lazy" width={1280} height={800} className="rounded-lg shadow-2xl" />
+            <img src={rigCloseImg} alt="Drilling rig equipment and derrick on an active OJEX-supported site" loading="lazy" width={1200} height={1600} className="rounded-lg shadow-2xl" />
             <div className="absolute -bottom-6 -left-6 hidden rounded-lg bg-[color:var(--navy-deep)] p-6 text-white shadow-2xl sm:block">
               <p className="text-3xl font-bold text-[color:var(--gold)]">RC Registered</p>
               <p className="text-xs uppercase tracking-widest text-white/80">Nigerian-incorporated company</p>

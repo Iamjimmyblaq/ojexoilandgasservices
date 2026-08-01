@@ -4,7 +4,6 @@ import heroImg from "@/assets/hero-rig.jpg";
 import rigCloseAsset from "@/assets/hero-rig-new.jpg.asset.json";
 const rigCloseImg = rigCloseAsset.url;
 import dieselImg from "@/assets/diesel-supply.jpg";
-import equipmentImg from "@/assets/equipment.jpg";
 import manpowerImg from "@/assets/manpower.jpg";
 import { SITE, INDUSTRIES } from "@/lib/site";
 import { useEffect, useState } from "react";

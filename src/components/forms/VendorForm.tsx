@@ -5,7 +5,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
 import { sendVendorEmails } from "@/lib/email.functions";
 
+/** Accepts "example.com", "www.example.com", or a full URL and returns a normalized https URL (or "" when blank). */
+function normalizeWebsite(raw: string): string {
+  const v = raw.trim();
+  if (!v) return "";
+  if (/^https?:\/\//i.test(v)) return v;
+  if (/^\/\//.test(v)) return `https:${v}`;
+  return `https://${v}`;
+}
+
 const schema = z.object({
+
   company_name: z.string().trim().min(1).max(160),
   contact_name: z.string().trim().min(1).max(120),
   email: z.string().trim().email().max(255),

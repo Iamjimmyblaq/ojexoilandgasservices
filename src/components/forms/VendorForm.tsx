@@ -59,7 +59,7 @@ export function VendorForm() {
     const form = e.currentTarget;
     const fd = new FormData(form);
     const parsed = schema.safeParse(Object.fromEntries(fd));
-    if (!parsed.success) { toast.error("Please complete the required fields."); return; }
+    if (!parsed.success) { toast.error(parsed.error.issues[0]?.message || "Please complete the required fields."); return; }
     setLoading(true);
     const ref = generateVendorReference();
     const payload = {

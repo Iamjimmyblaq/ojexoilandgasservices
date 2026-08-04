@@ -1,34 +1,57 @@
 # OJEX Oil and Gas Services
 
-> Industrial procurement, equipment supply, base oil & diesel distribution, logistics, and oilfield manpower recruitment across West Africa.
+> Nigerian supplier of drilling, completion, and production chemicals, industrial equipment, PPE, LPG skids and LPG product, base oil and diesel, plus manpower and HR management for the oil and gas sector. Headquartered in Port Harcourt, Rivers State.
 
-OJEX Oil and Gas Services is a Nigerian-incorporated procurement and manpower partner for upstream operators, EPC contractors, and industrial clients across Nigeria, West Africa, and beyond. Based in Port Harcourt, Rivers State.
+OJEX Oil and Gas Services is a Nigerian-incorporated sourcing, procurement, and manpower partner for upstream operators, drilling contractors, EPC firms, and industrial clients across Nigeria and West Africa. Address: No. 183 Okporo Road, Rumuodara, Artillery Road, Port Harcourt, Rivers State, Nigeria. Phone/WhatsApp: +234 707 572 8373. Email: info@ojexoilandgasservices.com.
+
+## Quick facts
+
+- Lead times: stock items 2–7 days within Nigeria; international orders 3–8 weeks.
+- Certification: API, ISO, and OEM-certified goods; COC / mill certs / COA issued per shipment.
+- Terms: 30% advance, 70% on delivery; credit terms after KYC and credit review.
+- Coverage: Port Harcourt, Warri, Lagos, Onne, Calabar, and offshore locations.
+- Sourcing origins: EU, USA, China, UAE, Singapore.
 
 ## Pages
 
 - [Home](/): Overview of OJEX services and industries served.
 - [About](/about): Company background, mission, and capabilities.
 - [Services](/services): Full list of energy-sector service lines.
-- [Products](/products): Catalog of industrial equipment, tools, PPE, and consumables.
+- [Products](/products): Catalog of industrial equipment, tools, PPE, chemicals, and consumables.
 - [Industries](/industries): Sectors OJEX serves.
 - [Projects](/projects): Past project highlights.
 - [Careers](/careers): Open positions and general applications.
 - [Blog](/blog): News, industry insights, and updates.
-- [FAQs](/faqs): Common questions on sourcing, lead times, and vendor onboarding.
+- [FAQs](/faqs): Detailed answers on chemicals, equipment, LPG, fuel, procurement, and manpower.
 - [Contact](/contact): Office, phone, email, and WhatsApp.
-- [Request a Quote](/quote): Submit an RFQ for equipment, fuel, or manpower.
+- [Request a Quote](/quote): Submit an RFQ for chemicals, equipment, fuel, LPG, or manpower.
 - [Vendor Registration](/vendor-registration): Register as an OJEX supplier.
 
 ## Services
 
-- [Procurement & Sourcing](/services/procurement): Global sourcing of certified industrial equipment and consumables.
-- [Industrial Equipment Supply](/services/equipment): Shale shakers, mud cleaners, drilling tools, offshore equipment.
-- [Base Oil & Diesel Supply](/services/diesel): Bulk AGO/diesel and base oil distribution.
-- [Manpower & Recruitment](/services/recruitment): Technical, engineering, and offshore staffing.
+- [Chemicals Supply](/services/chemicals): Drilling, completion, and production chemicals.
+- [Procurement & Sourcing](/services/procurement): Global sourcing, RFQ management, expediting, inspection, delivery.
+- [Industrial Equipment Supply](/services/equipment): Solids-control and flow-control equipment, drilling tools.
+- [Base Oil & Diesel Supply](/services/diesel): Bulk AGO/diesel and SN150/SN500/SN900 base oil.
+- [LPG Skid & Franchising](/services/lpg): Skid procurement, fabrication, installation, franchising, LPG product supply.
+- [Manpower & HR Management](/services/recruitment): Recruitment, deployment, contract-staff management, payroll and statutory compliance.
+- [Safety Equipment](/services/safety): Certified PPE and safety supplies.
 - [Logistics Support](/services/logistics): Customs clearance, freight forwarding, on-site delivery.
-- [Safety Equipment](/services/safety): Certified PPE, FRC coveralls, safety supplies.
 - [Offshore Support](/services/offshore): Marine equipment and offshore platform supplies.
 - [Vendor Management](/services/vendor-management): Pre-qualified vendor pool with contract administration.
+
+## Chemicals supplied
+
+- Drilling chemicals: barite (4.1–4.2 SG), bentonite, CaCO3 (calcium carbonate), mica (fine/medium/coarse), Fibroseal, soda ash, caustic soda, lime, PAC-R, PAC-LV, CMC, xanthan gum, lost-circulation materials.
+- Completion chemicals: calcium bromide, calcium chloride, sodium chloride brine, sodium bromide, potassium chloride, HEC liquid, HEC powder, oxygen scavenger, corrosion inhibitor, biocide, clay stabiliser, filtration aids.
+- Production chemicals: oxygen scavenger, biocide, scale inhibitor, corrosion inhibitor, demulsifier, defoamer, pour-point depressant, wax and asphaltene dispersant, H2S scavenger.
+
+## Equipment supplied
+
+- Solids control: shale shakers, shaker screens (OEM and composite), mud cleaners, desanders, desilters, decanter centrifuges.
+- Flow control: gate, globe, check, ball, and butterfly valves in carbon steel, stainless steel, API 6D.
+- Other: drilling tools, industrial vehicles, forklifts, marine equipment, hoses, ropes, oilfield consumables.
+- PPE: FRC coveralls, safety boots, helmets, gloves, goggles, face shields, hearing protection, respirators, harnesses, life jackets, gas detectors.
 
 ## Optional
 

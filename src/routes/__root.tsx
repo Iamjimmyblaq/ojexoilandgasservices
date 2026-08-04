@@ -10,6 +10,8 @@ import {
 import appCss from "../styles.css?url";
 import { SiteLayout } from "@/components/SiteLayout";
 import { SITE } from "@/lib/site";
+import { KNOWS_ABOUT, SERVICE_CATALOG } from "@/lib/seo-answers";
+
 
 function NotFoundComponent() {
   return (
@@ -71,22 +73,64 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       type: "application/ld+json",
       children: JSON.stringify({
         "@context": "https://schema.org",
-        "@type": "LocalBusiness",
-        name: SITE.name,
-        description: SITE.description,
-        email: SITE.email,
-        telephone: SITE.phone,
-        url: "https://www.ojexoilandgasservices.com",
-        address: {
-          "@type": "PostalAddress",
-          streetAddress: SITE.address,
-          addressLocality: "Port Harcourt",
-          addressRegion: "Rivers State",
-          addressCountry: "NG",
-        },
-        sameAs: [SITE.whatsapp],
+        "@graph": [
+          {
+            "@type": ["Organization", "LocalBusiness"],
+            "@id": "https://www.ojexoilandgasservices.com/#organization",
+            name: SITE.name,
+            alternateName: "OJEX",
+            description: SITE.description,
+            email: SITE.email,
+            telephone: SITE.phone,
+            url: "https://www.ojexoilandgasservices.com",
+            logo: "https://www.ojexoilandgasservices.com/ojex-logo.png",
+            image: "https://www.ojexoilandgasservices.com/ojex-logo.png",
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: SITE.address,
+              addressLocality: "Port Harcourt",
+              addressRegion: "Rivers State",
+              addressCountry: "NG",
+            },
+            areaServed: [
+              { "@type": "Country", name: "Nigeria" },
+              { "@type": "Place", name: "West Africa" },
+            ],
+            knowsAbout: KNOWS_ABOUT,
+            sameAs: [SITE.whatsapp],
+            contactPoint: [
+              { "@type": "ContactPoint", contactType: "sales", email: SITE.emailSales, telephone: SITE.phone, areaServed: "NG", availableLanguage: "en" },
+              { "@type": "ContactPoint", contactType: "customer support", email: SITE.email, telephone: SITE.phone, areaServed: "NG", availableLanguage: "en" },
+              { "@type": "ContactPoint", contactType: "human resources", email: SITE.emailCareers, areaServed: "NG", availableLanguage: "en" },
+            ],
+            hasOfferCatalog: {
+              "@type": "OfferCatalog",
+              name: "OJEX Oil and Gas Services — Service Catalogue",
+              itemListElement: SERVICE_CATALOG.map((s) => ({
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Service",
+                  name: s.name,
+                  description: s.description,
+                  url: `https://www.ojexoilandgasservices.com${s.url}`,
+                  areaServed: { "@type": "Country", name: "Nigeria" },
+                  provider: { "@id": "https://www.ojexoilandgasservices.com/#organization" },
+                },
+              })),
+            },
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://www.ojexoilandgasservices.com/#website",
+            url: "https://www.ojexoilandgasservices.com",
+            name: SITE.name,
+            publisher: { "@id": "https://www.ojexoilandgasservices.com/#organization" },
+            inLanguage: "en-NG",
+          },
+        ],
       }),
     }],
+
   }),
   shellComponent: RootShell,
   component: RootComponent,

@@ -5,13 +5,30 @@ import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
 import { sendVendorEmails } from "@/lib/email.functions";
 
+/** Accepts "example.com", "www.example.com", or a full URL and returns a normalized https URL (or "" when blank). */
+function normalizeWebsite(raw: string): string {
+  const v = raw.trim();
+  if (!v) return "";
+  if (/^https?:\/\//i.test(v)) return v;
+  if (/^\/\//.test(v)) return `https:${v}`;
+  return `https://${v}`;
+}
+
 const schema = z.object({
+
   company_name: z.string().trim().min(1).max(160),
   contact_name: z.string().trim().min(1).max(120),
   email: z.string().trim().email().max(255),
   phone: z.string().trim().max(40).optional().or(z.literal("")),
   country: z.string().trim().max(80).optional().or(z.literal("")),
-  website: z.string().trim().max(255).refine((u) => u === "" || /^https?:\/\//i.test(u), { message: "Only http(s) URLs allowed" }).optional().or(z.literal("")),
+  website: z
+    .string()
+    .trim()
+    .max(255)
+    .transform(normalizeWebsite)
+    .refine((u) => u === "" || /^https?:\/\/[^\s]+\.[^\s]+$/i.test(u), { message: "Enter a valid website, e.g. www.yourcompany.com" })
+    .optional(),
+
   category: z.string().trim().min(2).max(160),
   capabilities: z.string().trim().max(2000).optional().or(z.literal("")),
 });
@@ -42,7 +59,7 @@ export function VendorForm() {
     const form = e.currentTarget;
     const fd = new FormData(form);
     const parsed = schema.safeParse(Object.fromEntries(fd));
-    if (!parsed.success) { toast.error("Please complete the required fields."); return; }
+    if (!parsed.success) { toast.error(parsed.error.issues[0]?.message || "Please complete the required fields."); return; }
     setLoading(true);
     const ref = generateVendorReference();
     const payload = {

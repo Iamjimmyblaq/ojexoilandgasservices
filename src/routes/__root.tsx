@@ -10,6 +10,8 @@ import {
 import appCss from "../styles.css?url";
 import { SiteLayout } from "@/components/SiteLayout";
 import { SITE } from "@/lib/site";
+import { KNOWS_ABOUT, SERVICE_CATALOG } from "@/lib/seo-answers";
+
 
 function NotFoundComponent() {
   return (

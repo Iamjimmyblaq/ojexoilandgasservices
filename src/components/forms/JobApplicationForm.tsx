@@ -6,7 +6,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { sendJobApplicationEmails, createJobApplication, attachResumeToApplication } from "@/lib/email.functions";
 import { CheckCircle2, FileText, Link as LinkIcon, AlertTriangle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { validateResume, safeResumeName, MAX_RESUME_BYTES } from "@/lib/resume-validation";
+import { validateResume, safeResumeName } from "@/lib/resume-validation";
 
 const schema = z.object({
   full_name: z.string().trim().min(1).max(120),
@@ -212,7 +212,7 @@ export function JobApplicationForm({ jobId, position }: { jobId?: string; positi
         <label className="mb-1.5 block text-sm font-medium">Cover letter</label>
         <textarea name="cover_letter" rows={5} className="w-full rounded-md border border-input bg-card px-3 py-2.5 text-sm focus:border-[color:var(--gold)] focus:outline-none" />
       </div>
-      <button disabled={loading} className="btn-gold disabled:opacity-60">
+      <button disabled={loading || checking} className="btn-gold disabled:opacity-60">
         {loading ? "Submitting…" : "Submit Application"}
       </button>
     </form>

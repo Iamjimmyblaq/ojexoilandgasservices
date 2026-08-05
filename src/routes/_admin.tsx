@@ -20,6 +20,7 @@ const NAV = [
   { to: "/admin/procurement", label: "Procurement", icon: ShoppingCart, exact: false },
   { to: "/admin/users", label: "Users & Roles", icon: Users, exact: false },
   { to: "/admin/reports", label: "Reports & Exports", icon: BarChart3, exact: false },
+  { to: "/admin/seo", label: "Indexing Status", icon: Search, exact: false },
 ] as const;
 
 function AdminLayout() {

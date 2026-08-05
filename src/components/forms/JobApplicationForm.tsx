@@ -191,15 +191,22 @@ export function JobApplicationForm({ jobId, position }: { jobId?: string; positi
             type="file"
             accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             required
-            onChange={(e) => setResumeFile(e.target.files?.[0] ?? null)}
+            onChange={(e) => { void handleFileChange(e.target.files?.[0] ?? null); }}
             className="w-full text-sm file:mr-3 file:rounded file:border-0 file:bg-[color:var(--navy-deep)] file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white"
           />
         </div>
-        {resumeFile && (
-          <p className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground">
-            <FileText className="h-3 w-3" /> {resumeFile.name} ({Math.round(resumeFile.size / 1024)} KB)
+        {checking && <p className="mt-2 text-xs text-muted-foreground">Checking file…</p>}
+        {fileError && (
+          <p className="mt-2 inline-flex items-start gap-1 text-xs text-red-600" role="alert">
+            <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" /> {fileError}
           </p>
         )}
+        {resumeFile && !fileError && (
+          <p className="mt-2 inline-flex items-center gap-1 text-xs text-emerald-700">
+            <FileText className="h-3 w-3" /> {resumeFile.name} ({Math.round(resumeFile.size / 1024)} KB) — looks good
+          </p>
+        )}
+
       </div>
       <div>
         <label className="mb-1.5 block text-sm font-medium">Cover letter</label>

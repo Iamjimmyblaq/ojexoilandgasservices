@@ -4,8 +4,9 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
 import { sendJobApplicationEmails, createJobApplication, attachResumeToApplication } from "@/lib/email.functions";
-import { CheckCircle2, FileText, Link as LinkIcon } from "lucide-react";
+import { CheckCircle2, FileText, Link as LinkIcon, AlertTriangle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { validateResume, safeResumeName } from "@/lib/resume-validation";
 
 const schema = z.object({
   full_name: z.string().trim().min(1).max(120),
@@ -16,12 +17,6 @@ const schema = z.object({
   cover_letter: z.string().trim().max(3000).optional().or(z.literal("")),
 });
 
-const MAX_RESUME_BYTES = 8 * 1024 * 1024; // 8MB
-const ALLOWED_RESUME_TYPES = [
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-];
 
 function generateReference() {
   const d = new Date();
@@ -35,10 +30,23 @@ function generateReference() {
 export function JobApplicationForm({ jobId, position }: { jobId?: string; position?: string }) {
   const [loading, setLoading] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const [checking, setChecking] = useState(false);
   const [success, setSuccess] = useState<null | { name: string; reference: string; email: string; position: string }>(null);
   const sendEmails = useServerFn(sendJobApplicationEmails);
   const createApp = useServerFn(createJobApplication);
   const attachResume = useServerFn(attachResumeToApplication);
+
+  async function handleFileChange(file: File | null) {
+    setFileError(null);
+    setResumeFile(null);
+    if (!file) return;
+    setChecking(true);
+    const check = await validateResume(file);
+    setChecking(false);
+    if (!check.ok) { setFileError(check.message); return; }
+    setResumeFile(file);
+  }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -46,14 +54,20 @@ export function JobApplicationForm({ jobId, position }: { jobId?: string; positi
     const fd = new FormData(form);
     const parsed = schema.safeParse(Object.fromEntries(fd));
     if (!parsed.success) { toast.error("Please complete the required fields."); return; }
-    if (!resumeFile) { toast.error("Please attach your resume (PDF or Word)."); return; }
-    if (resumeFile.size > MAX_RESUME_BYTES) { toast.error("Resume must be smaller than 8MB."); return; }
-    if (!ALLOWED_RESUME_TYPES.includes(resumeFile.type)) { toast.error("Resume must be PDF, DOC, or DOCX."); return; }
+    if (!resumeFile) {
+      const msg = fileError || "Please attach your resume (PDF, DOC, or DOCX, max 8MB).";
+      setFileError(msg);
+      toast.error(msg);
+      return;
+    }
+
+    // Re-validate right before upload so a swapped/corrupt file can never reach storage.
+    const check = await validateResume(resumeFile);
+    if (!check.ok) { setFileError(check.message); toast.error(check.message); return; }
 
     setLoading(true);
     const reference = generateReference();
-    const safeName = resumeFile.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 80);
-    const path = `${reference}/${Date.now()}_${safeName}`;
+    const path = `${reference}/${Date.now()}_${safeResumeName(resumeFile.name, check.extension)}`;
 
     // 1. Insert application row via admin server fn (bypasses ordering/RLS issues)
     try {
@@ -76,22 +90,33 @@ export function JobApplicationForm({ jobId, position }: { jobId?: string; positi
       return;
     }
 
-    // 2. Upload resume — storage policy now finds the matching row
-    const up = await supabase.storage.from("resumes").upload(path, resumeFile, {
-      contentType: resumeFile.type,
-      upsert: false,
-    });
-    if (up.error) {
-      console.warn("resume upload failed", up.error);
-      toast.warning("Application received, but resume upload failed. We'll email you to request it.");
+    // 2. Upload resume with one retry — transient network blips shouldn't lose the file
+    let uploadError: unknown = null;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const up = await supabase.storage.from("resumes").upload(path, resumeFile, {
+        contentType: resumeFile.type || "application/octet-stream",
+        upsert: attempt > 0,
+      });
+      uploadError = up.error ?? null;
+      if (!up.error) break;
+      await new Promise((r) => setTimeout(r, 800));
+    }
+
+    if (uploadError) {
+      console.warn("resume upload failed", uploadError);
+      toast.warning("Application received, but the resume upload failed. We'll email you to request it.");
     } else {
       // 3. Attach path (anon has no UPDATE policy → server fn with admin)
       try {
         await attachResume({ data: { reference, path } });
       } catch (err) {
         console.warn("attach resume path failed", err);
+        // Clean up the orphaned object so storage doesn't fill with unlinked files.
+        await supabase.storage.from("resumes").remove([path]).catch(() => undefined);
+        toast.warning("Application received, but we couldn't link your resume. We'll email you to request it.");
       }
     }
+
 
     sendEmails({
       data: {
@@ -166,21 +191,28 @@ export function JobApplicationForm({ jobId, position }: { jobId?: string; positi
             type="file"
             accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             required
-            onChange={(e) => setResumeFile(e.target.files?.[0] ?? null)}
+            onChange={(e) => { void handleFileChange(e.target.files?.[0] ?? null); }}
             className="w-full text-sm file:mr-3 file:rounded file:border-0 file:bg-[color:var(--navy-deep)] file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white"
           />
         </div>
-        {resumeFile && (
-          <p className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground">
-            <FileText className="h-3 w-3" /> {resumeFile.name} ({Math.round(resumeFile.size / 1024)} KB)
+        {checking && <p className="mt-2 text-xs text-muted-foreground">Checking file…</p>}
+        {fileError && (
+          <p className="mt-2 inline-flex items-start gap-1 text-xs text-red-600" role="alert">
+            <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" /> {fileError}
           </p>
         )}
+        {resumeFile && !fileError && (
+          <p className="mt-2 inline-flex items-center gap-1 text-xs text-emerald-700">
+            <FileText className="h-3 w-3" /> {resumeFile.name} ({Math.round(resumeFile.size / 1024)} KB) — looks good
+          </p>
+        )}
+
       </div>
       <div>
         <label className="mb-1.5 block text-sm font-medium">Cover letter</label>
         <textarea name="cover_letter" rows={5} className="w-full rounded-md border border-input bg-card px-3 py-2.5 text-sm focus:border-[color:var(--gold)] focus:outline-none" />
       </div>
-      <button disabled={loading} className="btn-gold disabled:opacity-60">
+      <button disabled={loading || checking} className="btn-gold disabled:opacity-60">
         {loading ? "Submitting…" : "Submit Application"}
       </button>
     </form>

@@ -48,6 +48,7 @@ import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin.admin.index'
 import { Route as AdminAdminVendorsRouteImport } from './routes/_admin.admin.vendors'
 import { Route as AdminAdminUsersRouteImport } from './routes/_admin.admin.users'
+import { Route as AdminAdminSeoRouteImport } from './routes/_admin.admin.seo'
 import { Route as AdminAdminReportsRouteImport } from './routes/_admin.admin.reports'
 import { Route as AdminAdminQuotesRouteImport } from './routes/_admin.admin.quotes'
 import { Route as AdminAdminProductsRouteImport } from './routes/_admin.admin.products'
@@ -255,6 +256,11 @@ const AdminAdminUsersRoute = AdminAdminUsersRouteImport.update({
   path: '/admin/users',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAdminSeoRoute = AdminAdminSeoRouteImport.update({
+  id: '/admin/seo',
+  path: '/admin/seo',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAdminReportsRoute = AdminAdminReportsRouteImport.update({
   id: '/admin/reports',
   path: '/admin/reports',
@@ -355,6 +361,7 @@ export interface FileRoutesByFullPath {
   '/admin/products': typeof AdminAdminProductsRoute
   '/admin/quotes': typeof AdminAdminQuotesRoute
   '/admin/reports': typeof AdminAdminReportsRoute
+  '/admin/seo': typeof AdminAdminSeoRoute
   '/admin/users': typeof AdminAdminUsersRoute
   '/admin/vendors': typeof AdminAdminVendorsRoute
   '/admin/': typeof AdminAdminIndexRoute
@@ -405,6 +412,7 @@ export interface FileRoutesByTo {
   '/admin/products': typeof AdminAdminProductsRoute
   '/admin/quotes': typeof AdminAdminQuotesRoute
   '/admin/reports': typeof AdminAdminReportsRoute
+  '/admin/seo': typeof AdminAdminSeoRoute
   '/admin/users': typeof AdminAdminUsersRoute
   '/admin/vendors': typeof AdminAdminVendorsRoute
   '/admin': typeof AdminAdminIndexRoute
@@ -458,6 +466,7 @@ export interface FileRoutesById {
   '/_admin/admin/products': typeof AdminAdminProductsRoute
   '/_admin/admin/quotes': typeof AdminAdminQuotesRoute
   '/_admin/admin/reports': typeof AdminAdminReportsRoute
+  '/_admin/admin/seo': typeof AdminAdminSeoRoute
   '/_admin/admin/users': typeof AdminAdminUsersRoute
   '/_admin/admin/vendors': typeof AdminAdminVendorsRoute
   '/_admin/admin/': typeof AdminAdminIndexRoute
@@ -511,6 +520,7 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/quotes'
     | '/admin/reports'
+    | '/admin/seo'
     | '/admin/users'
     | '/admin/vendors'
     | '/admin/'
@@ -561,6 +571,7 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/quotes'
     | '/admin/reports'
+    | '/admin/seo'
     | '/admin/users'
     | '/admin/vendors'
     | '/admin'
@@ -613,6 +624,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/products'
     | '/_admin/admin/quotes'
     | '/_admin/admin/reports'
+    | '/_admin/admin/seo'
     | '/_admin/admin/users'
     | '/_admin/admin/vendors'
     | '/_admin/admin/'
@@ -927,6 +939,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminUsersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_admin/admin/seo': {
+      id: '/_admin/admin/seo'
+      path: '/admin/seo'
+      fullPath: '/admin/seo'
+      preLoaderRoute: typeof AdminAdminSeoRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_admin/admin/reports': {
       id: '/_admin/admin/reports'
       path: '/admin/reports'
@@ -1028,6 +1047,7 @@ interface AdminRouteChildren {
   AdminAdminProductsRoute: typeof AdminAdminProductsRoute
   AdminAdminQuotesRoute: typeof AdminAdminQuotesRoute
   AdminAdminReportsRoute: typeof AdminAdminReportsRoute
+  AdminAdminSeoRoute: typeof AdminAdminSeoRoute
   AdminAdminUsersRoute: typeof AdminAdminUsersRoute
   AdminAdminVendorsRoute: typeof AdminAdminVendorsRoute
   AdminAdminIndexRoute: typeof AdminAdminIndexRoute
@@ -1041,6 +1061,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAdminProductsRoute: AdminAdminProductsRoute,
   AdminAdminQuotesRoute: AdminAdminQuotesRoute,
   AdminAdminReportsRoute: AdminAdminReportsRoute,
+  AdminAdminSeoRoute: AdminAdminSeoRoute,
   AdminAdminUsersRoute: AdminAdminUsersRoute,
   AdminAdminVendorsRoute: AdminAdminVendorsRoute,
   AdminAdminIndexRoute: AdminAdminIndexRoute,

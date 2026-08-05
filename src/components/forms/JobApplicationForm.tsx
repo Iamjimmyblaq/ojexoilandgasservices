@@ -30,10 +30,23 @@ function generateReference() {
 export function JobApplicationForm({ jobId, position }: { jobId?: string; position?: string }) {
   const [loading, setLoading] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const [checking, setChecking] = useState(false);
   const [success, setSuccess] = useState<null | { name: string; reference: string; email: string; position: string }>(null);
   const sendEmails = useServerFn(sendJobApplicationEmails);
   const createApp = useServerFn(createJobApplication);
   const attachResume = useServerFn(attachResumeToApplication);
+
+  async function handleFileChange(file: File | null) {
+    setFileError(null);
+    setResumeFile(null);
+    if (!file) return;
+    setChecking(true);
+    const check = await validateResume(file);
+    setChecking(false);
+    if (!check.ok) { setFileError(check.message); return; }
+    setResumeFile(file);
+  }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -41,14 +54,20 @@ export function JobApplicationForm({ jobId, position }: { jobId?: string; positi
     const fd = new FormData(form);
     const parsed = schema.safeParse(Object.fromEntries(fd));
     if (!parsed.success) { toast.error("Please complete the required fields."); return; }
-    if (!resumeFile) { toast.error("Please attach your resume (PDF or Word)."); return; }
-    if (resumeFile.size > MAX_RESUME_BYTES) { toast.error("Resume must be smaller than 8MB."); return; }
-    if (!ALLOWED_RESUME_TYPES.includes(resumeFile.type)) { toast.error("Resume must be PDF, DOC, or DOCX."); return; }
+    if (!resumeFile) {
+      const msg = fileError || "Please attach your resume (PDF, DOC, or DOCX, max 8MB).";
+      setFileError(msg);
+      toast.error(msg);
+      return;
+    }
+
+    // Re-validate right before upload so a swapped/corrupt file can never reach storage.
+    const check = await validateResume(resumeFile);
+    if (!check.ok) { setFileError(check.message); toast.error(check.message); return; }
 
     setLoading(true);
     const reference = generateReference();
-    const safeName = resumeFile.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 80);
-    const path = `${reference}/${Date.now()}_${safeName}`;
+    const path = `${reference}/${Date.now()}_${safeResumeName(resumeFile.name, check.extension)}`;
 
     // 1. Insert application row via admin server fn (bypasses ordering/RLS issues)
     try {
@@ -71,22 +90,33 @@ export function JobApplicationForm({ jobId, position }: { jobId?: string; positi
       return;
     }
 
-    // 2. Upload resume — storage policy now finds the matching row
-    const up = await supabase.storage.from("resumes").upload(path, resumeFile, {
-      contentType: resumeFile.type,
-      upsert: false,
-    });
-    if (up.error) {
-      console.warn("resume upload failed", up.error);
-      toast.warning("Application received, but resume upload failed. We'll email you to request it.");
+    // 2. Upload resume with one retry — transient network blips shouldn't lose the file
+    let uploadError: unknown = null;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const up = await supabase.storage.from("resumes").upload(path, resumeFile, {
+        contentType: resumeFile.type || "application/octet-stream",
+        upsert: attempt > 0,
+      });
+      uploadError = up.error ?? null;
+      if (!up.error) break;
+      await new Promise((r) => setTimeout(r, 800));
+    }
+
+    if (uploadError) {
+      console.warn("resume upload failed", uploadError);
+      toast.warning("Application received, but the resume upload failed. We'll email you to request it.");
     } else {
       // 3. Attach path (anon has no UPDATE policy → server fn with admin)
       try {
         await attachResume({ data: { reference, path } });
       } catch (err) {
         console.warn("attach resume path failed", err);
+        // Clean up the orphaned object so storage doesn't fill with unlinked files.
+        await supabase.storage.from("resumes").remove([path]).catch(() => undefined);
+        toast.warning("Application received, but we couldn't link your resume. We'll email you to request it.");
       }
     }
+
 
     sendEmails({
       data: {

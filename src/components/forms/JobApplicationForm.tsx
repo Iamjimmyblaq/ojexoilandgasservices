@@ -4,8 +4,9 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
 import { sendJobApplicationEmails, createJobApplication, attachResumeToApplication } from "@/lib/email.functions";
-import { CheckCircle2, FileText, Link as LinkIcon } from "lucide-react";
+import { CheckCircle2, FileText, Link as LinkIcon, AlertTriangle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { validateResume, safeResumeName, MAX_RESUME_BYTES } from "@/lib/resume-validation";
 
 const schema = z.object({
   full_name: z.string().trim().min(1).max(120),
@@ -16,12 +17,6 @@ const schema = z.object({
   cover_letter: z.string().trim().max(3000).optional().or(z.literal("")),
 });
 
-const MAX_RESUME_BYTES = 8 * 1024 * 1024; // 8MB
-const ALLOWED_RESUME_TYPES = [
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-];
 
 function generateReference() {
   const d = new Date();

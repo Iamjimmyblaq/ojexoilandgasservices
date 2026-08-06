@@ -12,7 +12,9 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-[color:var(--navy-deep)]/95 backdrop-blur supports-[backdrop-filter]:bg-[color:var(--navy-deep)]/85">
       <div className="container-x flex h-16 items-center justify-between sm:h-20">
         <Link to="/" className="flex items-center gap-3">
-          <img src={logo} alt="OJEX Oil and Gas Services" className="h-12 w-auto sm:h-14" />
+          <div className="rounded-lg bg-white/10 p-1.5 ring-1 ring-white/20 shadow-lg shadow-black/20">
+            <img src={logo} alt="OJEX Oil and Gas Services" className="h-14 w-auto sm:h-16" />
+          </div>
           <span className="sr-only">OJEX Oil and Gas Services</span>
         </Link>
 

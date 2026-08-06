@@ -1,14 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { SERVICES } from "@/lib/services-data";
 
 const BASE_URL = "https://www.ojexoilandgasservices.com";
 
 const STATIC_PATHS = [
   "/", "/about", "/services", "/products", "/industries", "/projects",
   "/careers", "/contact", "/quote", "/blog", "/faqs", "/vendor-registration",
-  "/services/procurement", "/services/equipment", "/services/diesel",
-  "/services/recruitment", "/services/logistics", "/services/safety",
-  "/services/offshore", "/services/vendor-management",
+  ...Object.values(SERVICES).map((s) => `/services/${s.slug}`),
   "/privacy", "/terms",
 ];
 

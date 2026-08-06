@@ -20,6 +20,8 @@ export interface ServiceDef {
   categories: string[]; // product categories shown on this service page
   heroImage?: string;
   steps?: { title: string; body: string }[];
+  specs?: { group: string; items: { name: string; detail: string }[] }[];
+  faqs?: { q: string; a: string }[];
 }
 
 export const SERVICES: Record<string, ServiceDef> = {
@@ -156,6 +158,49 @@ export const SERVICES: Record<string, ServiceDef> = {
     ],
     categories: ["Chemicals", "Oilfield Consumables"],
     heroImage: chemicalsImage,
+    specs: [
+      {
+        group: "Drilling chemicals",
+        items: [
+          { name: "Barite (Barium Sulphate)", detail: "API 13A grade, 4.10–4.20 SG. Weighting agent for water- and oil-based muds. Supplied in 1.0–1.5 MT big bags or 50 kg sacks." },
+          { name: "Bentonite", detail: "API-grade sodium bentonite for viscosity and filtration control in spud and water-based mud systems." },
+          { name: "Calcium Carbonate (CaCO₃)", detail: "Acid-soluble bridging agent in fine, medium, and coarse grades for reservoir drill-in fluids and controlled seepage loss." },
+          { name: "Mica", detail: "Fine, medium and coarse flake for seepage and partial-loss circulation control." },
+          { name: "Fibroseal / LCM range", detail: "Fibrous, granular and flake lost-circulation blends for fracture sealing in depleted and vugular formations." },
+          { name: "Polymers & alkalinity control", detail: "PAC-R, PAC-LV, CMC HV/LV, xanthan gum, soda ash, caustic soda, and lime." },
+        ],
+      },
+      {
+        group: "Completion & workover chemicals",
+        items: [
+          { name: "Calcium Bromide (CaBr₂)", detail: "Clear brine to 14.2 ppg, low crystallisation temperature — used for completion and workover fluids." },
+          { name: "Calcium Chloride (CaCl₂)", detail: "94–96% pellet, powder and flake for brines to 11.6 ppg and clay inhibition." },
+          { name: "Sodium Chloride / Sodium Bromide", detail: "Clear brine bases in solid or pre-mixed liquid form, filtered to 2 NTU on request." },
+          { name: "HEC Liquid & HEC Powder", detail: "Hydroxyethyl cellulose viscosifier for gravel packing, sand control and clean workover fluids." },
+          { name: "Oxygen Scavenger", detail: "Ammonium bisulphite / sodium sulphite based scavengers to protect tubulars during completion." },
+          { name: "Clay stabilisers & filtration aids", detail: "KCl, quaternary amine stabilisers, filter aid and diatomaceous earth for brine polishing." },
+        ],
+      },
+      {
+        group: "Production & integrity chemicals",
+        items: [
+          { name: "Corrosion inhibitors", detail: "Film-forming amine and imidazoline chemistries for flowlines, pipelines and water-injection systems." },
+          { name: "Scale inhibitors", detail: "Phosphonate and polymeric inhibitors for carbonate and sulphate scale in producing wells." },
+          { name: "Demulsifiers & defoamers", detail: "Tailored blends bottle-tested against your crude to hit BS&W and export specifications." },
+          { name: "Biocides", detail: "THPS and glutaraldehyde biocides for SRB control in water-injection and storage systems." },
+          { name: "H₂S scavengers", detail: "Triazine-based scavengers for sour gas and crude sweetening." },
+          { name: "Flow assurance", detail: "Pour-point depressants, wax and asphaltene dispersants for waxy Niger Delta crudes." },
+        ],
+      },
+    ],
+    faqs: [
+      { q: "What grade of barite does OJEX supply in Nigeria?", a: "We supply API 13A specification barite at 4.10–4.20 specific gravity, screened for residue and moisture, with a certificate of analysis per batch. Packaging options are 50 kg sacks, 1.0 MT and 1.5 MT big bags, or bulk vessel/truck delivery to Port Harcourt, Warri, Onne and Onshore rig locations." },
+      { q: "Can you supply calcium bromide and clear completion brines to a required density?", a: "Yes. We supply calcium bromide, calcium chloride, sodium chloride and sodium bromide as solids or pre-blended clear brine at your target density (up to 14.2 ppg with CaBr₂), filtered to 2 NTU where the completion programme requires it. Provide the density, crystallisation temperature limit and volume, and we return a quote with the blend sheet." },
+      { q: "What is HEC liquid used for?", a: "HEC (hydroxyethyl cellulose) is a non-damaging viscosifier used in gravel-pack carrier fluids, sand-control completions and workover pills. It builds viscosity in brines without leaving a permanent filter cake, so it can be broken and cleaned up after the job. We stock both HEC liquid and HEC powder." },
+      { q: "Do your chemicals ship with certificates of analysis?", a: "Every batch ships with a manufacturer certificate of analysis and, where applicable, an SDS in GHS format. On request we arrange third-party sampling and independent lab verification before release." },
+      { q: "What are the minimum order quantities and lead times?", a: "Stocked drilling chemicals such as barite, bentonite, CaCO₃ and mica typically ship within 24–72 hours from our Port Harcourt supply base. Imported specialty production chemicals run 2–4 weeks depending on volume and packaging. There is no fixed minimum for stocked lines; specialty blends are quoted per drum, IBC or ISO tank." },
+      { q: "Can you deliver directly to rig site?", a: "Yes. We deliver to rig site, jetty, or client warehouse across Rivers, Delta, Bayelsa, Akwa Ibom and Lagos, including offshore transfer via supply vessel where the operator provides the logistics window." },
+    ],
   },
   logistics: {
     slug: "logistics",

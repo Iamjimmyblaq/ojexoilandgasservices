@@ -86,6 +86,41 @@ export function ServicePage({ service }: { service: ServiceDef }) {
                 ))}
               </ul>
             </div>
+
+            {service.specs && service.specs.length > 0 && (
+              <div>
+                <h3 className="text-lg font-bold">Product range & specifications</h3>
+                <div className="mt-3 space-y-6">
+                  {service.specs.map((group) => (
+                    <div key={group.group} className="overflow-hidden rounded-lg border border-border">
+                      <div className="bg-muted/60 px-4 py-2.5 text-sm font-semibold text-[color:var(--navy)]">{group.group}</div>
+                      <dl className="divide-y divide-border">
+                        {group.items.map((item) => (
+                          <div key={item.name} className="grid gap-1 px-4 py-3 sm:grid-cols-3 sm:gap-4">
+                            <dt className="text-sm font-semibold">{item.name}</dt>
+                            <dd className="text-sm text-muted-foreground sm:col-span-2">{item.detail}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {service.faqs && service.faqs.length > 0 && (
+              <div>
+                <h3 className="text-lg font-bold">Frequently asked questions</h3>
+                <div className="mt-3 space-y-4">
+                  {service.faqs.map((f) => (
+                    <div key={f.q} className="rounded-md border border-border bg-card p-4">
+                      <h4 className="text-sm font-bold text-[color:var(--navy)]">{f.q}</h4>
+                      <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{f.a}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <aside className="lg:sticky lg:top-24 lg:self-start space-y-4 rounded-lg bg-[color:var(--navy-deep)] p-8 text-white">

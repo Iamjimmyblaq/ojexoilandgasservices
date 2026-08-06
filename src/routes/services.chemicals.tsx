@@ -15,5 +15,19 @@ export const Route = createFileRoute("/services/chemicals")({
       { property: "og:url", content: `https://www.ojexoilandgasservices.com/services/${S.slug}` },
     ],
     links: [{ rel: "canonical", href: `https://www.ojexoilandgasservices.com/services/${S.slug}` }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: (S.faqs ?? []).map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        }),
+      },
+    ],
   }),
 });
